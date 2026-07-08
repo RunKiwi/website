@@ -20,9 +20,8 @@ function initHeroCanvas() {
 
   // Set sizing
   function resizeCanvas() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height - 50; // leave space for controls
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
   }
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -45,7 +44,7 @@ function initHeroCanvas() {
     });
   }
 
-  // Interactive mouse gravity
+  // Interactive mouse tracking
   let mouse = { x: null, y: null, targetX: null, targetY: null };
   canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
@@ -57,38 +56,79 @@ function initHeroCanvas() {
     mouse.targetY = null;
   });
 
-  // Orbital parameters
-  const orbitRadiusX = 140;
-  const orbitRadiusY = 45;
-  const orbitTilt = -0.22; // radians of tilt
+  // Generative Particle System Settings
+  const coreX = () => canvas.width / 2;
+  const coreY = () => canvas.height / 2;
+  
+  // 1. Ambient Background Grid Particles (Vector Field)
+  const gridParticles = [];
+  const gridRows = 12;
+  const gridCols = 16;
+  
+  for (let r = 0; r < gridRows; r++) {
+    for (let c = 0; c < gridCols; c++) {
+      gridParticles.push({
+        baseX: 0,
+        baseY: 0,
+        x: 0,
+        y: 0,
+        row: r,
+        col: c,
+        size: Math.random() * 1 + 0.5,
+        alpha: Math.random() * 0.2 + 0.05
+      });
+    }
+  }
 
-  // Main orbiting loop particle
-  const loopParticle = {
-    angle: 0,
-    speed: 0.02,
-    r: 8,
-    color: '#8ce62c',
-    trail: [],
-    maxTrailLen: 30
-  };
-
-  // Tunnel credentials particles
-  const tunnelParticles = [
-    { progress: 0, speed: 0.006, label: 'GITHUB_TOKEN', active: true },
-    { progress: 0.35, speed: 0.007, label: 'AWS_SECRET', active: true },
-    { progress: 0.7, speed: 0.005, label: 'DB_URL', active: true }
+  // 2. Tilted Orbit Ring Particles
+  const orbitRings = [
+    { radiusX: 180, radiusY: 55, tilt: -0.25, speed: 0.012, color: 'var(--primary)', count: 18 },
+    { radiusX: 130, radiusY: 40, tilt: 0.15, speed: -0.015, color: 'var(--secondary)', count: 12 },
+    { radiusX: 80, radiusY: 25, tilt: -0.1, speed: 0.02, color: '#ffffff', count: 8 }
   ];
 
-  let localLaptopNode = { x: 60, y: 0 };
-  let cloudDaemonNode = { x: 0, y: 0 };
-  let angle = 0;
+  // Initialize ring particle angles
+  orbitRings.forEach(ring => {
+    ring.particles = [];
+    for (let i = 0; i < ring.count; i++) {
+      ring.particles.push({
+        angle: (i / ring.count) * Math.PI * 2,
+        size: Math.random() * 2 + 1.5,
+        alpha: Math.random() * 0.5 + 0.4
+      });
+    }
+  });
+
+  // 3. Flowing Secret Tunnel Streams
+  const streams = [];
+  const maxStreams = 4;
+  for (let i = 0; i < maxStreams; i++) {
+    streams.push({
+      progress: Math.random(),
+      speed: 0.005 + Math.random() * 0.005,
+      startX: -40,
+      startY: () => canvas.height + 40,
+      controlX1: () => canvas.width * 0.2,
+      controlY1: () => canvas.height * 0.7,
+      controlX2: () => canvas.width * 0.4,
+      controlY2: () => canvas.height * 0.2,
+      color: 'rgba(0, 240, 255, 0.7)',
+      width: Math.random() * 2 + 1
+    });
+  }
+
+  // 4. Actor-Critic Loop Execution Rings
+  const loopRings = [];
+  let ringTimer = 0;
+
+  let globalAngle = 0;
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    globalAngle += 0.01;
 
-    cloudDaemonNode.x = canvas.width / 2;
-    cloudDaemonNode.y = canvas.height / 2 - 15;
-    localLaptopNode.y = canvas.height - 40;
+    const cx = coreX();
+    const cy = coreY();
 
     // Smooth mouse coordinates
     if (mouse.targetX !== null) {
@@ -104,268 +144,203 @@ function initHeroCanvas() {
       mouse.y = null;
     }
 
-    // 1. Draw modern dot matrix grid background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-    const spacing = 30;
-    for (let x = spacing; x < canvas.width; x += spacing) {
-      for (let y = spacing; y < canvas.height; y += spacing) {
-        ctx.beginPath();
-        ctx.arc(x, y, 1, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
+    // A. Draw & Warp Vector Dot Grid
+    gridParticles.forEach(p => {
+      // Calculate coordinates dynamically to fill parent canvas bounds
+      const spacingX = canvas.width / (gridCols - 1);
+      const spacingY = canvas.height / (gridRows - 1);
+      p.baseX = p.col * spacingX;
+      p.baseY = p.row * spacingY;
 
-    // 2. Draw ambient background glows
-    const backgroundGlow = ctx.createRadialGradient(
-      cloudDaemonNode.x, cloudDaemonNode.y, 5,
-      cloudDaemonNode.x, cloudDaemonNode.y, 160
-    );
-    backgroundGlow.addColorStop(0, 'rgba(140, 230, 44, 0.08)');
-    backgroundGlow.addColorStop(0.5, 'rgba(0, 240, 255, 0.03)');
-    backgroundGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = backgroundGlow;
+      // Mouse gravity repulsion
+      let targetX = p.baseX;
+      let targetY = p.baseY;
+
+      if (mouse.x !== null) {
+        const dx = mouse.x - p.baseX;
+        const dy = mouse.y - p.baseY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) {
+          const force = (120 - dist) * 0.15;
+          targetX -= (dx / dist) * force;
+          targetY -= (dy / dist) * force;
+        }
+      }
+
+      // Easing to current position
+      p.x += (targetX - p.x) * 0.1;
+      p.y += (targetY - p.y) * 0.1;
+
+      ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // B. Draw Background Ambient Glows
+    const radialGlow = ctx.createRadialGradient(cx, cy, 10, cx, cy, 220);
+    radialGlow.addColorStop(0, 'rgba(140, 230, 44, 0.06)');
+    radialGlow.addColorStop(0.5, 'rgba(0, 240, 255, 0.03)');
+    radialGlow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = radialGlow;
     ctx.beginPath();
-    ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, 160, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 220, 0, Math.PI * 2);
     ctx.fill();
 
-    // 3. Draw connection tunnel (Sleek minimalist bezier rail)
-    const showTunnel = simMode === 'tunnel';
-    const cp1x = localLaptopNode.x + 100, cp1y = localLaptopNode.y - 120;
-    const cp2x = cloudDaemonNode.x - 120, cp2y = cloudDaemonNode.y + 100;
-
-    ctx.beginPath();
-    ctx.moveTo(localLaptopNode.x, localLaptopNode.y);
-    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, cloudDaemonNode.x, cloudDaemonNode.y);
-    
-    ctx.strokeStyle = showTunnel ? 'rgba(0, 240, 255, 0.3)' : 'rgba(255, 255, 255, 0.04)';
-    ctx.lineWidth = showTunnel ? 2.5 : 1.5;
-    if (!showTunnel) {
-      ctx.setLineDash([4, 6]);
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // 4. Draw credential packets flowing through the tunnel
-    if (showTunnel) {
-      tunnelParticles.forEach(p => {
-        p.progress += p.speed;
-        if (p.progress > 1) {
-          p.progress = 0;
+    // C. Draw Credential Flow Streams (Tunnel mode)
+    if (simMode === 'tunnel') {
+      streams.forEach((stream, idx) => {
+        stream.progress += stream.speed;
+        if (stream.progress > 1) {
+          stream.progress = 0;
         }
 
-        const t = p.progress;
-        const px = Math.pow(1-t, 3)*localLaptopNode.x + 3*Math.pow(1-t, 2)*t*cp1x + 3*(1-t)*Math.pow(t, 2)*cp2x + Math.pow(t, 3)*cloudDaemonNode.x;
-        const py = Math.pow(1-t, 3)*localLaptopNode.y + 3*Math.pow(1-t, 2)*t*cp1y + 3*(1-t)*Math.pow(t, 2)*cp2y + Math.pow(t, 3)*cloudDaemonNode.y;
+        const startX = stream.startX;
+        const startY = stream.startY();
+        const cp1x = stream.controlX1();
+        const cp1y = stream.controlY1();
+        const cp2x = stream.controlX2();
+        const cp2y = stream.controlY2();
 
-        // Draw packet glow
+        // Draw flowing path ribbon behind particles
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+        ctx.lineWidth = stream.width;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, cx, cy);
+        ctx.stroke();
+
+        // Particle calculations (Bezier curve mapping)
+        const t = stream.progress;
+        const px = Math.pow(1-t, 3)*startX + 3*Math.pow(1-t, 2)*t*cp1x + 3*(1-t)*Math.pow(t, 2)*cp2x + Math.pow(t, 3)*cx;
+        const py = Math.pow(1-t, 3)*startY + 3*Math.pow(1-t, 2)*t*cp1y + 3*(1-t)*Math.pow(t, 2)*cp2y + Math.pow(t, 3)*cy;
+
+        // Draw particle head
         const grad = ctx.createRadialGradient(px, py, 1, px, py, 8);
-        grad.addColorStop(0, '#00f0ff');
-        grad.addColorStop(0.5, 'rgba(0, 240, 255, 0.4)');
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.3, 'rgba(0, 240, 255, 0.8)');
         grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(px, py, 8, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw packet core dot
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.arc(px, py, 2, 0, Math.PI * 2);
+        ctx.arc(px, py, 1.5, 0, Math.PI * 2);
         ctx.fill();
-
-        // Elegant tiny label next to packet
-        ctx.font = '7px var(--font-mono)';
-        ctx.fillStyle = 'rgba(0, 240, 255, 0.7)';
-        ctx.textAlign = 'left';
-        ctx.fillText(p.label, px + 6, py - 2);
       });
     }
 
-    // 5. Draw Local CLI Node
-    ctx.fillStyle = '#06070a';
-    ctx.strokeStyle = showTunnel ? '#00f0ff' : 'rgba(255, 255, 255, 0.15)';
+    // D. Draw Actor-Critic Loop Execution Rings (Loop mode)
+    if (simMode === 'loop') {
+      ringTimer++;
+      if (ringTimer % 80 === 0) {
+        loopRings.push({ radius: 30, maxRadius: 180, alpha: 0.6, speed: 1.2 });
+      }
+
+      for (let i = loopRings.length - 1; i >= 0; i--) {
+        const ring = loopRings[i];
+        ring.radius += ring.speed;
+        ring.alpha = 1 - (ring.radius / ring.maxRadius);
+
+        if (ring.radius > ring.maxRadius) {
+          loopRings.splice(i, 1);
+          continue;
+        }
+
+        ctx.strokeStyle = `rgba(140, 230, 44, ${ring.alpha * 0.15})`;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([6, 12]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, ring.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // E. Draw Concentric 3D Tilted Orbit Rings & Orbiting Nodes
+    orbitRings.forEach(ring => {
+      // Draw actual path ellipse tilted in 3D space
+      ctx.strokeStyle = `rgba(255, 255, 255, 0.03)`;
+      ctx.lineWidth = 1;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(ring.tilt);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, ring.radiusX, ring.radiusY, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // Render tilted orbiting particles
+      ring.particles.forEach(p => {
+        p.angle += ring.speed;
+        
+        const cosAngle = Math.cos(p.angle);
+        const sinAngle = Math.sin(p.angle);
+
+        // Project coordinate using tilt matrix
+        let x3d = cosAngle * ring.radiusX;
+        let y3d = sinAngle * ring.radiusY;
+        let rx = x3d * Math.cos(ring.tilt) - y3d * Math.sin(ring.tilt);
+        let ry = x3d * Math.sin(ring.tilt) + y3d * Math.cos(ring.tilt);
+
+        let finalX = cx + rx;
+        let finalY = cy + ry;
+
+        // Perspective scaling (sinAngle represents depth -1 to 1)
+        const scale = 0.6 + (sinAngle + 1) / 2 * 0.6;
+        const color = ring.color === 'var(--primary)' ? 'rgba(140, 230, 44, ' : 'rgba(0, 240, 255, ';
+
+        // Render glowing particle node
+        const glow = ctx.createRadialGradient(finalX, finalY, 0.5, finalX, finalY, p.size * 3 * scale);
+        glow.addColorStop(0, '#ffffff');
+        glow.addColorStop(0.3, `${color}${p.alpha})`);
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(finalX, finalY, p.size * 3 * scale, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+
+    // F. Draw Modern Cybernetic Pulsing Core
+    // Outer breathing circle
+    const coreBreathing = Math.sin(globalAngle * 3.5) * 2 + 25;
+    ctx.strokeStyle = 'rgba(140, 230, 44, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 6]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreBreathing + 8, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Glassmorphic core ring
+    ctx.fillStyle = 'rgba(11, 15, 26, 0.9)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.arc(localLaptopNode.x, localLaptopNode.y, 14, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 25, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = showTunnel ? '#00f0ff' : 'var(--text-muted)';
-    ctx.font = 'bold 8px var(--font-mono)';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('CLI', localLaptopNode.x, localLaptopNode.y);
-
-    // 6. Draw Orbit Line
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-    ctx.lineWidth = 1;
-    ctx.save();
-    ctx.translate(cloudDaemonNode.x, cloudDaemonNode.y);
-    ctx.rotate(orbitTilt);
+    // Glowing core dots representing secure agent controls
+    const innerBreathing = Math.sin(globalAngle * 2.5) * 1.5 + 14;
+    const coreGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, innerBreathing);
+    coreGrad.addColorStop(0, '#8ce62c');
+    coreGrad.addColorStop(0.4, 'rgba(140, 230, 44, 0.3)');
+    coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = coreGrad;
     ctx.beginPath();
-    ctx.ellipse(0, 0, orbitRadiusX, orbitRadiusY, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
+    ctx.arc(cx, cy, innerBreathing, 0, Math.PI * 2);
+    ctx.fill();
 
-    // 7. Calculate Orbit Position and Trails
-    loopParticle.angle += loopParticle.speed;
-    const cosAngle = Math.cos(loopParticle.angle);
-    const sinAngle = Math.sin(loopParticle.angle);
-    
-    // Orbit relative coordinates (tilted)
-    let x3d = cosAngle * orbitRadiusX;
-    let y3d = sinAngle * orbitRadiusY;
-    let rx = x3d * Math.cos(orbitTilt) - y3d * Math.sin(orbitTilt);
-    let ry = x3d * Math.sin(orbitTilt) + y3d * Math.cos(orbitTilt);
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
+    ctx.fill();
 
-    let finalX = cloudDaemonNode.x + rx;
-    let finalY = cloudDaemonNode.y + ry;
-
-    // Mouse gravity interactive deflection
-    if (mouse.x !== null) {
-      const dx = mouse.x - finalX;
-      const dy = mouse.y - finalY;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 80) {
-        const force = (80 - dist) * 0.12;
-        finalX -= (dx / dist) * force;
-        finalY -= (dy / dist) * force;
-      }
-    }
-
-    // Capture trail position
-    loopParticle.trail.push({ x: finalX, y: finalY, depth: sinAngle });
-    if (loopParticle.trail.length > loopParticle.maxTrailLen) {
-      loopParticle.trail.shift();
-    }
-
-    // Depth checks: is particle behind centerpiece (sinAngle < 0)?
-    const isBehind = sinAngle < 0.1;
-
-    // Draw function helpers for core & particle to support 3D occlusion
-    function drawOrbitingParticle() {
-      // Draw smooth trailing gradient brush
-      if (loopParticle.trail.length > 1) {
-        for (let i = 1; i < loopParticle.trail.length; i++) {
-          const pt1 = loopParticle.trail[i - 1];
-          const pt2 = loopParticle.trail[i];
-          const alpha = (i / loopParticle.maxTrailLen) * 0.4;
-          const scale = 0.5 + (pt2.depth + 1) / 2 * 0.6; // 3D thickness scaling
-          
-          ctx.strokeStyle = loopParticle.color;
-          ctx.lineWidth = loopParticle.r * scale * (i / loopParticle.maxTrailLen) * 1.5;
-          ctx.globalAlpha = alpha;
-          ctx.beginPath();
-          ctx.moveTo(pt1.x, pt1.y);
-          ctx.lineTo(pt2.x, pt2.y);
-          ctx.stroke();
-        }
-        ctx.globalAlpha = 1.0;
-      }
-
-      // Draw particle head
-      const scale = 0.6 + (sinAngle + 1) / 2 * 0.6; // 3D size scaling
-      const particleGlow = ctx.createRadialGradient(
-        finalX, finalY, 1,
-        finalX, finalY, loopParticle.r * 2.5 * scale
-      );
-      particleGlow.addColorStop(0, '#ffffff');
-      particleGlow.addColorStop(0.3, loopParticle.color);
-      particleGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      
-      ctx.fillStyle = particleGlow;
-      ctx.beginPath();
-      ctx.arc(finalX, finalY, loopParticle.r * 2.5 * scale, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Inner solid core
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(finalX, finalY, 2.5 * scale, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Simple label badge floating above particle
-      ctx.fillStyle = 'rgba(6, 7, 10, 0.7)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.lineWidth = 1;
-      
-      ctx.font = 'bold 8px var(--font-mono)';
-      const labelText = 'Developer Loop';
-      const labelW = ctx.measureText(labelText).width;
-      
-      // Draw simple capsule background
-      ctx.beginPath();
-      ctx.arc(finalX - labelW/2, finalY - 18 * scale, 5, Math.PI/2, Math.PI * 1.5);
-      ctx.lineTo(finalX + labelW/2, finalY - 23 * scale);
-      ctx.arc(finalX + labelW/2, finalY - 18 * scale, 5, Math.PI * 1.5, Math.PI / 2);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.textAlign = 'center';
-      ctx.fillText(labelText, finalX, finalY - 15 * scale);
-    }
-
-    function drawCenterCore() {
-      // Glow background for core
-      const coreGlow = ctx.createRadialGradient(
-        cloudDaemonNode.x, cloudDaemonNode.y, 1,
-        cloudDaemonNode.x, cloudDaemonNode.y, 45
-      );
-      coreGlow.addColorStop(0, 'rgba(140, 230, 44, 0.25)');
-      coreGlow.addColorStop(0.4, 'rgba(0, 240, 255, 0.1)');
-      coreGlow.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = coreGlow;
-      ctx.beginPath();
-      ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, 45, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Outer glassmorphic frame
-      const centerPulse = Math.sin(angle * 2) * 1.5 + 24;
-      ctx.fillStyle = 'rgba(11, 15, 26, 0.8)';
-      ctx.strokeStyle = 'rgba(140, 230, 44, 0.4)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, centerPulse, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Concentric inner line
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, centerPulse - 6, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Central pulsing core dot
-      ctx.fillStyle = '#8ce62c';
-      ctx.beginPath();
-      ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Text identifiers
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 9px var(--font-heading)';
-      ctx.textAlign = 'center';
-      ctx.fillText('KIWI', cloudDaemonNode.x, cloudDaemonNode.y - 3);
-      ctx.fillStyle = '#8ce62c';
-      ctx.font = '7px var(--font-mono)';
-      ctx.fillText('CLOUD', cloudDaemonNode.x, cloudDaemonNode.y + 7);
-    }
-
-    // 8. 3D Occlusion Drawing Sequence
-    if (isBehind) {
-      // Particle is in background: draw particle, then center core over it
-      drawOrbitingParticle();
-      drawCenterCore();
-    } else {
-      // Particle is in foreground: draw center core, then particle over it
-      drawCenterCore();
-      drawOrbitingParticle();
-    }
-
-    angle += 0.05;
     animationFrameId = requestAnimationFrame(draw);
   }
 
