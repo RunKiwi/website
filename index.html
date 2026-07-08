@@ -124,144 +124,196 @@
   <section id="how-it-works" class="simulator-section">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Laptop Closed. Loop Continues.</h2>
+        <h2 class="section-title">The Secure Control Plane in Action</h2>
         <p class="section-subtitle">
-          Toggle the laptop state below to see how Kiwi's reverse credential tunnel caching secures execution even when you go offline.
+          Explore Kiwi's complete orchestration engine. Select a sandbox, trigger system controls, and observe multi-agent sandboxing, tunneling, budget caps, and safety breakers.
         </p>
       </div>
 
-      <div class="simulator-grid" id="simulator-section">
-        <!-- Interactive Control Panel -->
-        <div class="simulator-controls-card">
-          <div class="card-glow"></div>
-          <h3 class="card-title-sm">Simulator Controls</h3>
-          <p class="card-desc">Interact with the state of the local laptop and observe the cloud sandbox environment respond in real-time.</p>
-          
-          <div class="simulator-toggles">
-            <div class="toggle-group">
-              <span class="toggle-label">Laptop Connection Status</span>
-              <button class="btn-toggle active" id="toggle-laptop">
-                <span class="toggle-indicator"></span>
-                <span class="toggle-btn-text">Laptop Open (Connected)</span>
-              </button>
-            </div>
-            
-            <div class="toggle-group">
-              <span class="toggle-label">Secret Request Triggers</span>
-              <div class="btn-group-secrets">
-                <button class="btn-secret-trigger" id="trigger-github" data-secret="GITHUB_TOKEN">Pull GITHUB_TOKEN</button>
-                <button class="btn-secret-trigger" id="trigger-db" data-secret="DATABASE_URL">Pull DATABASE_URL</button>
-                <button class="btn-secret-trigger" id="trigger-aws" data-secret="AWS_ACCESS_KEY">Pull AWS_SECRET</button>
+      <!-- Main Simulator Control Console Frame -->
+      <div class="control-console" id="simulator-section">
+        <div class="console-glow"></div>
+        
+        <!-- Console Top bar / Telemetry Bar -->
+        <div class="console-telemetry-bar">
+          <div class="telemetry-item">
+            <span class="t-dot active"></span>
+            <span class="t-label">Control Plane:</span>
+            <span class="t-value text-gradient">ONLINE</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="t-label">Sandboxes:</span>
+            <span class="t-value" id="telemetry-sandboxes">3 Active</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="t-label">Active Tunnels:</span>
+            <span class="t-value" id="telemetry-tunnels">2 / 3 Connected</span>
+          </div>
+          <div class="telemetry-item text-warning" id="telemetry-warning-indicator" style="display:none;">
+            <span class="t-dot warn"></span>
+            <span class="t-value" id="telemetry-warning-text">ALERT DETECTED</span>
+          </div>
+        </div>
+
+        <div class="console-body">
+          <!-- Column 1: Sandbox Workspace Selector -->
+          <div class="console-sidebar">
+            <h4 class="sidebar-title">Active Sandboxes</h4>
+            <div class="sandbox-list">
+              <!-- Sandbox item 1 -->
+              <div class="sandbox-item active" id="sb-steelwing" data-sandbox="steelwing">
+                <div class="sb-header">
+                  <span class="sb-id">task-3831</span>
+                  <span class="sb-badge active" id="sb-badge-steelwing">RUNNING</span>
+                </div>
+                <h5 class="sb-title">steelwing (TDD loop)</h5>
+                <p class="sb-desc">Fix division by zero inside Divide()</p>
+                <div class="sb-tech">Golang • Docker v1.21</div>
+              </div>
+
+              <!-- Sandbox item 2 -->
+              <div class="sandbox-item" id="sb-microfish" data-sandbox="microfish">
+                <div class="sb-header">
+                  <span class="sb-id">task-3832</span>
+                  <span class="sb-badge paused" id="sb-badge-microfish">PAUSED</span>
+                </div>
+                <h5 class="sb-title">microfish (secrets tunnel)</h5>
+                <p class="sb-desc">Upload credentials & test S3 pipeline</p>
+                <div class="sb-tech">Python • Boto3 Sandbox</div>
+              </div>
+
+              <!-- Sandbox item 3 -->
+              <div class="sandbox-item" id="sb-threatmapper" data-sandbox="threatmapper">
+                <div class="sb-header">
+                  <span class="sb-id">task-3833</span>
+                  <span class="sb-badge active" id="sb-badge-threatmapper">RUNNING</span>
+                </div>
+                <h5 class="sb-title">threatmapper (safety cap)</h5>
+                <p class="sb-desc">Loop refactoring & security checks</p>
+                <div class="sb-tech">Node.js • Scanner Engine</div>
               </div>
             </div>
           </div>
 
-          <div class="flow-steps">
-            <div class="flow-step active" id="step-1">
-              <div class="step-num">1</div>
-              <div class="step-details">
-                <h4>Code Pack & Sync</h4>
-                <p>CLI zips workspace and uploads to cloud daemon.</p>
+          <!-- Column 2: Sandbox Workspace Details Visualizer -->
+          <div class="console-main-visual">
+            <div class="visual-card">
+              <div class="visual-card-header">
+                <span class="v-title" id="visual-sandbox-title">SANDBOX: task-3831 (steelwing)</span>
+                <span class="v-status-pill running" id="visual-sandbox-status">RUNNING</span>
+              </div>
+              
+              <div class="visual-card-body">
+                <!-- Sandbox graphic matrix -->
+                <div class="sandbox-graphic-container">
+                  <!-- Left: Developer Laptop client -->
+                  <div class="graphic-node" id="g-node-laptop">
+                    <div class="node-glow-wrapper laptop-glow active" id="laptop-glow-indicator"></div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                      <line x1="2" y1="20" x2="22" y2="20"></line>
+                      <line x1="12" y1="17" x2="12" y2="20"></line>
+                    </svg>
+                    <span class="node-name">Local Laptop</span>
+                    <span class="node-sub" id="visual-laptop-status">Connected</span>
+                  </div>
+
+                  <!-- Middle: Glowing Tunnel line -->
+                  <div class="graphic-tunnel-wrapper">
+                    <div class="graphic-tunnel-line active" id="visual-tunnel-line"></div>
+                    <div class="graphic-tunnel-pulse" id="visual-tunnel-pulse"></div>
+                    <span class="graphic-tunnel-label" id="visual-tunnel-label">REVERSE TUNNEL</span>
+                  </div>
+
+                  <!-- Right: Docker sandbox container inside cloud daemon -->
+                  <div class="graphic-node" id="g-node-container">
+                    <div class="node-glow-wrapper container-glow active" id="container-glow-indicator"></div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span class="node-name">Docker Sandbox</span>
+                    <span class="node-sub" id="visual-container-sub">Active Loop</span>
+                  </div>
+                </div>
+
+                <!-- Live Metrics Grid -->
+                <div class="metrics-grid">
+                  <div class="metric-box">
+                    <span class="m-label">In-Memory Cache:</span>
+                    <div class="m-cache-slots" id="visual-cache-slots">
+                      <span class="cache-pill empty" id="slot-github">GITHUB_TOKEN</span>
+                      <span class="cache-pill empty" id="slot-db">DATABASE_URL</span>
+                      <span class="cache-pill empty" id="slot-aws">AWS_SECRET</span>
+                    </div>
+                  </div>
+                  <div class="metric-box">
+                    <span class="m-label">Safety Budget Cap:</span>
+                    <div class="m-progress-bar">
+                      <div class="m-progress-fill" id="visual-budget-fill" style="width: 15%"></div>
+                    </div>
+                    <div class="m-progress-labels">
+                      <span id="visual-budget-spent">$1.50 spent</span>
+                      <span>$10.00 Limit</span>
+                    </div>
+                  </div>
+                  <div class="metric-box">
+                    <span class="m-label">Circuit Breaker:</span>
+                    <div class="m-breaker-status status-stable" id="visual-breaker-status">
+                      <span class="breaker-dot"></span>
+                      <span class="breaker-txt" id="visual-breaker-text">STABLE (No loops)</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="flow-step" id="step-2">
-              <div class="step-num">2</div>
-              <div class="step-details">
-                <h4>Reverse Tunnel Established</h4>
-                <p>Multiplexed HTTP/2 channel opens from laptop to cloud.</p>
+          </div>
+
+          <!-- Column 3: Control Panel Controls -->
+          <div class="console-controls">
+            <h4 class="controls-title">Trigger Controls</h4>
+            <p class="controls-desc">Trigger system actions on the active sandbox.</p>
+            
+            <div class="control-actions-list">
+              <!-- Action: Toggle Laptop Client Tunnel -->
+              <div class="control-card">
+                <span class="control-card-label">Client Laptop Connection</span>
+                <button class="btn btn-primary btn-sm btn-full active" id="ctrl-toggle-laptop">
+                  <span class="btn-text">Close Laptop (Disconnect)</span>
+                </button>
               </div>
-            </div>
-            <div class="flow-step" id="step-3">
-              <div class="step-num">3</div>
-              <div class="step-details">
-                <h4>Actor-Critic Execution</h4>
-                <p>Daemon runs code inside isolated Docker container.</p>
+
+              <!-- Action: Run TDD Actor Critic Step -->
+              <div class="control-card">
+                <span class="control-card-label">TDD Actor-Critic alignment</span>
+                <button class="btn btn-secondary btn-sm btn-full" id="ctrl-step-loop">
+                  Step Agent Loop
+                </button>
               </div>
-            </div>
-            <div class="flow-step" id="step-4">
-              <div class="step-num">4</div>
-              <div class="step-details">
-                <h4>Dynamic Key Pull</h4>
-                <p>Cloud pulls required secrets on-demand. Never persisted on server disk.</p>
+
+              <!-- Action: Simulate Infinite Recursion (Breaker test) -->
+              <div class="control-card">
+                <span class="control-card-label">Safety & Security Systems</span>
+                <div class="dual-btn-group">
+                  <button class="btn btn-outline btn-sm btn-half" id="ctrl-trigger-breaker">Loop Crash</button>
+                  <button class="btn btn-outline btn-sm btn-half" id="ctrl-trigger-budget">Cap Limit</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Live Visualizing Screen -->
-        <div class="simulator-screen-card">
-          <div class="simulator-screen-header">
-            <div class="window-dot red"></div>
-            <div class="window-dot yellow"></div>
-            <div class="window-dot green"></div>
-            <span class="window-title">Kiwi Execution Tunnel Visualizer</span>
+        <!-- Bottom Panel: Console Diagnostic Logs Output -->
+        <div class="console-footer-logs">
+          <div class="logs-header-bar">
+            <span>Diagnostic Logs Console Output</span>
+            <button class="btn-clear-logs" id="ctrl-clear-logs">Clear</button>
           </div>
-          
-          <div class="simulator-screen-body">
-            <!-- Graphical nodes -->
-            <div class="nodes-container">
-              <!-- Local Machine -->
-              <div class="node-box" id="node-local">
-                <div class="node-icon-wrapper local">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="2" y1="20" x2="22" y2="20"></line>
-                    <line x1="12" y1="17" x2="12" y2="20"></line>
-                  </svg>
-                </div>
-                <div class="node-info">
-                  <div class="node-title">Local Machine</div>
-                  <div class="node-status" id="status-local">Laptop Open</div>
-                </div>
-                <div class="local-secrets-status">
-                  <div class="secret-tag active">GITHUB_TOKEN</div>
-                  <div class="secret-tag active">DATABASE_URL</div>
-                  <div class="secret-tag active">AWS_SECRET</div>
-                </div>
-              </div>
-
-              <!-- Tunnel Connection Line -->
-              <div class="tunnel-line-wrapper">
-                <div class="tunnel-line" id="connection-tunnel-line"></div>
-                <div class="tunnel-direction-indicator" id="tunnel-pulse"></div>
-                <span class="tunnel-label-overlay" id="tunnel-label">HTTP/2 REVERSE TUNNEL</span>
-              </div>
-
-              <!-- Cloud Daemon -->
-              <div class="node-box" id="node-cloud">
-                <div class="node-icon-wrapper cloud">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8ce62c" stroke-width="2">
-                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-                    <circle cx="12" cy="12" r="4"></circle>
-                  </svg>
-                </div>
-                <div class="node-info">
-                  <div class="node-title">Kiwi Cloud Daemon</div>
-                  <div class="node-status running" id="status-cloud">Executing Loop</div>
-                </div>
-                <!-- In-memory Cache indicators -->
-                <div class="cache-container">
-                  <div class="cache-title">Secure In-Memory Cache</div>
-                  <div class="cache-slots">
-                    <div class="cache-slot empty" id="cache-github">GITHUB_TOKEN: <span class="val">Empty</span></div>
-                    <div class="cache-slot empty" id="cache-db">DATABASE_URL: <span class="val">Empty</span></div>
-                    <div class="cache-slot empty" id="cache-aws">AWS_SECRET: <span class="val">Empty</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Terminal output overlay -->
-            <div class="simulator-terminal">
-              <div class="terminal-bar">
-                <span>Daemon Log Output</span>
-                <span class="terminal-status-badge" id="terminal-badge">RUNNING</span>
-              </div>
-              <div class="terminal-content" id="sim-terminal-logs">
-                <div class="log-row info">Ready to receive execution task. Submit via Kiwi CLI.</div>
-                <div class="log-row cmd">./kiwi -task "Fix division by zero in Divide()" -file math_utils.go -test-cmd "go test ./..."</div>
-              </div>
-            </div>
+          <div class="logs-window-content" id="console-logs-content">
+            <div class="log-row info">Initializing Kiwi Secure Control Center simulator...</div>
+            <div class="log-row success">System online. 3 sandboxes state-loaded from local DB (kiwi.db).</div>
+            <div class="log-row info">Task 3831 (steelwing) running Golang test runner suite.</div>
           </div>
         </div>
       </div>
