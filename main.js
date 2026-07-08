@@ -45,7 +45,7 @@ function initHeroCanvas() {
     });
   }
 
-  // Interactive mouse gravity
+  // Interactive mouse deflection
   let mouse = { x: null, y: null, targetX: null, targetY: null };
   canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
@@ -57,32 +57,60 @@ function initHeroCanvas() {
     mouse.targetY = null;
   });
 
+  // Telemetry HUD Elements floating in background
+  const telemetryLines = [
+    { text: '[SYS_DAEMON_OK]', x: 30, y: 40, speed: 0.1, alpha: 0.3 },
+    { text: '[TDD_CRITIC_ACTIVE]', x: 30, y: 60, speed: 0.15, alpha: 0.2 },
+    { text: '[TUNNEL_SECURE_HTTP2]', x: 260, y: 260, speed: 0.08, alpha: 0.25 },
+    { text: '[BUDGET_CAP: $10.00]', x: 280, y: 40, speed: 0.05, alpha: 0.3 },
+    { text: '[ALIGNMENT_LOOP_RUNNING]', x: 120, y: 320, speed: 0.12, alpha: 0.2 }
+  ];
+
   // Orbital particles parameters
   const particles = [];
-  const particleCount = 45;
-  const orbitRadiusX = 120;
-  const orbitRadiusY = 50; // creates 3D tilt perspective
-  const orbitTilt = -0.3; // radians of tilt
+  const particleCount = 35;
+  const orbitRadiusX = 135;
+  const orbitRadiusY = 55; // 3D tilt perspective
+  const orbitTilt = -0.25; // radians of tilt
 
-  // Main orbiting entities (Actor & Critic)
-  const actor = { angle: 0, r: 16, color: '#8ce62c', label: 'Actor', glowColor: 'rgba(140, 230, 44, 0.4)' };
-  const critic = { angle: Math.PI, r: 16, color: '#8b5cf6', label: 'Critic', glowColor: 'rgba(139, 92, 246, 0.4)' };
+  // Main Orbiting Nodes with Trails
+  const actor = { 
+    angle: 0, 
+    r: 10, 
+    color: '#8ce62c', 
+    label: 'Actor', 
+    trail: [], 
+    dashPhase: 0,
+    pulseSize: 0
+  };
+  
+  const critic = { 
+    angle: Math.PI, 
+    r: 10, 
+    color: '#8b5cf6', 
+    label: 'Critic', 
+    trail: [], 
+    dashPhase: 0,
+    pulseSize: 0
+  };
 
-  // Generate minor swirling background elements (tests/code files)
+  // Generate modern tech code particles (tiny crosshairs / dots)
   for (let i = 0; i < particleCount; i++) {
     particles.push({
       angle: Math.random() * Math.PI * 2,
-      speed: 0.01 + Math.random() * 0.02,
-      distanceScale: 0.5 + Math.random() * 0.7,
-      size: 1.5 + Math.random() * 2.5,
-      opacity: 0.3 + Math.random() * 0.5,
-      color: Math.random() > 0.5 ? '#00f0ff' : '#ffffff'
+      speed: 0.008 + Math.random() * 0.012,
+      distanceScale: 0.6 + Math.random() * 0.6,
+      size: 1.5 + Math.random() * 2,
+      opacity: 0.2 + Math.random() * 0.4,
+      color: Math.random() > 0.5 ? '#00f0ff' : '#8ce62c',
+      type: Math.random() > 0.7 ? 'cross' : 'dot'
     });
   }
 
-  let localLaptopNode = { x: 50, y: 0 }; // relative positions computed in draw
+  let localLaptopNode = { x: 50, y: 0 };
   let cloudDaemonNode = { x: 0, y: 0 };
   let angle = 0;
+  let daemonRotation = 0;
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -91,24 +119,24 @@ function initHeroCanvas() {
     cloudDaemonNode.y = canvas.height / 2 - 20;
     localLaptopNode.y = canvas.height - 40;
 
-    // Smooth mouse coordinates interpolation
+    // Interpolate mouse coordinates
     if (mouse.targetX !== null) {
       if (mouse.x === null) {
         mouse.x = mouse.targetX;
         mouse.y = mouse.targetY;
       } else {
-        mouse.x += (mouse.targetX - mouse.x) * 0.1;
-        mouse.y += (mouse.targetY - mouse.y) * 0.1;
+        mouse.x += (mouse.targetX - mouse.x) * 0.15;
+        mouse.y += (mouse.targetY - mouse.y) * 0.15;
       }
     } else {
       mouse.x = null;
       mouse.y = null;
     }
 
-    // 1. Draw grid backdrop (Subtle tech aesthetic)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+    // 1. Draw Grid Backdrop (Subtle Tech Coordinate System)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
     ctx.lineWidth = 1;
-    const gridSize = 30;
+    const gridSize = 40;
     for (let x = 0; x < canvas.width; x += gridSize) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
@@ -122,64 +150,151 @@ function initHeroCanvas() {
       ctx.stroke();
     }
 
-    // 2. Draw Connection Tunnel if in 'tunnel' mode or default state
-    const tunnelGlow = Math.sin(angle * 5) * 0.2 + 0.8;
-    ctx.lineWidth = 2;
-    if (simMode === 'tunnel') {
-      ctx.strokeStyle = `rgba(0, 240, 255, ${0.4 * tunnelGlow})`;
-      ctx.setLineDash([6, 4]);
-    } else {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
-      ctx.setLineDash([4, 6]);
-    }
+    // 2. Draw HUD Background Telemetry Text
+    ctx.font = '9px var(--font-mono)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    telemetryLines.forEach(line => {
+      ctx.fillStyle = `rgba(140, 230, 44, ${line.alpha * (0.6 + Math.sin(angle * line.speed * 2) * 0.4)})`;
+      ctx.fillText(line.text, line.x, line.y);
+    });
+
+    // 3. Draw Rotating Faint Background Concentric Rings (Tech radar look)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+    ctx.lineWidth = 1.2;
+    ctx.save();
+    ctx.translate(cloudDaemonNode.x, cloudDaemonNode.y);
+    ctx.rotate(orbitTilt);
+    
+    // Static concentric paths
+    [90, 160, 220].forEach((r, idx) => {
+      ctx.beginPath();
+      if (idx % 2 === 0) {
+        ctx.setLineDash([4, 12]);
+      } else {
+        ctx.setLineDash([2, 6]);
+      }
+      ctx.ellipse(0, 0, r, r * 0.4, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+    ctx.restore();
+    ctx.setLineDash([]); // Reset
+
+    // 4. Draw Connection Tunnel (Sine-wave glowing wire)
+    const activeTunnel = simMode === 'tunnel';
+    
+    // Tunnel core wire
     ctx.beginPath();
     ctx.moveTo(localLaptopNode.x, localLaptopNode.y);
-    ctx.bezierCurveTo(
-      localLaptopNode.x + 80, localLaptopNode.y - 120,
-      cloudDaemonNode.x - 120, cloudDaemonNode.y + 120,
-      cloudDaemonNode.x, cloudDaemonNode.y
-    );
+    const cp1x = localLaptopNode.x + 80, cp1y = localLaptopNode.y - 120;
+    const cp2x = cloudDaemonNode.x - 120, cp2y = cloudDaemonNode.y + 120;
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, cloudDaemonNode.x, cloudDaemonNode.y);
+    
+    ctx.strokeStyle = activeTunnel ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.04)';
+    ctx.lineWidth = 4;
     ctx.stroke();
-    ctx.setLineDash([]); // Reset line dash
+    
+    ctx.strokeStyle = activeTunnel ? '#00f0ff' : 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-    // Draw tunnel packets (traveling dots)
-    if (simMode === 'tunnel') {
-      const t = (angle * 0.3) % 1.0;
-      // Bezier point formula: B(t) = (1-t)^3 * P0 + 3(1-t)^2 * t * P1 + 3(1-t)*t^2 * P2 + t^3 * P3
-      const cp1x = localLaptopNode.x + 80, cp1y = localLaptopNode.y - 120;
-      const cp2x = cloudDaemonNode.x - 120, cp2y = cloudDaemonNode.y + 120;
-      
-      const px = Math.pow(1-t, 3)*localLaptopNode.x + 3*Math.pow(1-t, 2)*t*cp1x + 3*(1-t)*Math.pow(t, 2)*cp2x + Math.pow(t, 3)*cloudDaemonNode.x;
-      const py = Math.pow(1-t, 3)*localLaptopNode.y + 3*Math.pow(1-t, 2)*t*cp1y + 3*(1-t)*Math.pow(t, 2)*cp2y + Math.pow(t, 3)*cloudDaemonNode.y;
-      
-      ctx.fillStyle = '#00f0ff';
+    // Draw wavy sine wave wrapping around the tunnel path
+    if (activeTunnel) {
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(px, py, 6, 0, Math.PI*2);
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = '#00f0ff';
-      ctx.fill();
-      ctx.shadowBlur = 0; // reset
+      const waveSegments = 40;
+      for (let i = 0; i <= waveSegments; i++) {
+        const t = i / waveSegments;
+        // Bezier points
+        const bx = Math.pow(1-t, 3)*localLaptopNode.x + 3*Math.pow(1-t, 2)*t*cp1x + 3*(1-t)*Math.pow(t, 2)*cp2x + Math.pow(t, 3)*cloudDaemonNode.x;
+        const by = Math.pow(1-t, 3)*localLaptopNode.y + 3*Math.pow(1-t, 2)*t*cp1y + 3*(1-t)*Math.pow(t, 2)*cp2y + Math.pow(t, 3)*cloudDaemonNode.y;
+        
+        // Offset normal to curve
+        const waveOffset = Math.sin(t * Math.PI * 8 - angle * 4) * 6;
+        
+        // Approximation of normal vector by forward point
+        const tNext = Math.min(1, t + 0.01);
+        const bxNext = Math.pow(1-tNext, 3)*localLaptopNode.x + 3*Math.pow(1-tNext, 2)*tNext*cp1x + 3*(1-tNext)*Math.pow(tNext, 2)*cp2x + Math.pow(tNext, 3)*cloudDaemonNode.x;
+        const byNext = Math.pow(1-tNext, 3)*localLaptopNode.y + 3*Math.pow(1-tNext, 2)*tNext*cp1y + 3*(1-tNext)*Math.pow(tNext, 2)*cp2y + Math.pow(tNext, 3)*cloudDaemonNode.y;
+        
+        const dx = bxNext - bx;
+        const dy = byNext - by;
+        const len = Math.sqrt(dx*dx + dy*dy) || 1;
+        const nx = -dy / len;
+        const ny = dx / len;
+        
+        if (i === 0) {
+          ctx.moveTo(bx + nx * waveOffset, by + ny * waveOffset);
+        } else {
+          ctx.lineTo(bx + nx * waveOffset, by + ny * waveOffset);
+        }
+      }
+      ctx.stroke();
     }
 
-    // 3. Draw Local Machine Representational Node
-    ctx.fillStyle = '#0b0f19';
-    ctx.strokeStyle = simMode === 'tunnel' ? 'var(--secondary)' : 'rgba(255, 255, 255, 0.15)';
-    ctx.lineWidth = 1.5;
+    // Traveling glowing packet streams
+    if (activeTunnel) {
+      const packetCount = 2;
+      for (let pIndex = 0; pIndex < packetCount; pIndex++) {
+        const offset = pIndex / packetCount;
+        const t = (angle * 0.15 + offset) % 1.0;
+        
+        // Find position on Bezier
+        const px = Math.pow(1-t, 3)*localLaptopNode.x + 3*Math.pow(1-t, 2)*t*cp1x + 3*(1-t)*Math.pow(t, 2)*cp2x + Math.pow(t, 3)*cloudDaemonNode.x;
+        const py = Math.pow(1-t, 3)*localLaptopNode.y + 3*Math.pow(1-t, 2)*t*cp1y + 3*(1-t)*Math.pow(t, 2)*cp2y + Math.pow(t, 3)*cloudDaemonNode.y;
+
+        // Radial glow grad for packet
+        const grad = ctx.createRadialGradient(px, py, 1, px, py, 12);
+        grad.addColorStop(0, '#00f0ff');
+        grad.addColorStop(0.3, 'rgba(0, 240, 255, 0.6)');
+        grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+        
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(px, py, 12, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Core pulse dot
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(px, py, 3, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // 5. Draw Local Laptop Node
+    ctx.fillStyle = '#090e17';
+    ctx.strokeStyle = activeTunnel ? '#00f0ff' : 'rgba(255, 255, 255, 0.12)';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(localLaptopNode.x, localLaptopNode.y, 16, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-    
-    // Laptop icon overlay inside circle
-    ctx.fillStyle = simMode === 'tunnel' ? 'var(--secondary)' : 'var(--text-muted)';
-    ctx.font = '10px var(--font-mono)';
+
+    // Outer spinning bracket for laptop
+    ctx.strokeStyle = activeTunnel ? 'rgba(0, 240, 255, 0.4)' : 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 6]);
+    ctx.save();
+    ctx.translate(localLaptopNode.x, localLaptopNode.y);
+    ctx.rotate(-angle * 0.5);
+    ctx.beginPath();
+    ctx.arc(0, 0, 22, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    ctx.setLineDash([]); // Reset
+
+    // Local Node inner text HUD labels
+    ctx.fillStyle = activeTunnel ? '#00f0ff' : 'var(--text-dim)';
+    ctx.font = 'bold 9px var(--font-mono)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('CLI', localLaptopNode.x, localLaptopNode.y);
 
-    // 4. Draw Orbit Path Line (with tilt projection)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-    ctx.lineWidth = 1.5;
+    // 6. Draw Orbit Path Ellipse (Modern 3D tilting grid)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.lineWidth = 1;
     ctx.save();
     ctx.translate(cloudDaemonNode.x, cloudDaemonNode.y);
     ctx.rotate(orbitTilt);
@@ -188,47 +303,57 @@ function initHeroCanvas() {
     ctx.stroke();
     ctx.restore();
 
-    // 5. Draw Orbiting Minor Particles (Sorted by depth approximation for 3D feel)
+    // 7. Draw Swirling Minor Telemetry Particles
     particles.forEach(p => {
       p.angle += p.speed;
       
-      // Calculate 3D position
       let x3d = Math.cos(p.angle) * orbitRadiusX * p.distanceScale;
       let y3d = Math.sin(p.angle) * orbitRadiusY * p.distanceScale;
       
-      // Apply Tilt rotation matrix
-      let rotatedX = x3d * Math.cos(orbitTilt) - y3d * Math.sin(orbitTilt);
-      let rotatedY = x3d * Math.sin(orbitTilt) + y3d * Math.cos(orbitTilt);
+      let rx = x3d * Math.cos(orbitTilt) - y3d * Math.sin(orbitTilt);
+      let ry = x3d * Math.sin(orbitTilt) + y3d * Math.cos(orbitTilt);
 
-      // Mouse interactive deflection
-      let finalX = cloudDaemonNode.x + rotatedX;
-      let finalY = cloudDaemonNode.y + rotatedY;
+      let finalX = cloudDaemonNode.x + rx;
+      let finalY = cloudDaemonNode.y + ry;
 
+      // Mouse interaction magnetic push
       if (mouse.x !== null) {
         const dx = mouse.x - finalX;
         const dy = mouse.y - finalY;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 80) {
-          const force = (80 - dist) * 0.15;
+        if (dist < 60) {
+          const force = (60 - dist) * 0.18;
           finalX -= (dx / dist) * force;
           finalY -= (dy / dist) * force;
         }
       }
 
-      // Draw particle
       ctx.fillStyle = p.color;
       ctx.globalAlpha = p.opacity;
-      ctx.beginPath();
-      // scale size by relative depth (simulated y value in rotated frame)
-      const scale = 0.5 + (rotatedY + orbitRadiusX) / (orbitRadiusX * 2);
-      ctx.arc(finalX, finalY, p.size * scale, 0, Math.PI * 2);
-      ctx.fill();
+      const zScale = 0.6 + (ry + orbitRadiusX) / (orbitRadiusX * 2) * 0.6;
+      
+      if (p.type === 'cross') {
+        // Draw crosshair particle
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(finalX - 3 * zScale, finalY);
+        ctx.lineTo(finalX + 3 * zScale, finalY);
+        ctx.moveTo(finalX, finalY - 3 * zScale);
+        ctx.lineTo(finalX, finalY + 3 * zScale);
+        ctx.stroke();
+      } else {
+        // Draw tiny circle particle
+        ctx.beginPath();
+        ctx.arc(finalX, finalY, p.size * zScale * 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.globalAlpha = 1.0;
     });
 
-    // 6. Draw Actor & Critic Nodes (orbiting 180 deg apart)
-    actor.angle += 0.015;
-    critic.angle += 0.015;
+    // 8. Actor & Critic Orbit Entities & Motion Trails
+    actor.angle += 0.016;
+    critic.angle += 0.016;
 
     [actor, critic].forEach(node => {
       let x3d = Math.cos(node.angle) * orbitRadiusX;
@@ -240,61 +365,183 @@ function initHeroCanvas() {
       let finalX = cloudDaemonNode.x + rx;
       let finalY = cloudDaemonNode.y + ry;
 
-      // Mouse deflection
+      // Mouse interaction
       if (mouse.x !== null) {
         const dx = mouse.x - finalX;
         const dy = mouse.y - finalY;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 100) {
-          const force = (100 - dist) * 0.12;
+        if (dist < 90) {
+          const force = (90 - dist) * 0.14;
           finalX -= (dx / dist) * force;
           finalY -= (dy / dist) * force;
         }
       }
 
-      // Depth scaling for 3D depth illusion
-      const zScale = 0.7 + (ry + orbitRadiusY) / (orbitRadiusY * 2) * 0.6; // scale between 0.7 and 1.3
+      // Track trail history for ghosting motion trails
+      node.trail.push({ x: finalX, y: finalY });
+      if (node.trail.length > 12) {
+        node.trail.shift();
+      }
 
-      // Glow effect
-      ctx.shadowBlur = 20 * zScale;
-      ctx.shadowColor = node.color;
-      ctx.fillStyle = node.glowColor;
+      const zScale = 0.7 + (ry + orbitRadiusY) / (orbitRadiusY * 2) * 0.6;
+
+      // Draw Motion Trail Paths
+      if (node.trail.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(node.trail[0].x, node.trail[0].y);
+        for (let j = 1; j < node.trail.length; j++) {
+          ctx.lineTo(node.trail[j].x, node.trail[j].y);
+        }
+        ctx.strokeStyle = node.color;
+        ctx.lineWidth = 2 * zScale;
+        ctx.globalAlpha = 0.15;
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+      }
+
+      // HUD crosshairs outer ring
+      node.dashPhase += 0.02;
+      ctx.strokeStyle = node.color;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 5]);
+      ctx.save();
+      ctx.translate(finalX, finalY);
+      ctx.rotate(node.dashPhase);
       ctx.beginPath();
-      ctx.arc(finalX, finalY, node.r * zScale * 1.5, 0, Math.PI * 2);
+      ctx.arc(0, 0, (node.r + 6) * zScale, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+      ctx.setLineDash([]); // Reset
+
+      // Pulse ring expansion
+      node.pulseSize = (node.pulseSize + 0.3) % 18;
+      ctx.strokeStyle = node.color;
+      ctx.globalAlpha = (18 - node.pulseSize) / 18 * 0.4;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(finalX, finalY, (node.r + node.pulseSize) * zScale, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+
+      // Glow Gradient Center Circle
+      const glowGrad = ctx.createRadialGradient(finalX, finalY, 1, finalX, finalY, node.r * 2 * zScale);
+      glowGrad.addColorStop(0, '#ffffff');
+      glowGrad.addColorStop(0.3, node.color);
+      glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.arc(finalX, finalY, node.r * 1.8 * zScale, 0, Math.PI * 2);
       ctx.fill();
 
-      // Core Node
-      ctx.shadowBlur = 0; // reset
-      ctx.fillStyle = node.color;
-      ctx.beginPath();
-      ctx.arc(finalX, finalY, node.r * zScale * 0.7, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw text tags for Actor/Critic
+      // Small solid core
       ctx.fillStyle = '#ffffff';
-      ctx.font = `bold ${Math.round(11 * zScale)}px var(--font-heading)`;
-      ctx.fillText(node.label, finalX, finalY - (node.r * zScale * 1.8));
+      ctx.beginPath();
+      ctx.arc(finalX, finalY, 3 * zScale, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Custom HUD text tag for Actor/Critic
+      ctx.font = `bold ${Math.round(9 * zScale)}px var(--font-mono)`;
+      ctx.fillStyle = node.color;
+      const textWidth = ctx.measureText(node.label).width;
+      
+      // Draw small card background for text label
+      ctx.fillStyle = 'rgba(6, 7, 10, 0.85)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(finalX - textWidth/2 - 4, finalY - (node.r * zScale * 2.3) - 6, textWidth + 8, 12, 3);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText(node.label, finalX, finalY - (node.r * zScale * 2.3));
     });
 
-    // 7. Draw Cloud Sandbox Centerpiece
-    const daemonPulse = Math.sin(angle * 3) * 3 + 24;
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = 'rgba(140, 230, 44, 0.3)';
-    ctx.fillStyle = '#0b0f19';
-    ctx.strokeStyle = 'var(--primary)';
-    ctx.lineWidth = 2;
+    // 9. Draw Alignment Vector Link (Connecting Actor & Critic)
+    const actorPos = actor.trail[actor.trail.length - 1];
+    const criticPos = critic.trail[critic.trail.length - 1];
+    if (actorPos && criticPos) {
+      ctx.strokeStyle = 'rgba(140, 230, 44, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(actorPos.x, actorPos.y);
+      ctx.lineTo(criticPos.x, criticPos.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Center tick mark on vector line
+      const mx = (actorPos.x + criticPos.x) / 2;
+      const my = (actorPos.y + criticPos.y) / 2;
+      ctx.fillStyle = '#8ce62c';
+      ctx.font = '8px var(--font-mono)';
+      ctx.fillText('ALIGN_VEC', mx, my - 6);
+    }
+
+    // 10. Draw Cloud Daemon (Concentric high-tech rings & pulsing centerpiece)
+    daemonRotation += 0.005;
+    
+    // Radial back glow for cloud
+    const cloudGlow = ctx.createRadialGradient(cloudDaemonNode.x, cloudDaemonNode.y, 1, cloudDaemonNode.x, cloudDaemonNode.y, 50);
+    cloudGlow.addColorStop(0, 'rgba(140, 230, 44, 0.18)');
+    cloudGlow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = cloudGlow;
     ctx.beginPath();
-    ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, daemonPulse, 0, Math.PI * 2);
+    ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, 50, 0, Math.PI*2);
+    ctx.fill();
+
+    // Concentric ticking bracket 1
+    ctx.strokeStyle = 'rgba(140, 230, 44, 0.3)';
+    ctx.lineWidth = 1.2;
+    ctx.save();
+    ctx.translate(cloudDaemonNode.x, cloudDaemonNode.y);
+    ctx.rotate(daemonRotation);
+    ctx.beginPath();
+    ctx.arc(0, 0, 32, 0, Math.PI * 0.4);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, 32, Math.PI, Math.PI * 1.4);
+    ctx.stroke();
+    ctx.restore();
+
+    // Concentric ticking bracket 2 (opposite spin)
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+    ctx.save();
+    ctx.translate(cloudDaemonNode.x, cloudDaemonNode.y);
+    ctx.rotate(-daemonRotation * 1.5);
+    ctx.beginPath();
+    ctx.setLineDash([2, 5]);
+    ctx.arc(0, 0, 26, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    ctx.setLineDash([]);
+
+    // Central core circular node
+    const corePulseSize = Math.sin(angle * 2) * 2 + 18;
+    ctx.fillStyle = '#06070a';
+    ctx.strokeStyle = '#8ce62c';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, corePulseSize, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-    ctx.shadowBlur = 0; // reset
 
+    // Core pulsing dot
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 11px var(--font-heading)';
-    ctx.fillText('Kiwi Daemon', cloudDaemonNode.x, cloudDaemonNode.y - 4);
-    ctx.fillStyle = 'var(--primary)';
-    ctx.font = '9px var(--font-mono)';
-    ctx.fillText('SANDBOX', cloudDaemonNode.x, cloudDaemonNode.y + 10);
+    ctx.beginPath();
+    ctx.arc(cloudDaemonNode.x, cloudDaemonNode.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Central node textual HUD
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 9px var(--font-heading)';
+    ctx.textAlign = 'center';
+    ctx.fillText('KIWI_D', cloudDaemonNode.x, cloudDaemonNode.y - 4);
+    ctx.fillStyle = '#8ce62c';
+    ctx.font = 'bold 7px var(--font-mono)';
+    ctx.fillText('SANDBOX', cloudDaemonNode.x, cloudDaemonNode.y + 8);
 
     angle += 0.05;
     animationFrameId = requestAnimationFrame(draw);

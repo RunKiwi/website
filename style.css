@@ -924,7 +924,7 @@ section {
   border: 1px solid var(--border);
   border-radius: 10px;
   overflow: hidden;
-  height: 130px;
+  height: 170px;
   display: flex;
   flex-direction: column;
 }
@@ -957,11 +957,28 @@ section {
 }
 
 .terminal-content {
-  padding: 12px;
+  padding: 12px 12px 24px 12px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   overflow-y: auto;
   flex: 1;
+}
+
+.terminal-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.terminal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.terminal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 230, 44, 0.2);
 }
 
 .log-row {
