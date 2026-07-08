@@ -370,6 +370,13 @@ function initSimulator() {
   const laptopGlow = document.getElementById('laptop-glow-indicator');
   const containerGlow = document.getElementById('container-glow-indicator');
 
+  const mLaptopStatus = document.getElementById('m-laptop-status');
+  const mTunnelLine = document.getElementById('m-tunnel-line');
+  const mTunnelPulse = document.getElementById('m-tunnel-pulse');
+  const mContainerSub = document.getElementById('m-container-sub');
+  const mLaptopGlow = document.getElementById('m-laptop-glow');
+  const mContainerGlow = document.getElementById('m-container-glow');
+
   const slotGithub = document.getElementById('slot-github');
   const slotDb = document.getElementById('slot-db');
   const slotAws = document.getElementById('slot-aws');
@@ -501,6 +508,13 @@ function initSimulator() {
       visualTunnelPulse.style.display = 'block';
       ctrlToggleLaptop.classList.add('active');
       ctrlToggleLaptop.querySelector('.btn-text').textContent = 'Close Laptop (Disconnect)';
+
+      // Mobile
+      mLaptopStatus.textContent = 'Connected';
+      mLaptopStatus.style.color = 'var(--secondary)';
+      mLaptopGlow.classList.add('active');
+      mTunnelLine.classList.add('active');
+      mTunnelPulse.style.display = 'block';
     } else {
       visualLaptopStatus.textContent = 'Disconnected';
       visualLaptopStatus.style.color = 'var(--error)';
@@ -509,6 +523,13 @@ function initSimulator() {
       visualTunnelPulse.style.display = 'none';
       ctrlToggleLaptop.classList.remove('active');
       ctrlToggleLaptop.querySelector('.btn-text').textContent = 'Open Laptop (Connect)';
+
+      // Mobile
+      mLaptopStatus.textContent = 'Disconnected';
+      mLaptopStatus.style.color = 'var(--error)';
+      mLaptopGlow.classList.remove('active');
+      mTunnelLine.classList.remove('active');
+      mTunnelPulse.style.display = 'none';
     }
 
     // Sandbox container state
@@ -519,6 +540,11 @@ function initSimulator() {
       ctrlStepLoop.disabled = false;
       ctrlTriggerBreaker.disabled = false;
       ctrlTriggerBudget.disabled = false;
+
+      // Mobile
+      mContainerSub.textContent = 'Active Loop';
+      mContainerGlow.classList.add('active');
+      mContainerGlow.className = 'node-glow-wrapper-mobile container-glow active';
     } else if (sb.status === 'PAUSED') {
       visualContainerSub.textContent = 'Paused';
       containerGlow.classList.add('active');
@@ -529,12 +555,23 @@ function initSimulator() {
       ctrlStepLoop.disabled = true;
       ctrlTriggerBreaker.disabled = true;
       ctrlTriggerBudget.disabled = true;
+
+      // Mobile
+      mContainerSub.textContent = 'Paused';
+      mContainerGlow.classList.add('active');
+      mContainerGlow.className = 'node-glow-wrapper-mobile container-glow active';
+      mContainerGlow.style.boxShadow = '0 0 15px rgba(245, 158, 11, 0.4)';
+      mContainerGlow.style.borderColor = 'var(--warning)';
     } else if (sb.status === 'TRIPPED') {
       visualContainerSub.textContent = 'Stopped';
       containerGlow.classList.remove('active');
       ctrlStepLoop.disabled = true;
       ctrlTriggerBreaker.disabled = true;
       ctrlTriggerBudget.disabled = true;
+
+      // Mobile
+      mContainerSub.textContent = 'Stopped';
+      mContainerGlow.classList.remove('active');
     } else if (sb.status === 'COMPLETED') {
       visualContainerSub.textContent = 'Resolved';
       containerGlow.classList.add('active');
@@ -544,6 +581,13 @@ function initSimulator() {
       ctrlStepLoop.disabled = true;
       ctrlTriggerBreaker.disabled = true;
       ctrlTriggerBudget.disabled = true;
+
+      // Mobile
+      mContainerSub.textContent = 'Resolved';
+      mContainerGlow.classList.add('active');
+      mContainerGlow.className = 'node-glow-wrapper-mobile container-glow active';
+      mContainerGlow.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.4)';
+      mContainerGlow.style.borderColor = 'var(--success)';
     }
 
     // Cache vaults

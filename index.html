@@ -201,8 +201,8 @@
               </div>
               
               <div class="visual-card-body">
-                <!-- Sandbox graphic matrix -->
-                <div class="sandbox-graphic-container">
+                <!-- Desktop Sandbox visualizer (horizontal layout) -->
+                <div class="sandbox-graphic-container desktop-only-visual">
                   <!-- Left: Developer Laptop client -->
                   <div class="graphic-node" id="g-node-laptop">
                     <div class="node-glow-wrapper laptop-glow active" id="laptop-glow-indicator"></div>
@@ -232,6 +232,38 @@
                     </svg>
                     <span class="node-name">Docker Sandbox</span>
                     <span class="node-sub" id="visual-container-sub">Active Loop</span>
+                  </div>
+                </div>
+
+                <!-- Mobile Sandbox visualizer (vertical layout) -->
+                <div class="sandbox-graphic-container-mobile mobile-only-visual">
+                  <div class="graphic-node-mobile" id="m-node-laptop">
+                    <div class="node-glow-wrapper-mobile laptop-glow active" id="m-laptop-glow"></div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                      <line x1="2" y1="20" x2="22" y2="20"></line>
+                    </svg>
+                    <div class="node-mobile-info">
+                      <span class="node-mobile-name">Local Laptop</span>
+                      <span class="node-mobile-sub" id="m-laptop-status">Connected</span>
+                    </div>
+                  </div>
+
+                  <div class="graphic-tunnel-wrapper-mobile">
+                    <div class="graphic-tunnel-line-mobile active" id="m-tunnel-line"></div>
+                    <div class="graphic-tunnel-pulse-mobile" id="m-tunnel-pulse"></div>
+                    <span class="graphic-tunnel-label-mobile">HTTP/2 REVERSE TUNNEL</span>
+                  </div>
+
+                  <div class="graphic-node-mobile" id="m-node-container">
+                    <div class="node-glow-wrapper-mobile container-glow active" id="m-container-glow"></div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    </svg>
+                    <div class="node-mobile-info">
+                      <span class="node-mobile-name">Docker Sandbox</span>
+                      <span class="node-mobile-sub" id="m-container-sub">Active Loop</span>
+                    </div>
                   </div>
                 </div>
 
