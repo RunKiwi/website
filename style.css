@@ -1837,15 +1837,73 @@ code {
   font-size: 0.8rem;
 }
 
+/* ------------------------------------------------------------------
+   Overflow containment (root-cause fix for mobile horizontal clipping)
+   Grid & flex items default to `min-width: auto`, refusing to shrink
+   below their content's intrinsic width. On narrow screens this inflates
+   single-column grids/flex rows past the viewport, and body{overflow-x}
+   then clips the right edge. Allowing these items to shrink lets their
+   content wrap or scroll within the viewport instead of being cut off.
+   ------------------------------------------------------------------ */
+.hero-container > *,
+.hero-content > *,
+.hero-visual > *,
+.cli-container > *,
+.console-body > *,
+.console-sidebar > *,
+.console-main-visual > *,
+.console-controls > *,
+.visual-card > *,
+.visual-card-body > *,
+.metrics-grid > *,
+.metric-box > *,
+.control-actions-list > *,
+.control-card > *,
+.dual-btn-group > *,
+.footer-container > * {
+  min-width: 0;
+}
+
+/* Scrollable regions must be able to shrink to become scroll containers */
+.hero-content,
+.hero-visual,
+.hero-cli-install,
+.cli-container,
+.cli-command,
+.sandbox-list,
+.visual-card,
+.visual-card-body,
+.metrics-grid,
+.metric-box,
+.control-actions-list {
+  min-width: 0;
+}
+
+/* Replaced/embedded content should never force the page wider than its box */
+img,
+canvas,
+svg,
+video,
+pre {
+  max-width: 100%;
+}
+
 /* Responsive Adaptations */
 @media (max-width: 1024px) {
   .hero-container {
     grid-template-columns: 1fr;
     text-align: center;
-    justify-items: center;
     gap: 40px;
   }
-  
+
+  /* Stretch grid items to the track width instead of shrink-wrapping to
+     content (justify-items:center would let hero-content take its full
+     max-content width and overflow the viewport). */
+  .hero-content,
+  .hero-visual {
+    width: 100%;
+  }
+
   .hero-content {
     align-items: center;
   }
