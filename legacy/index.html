@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiwi | The Secure Agentic Control Plane</title>
+  <link rel="icon" type="image/png" href="/kiwi.png">
+  <meta name="description" content="Orchestrate multi-agent workflows with ecosystem tools (Aider, Claude) using pluggable sandboxes and secure Enterprise Vault credential injection.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-bg-primary" aria-hidden="true"></div>
+  <div class="glow-bg-secondary" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="#" class="logo" id="header-logo-link">
+        <img class="logo-icon" src="/kiwi.png" alt="Kiwi Logo" width="32" height="32">
+        <span class="logo-text">Kiwi</span>
+      </a>
+      
+      <nav class="nav-links">
+        <a href="#how-it-works" class="nav-link" id="nav-how-link">How It Works</a>
+        <a href="#features" class="nav-link" id="nav-features-link">Features</a>
+        <a href="#dashboard" class="nav-link" id="nav-dashboard-link">Dashboard</a>
+        <a href="#quickstart" class="nav-link" id="nav-quickstart-link">Quickstart</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="#quickstart" class="btn btn-secondary btn-sm" id="header-docs-btn">Docs</a>
+        <a href="#simulator-section" class="btn btn-primary btn-sm" id="header-cta-btn">Try Demo</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <div class="badge" id="hero-announcement-badge">
+          <span class="badge-dot"></span>
+          <span class="badge-text">Open Source Control Plane</span>
+        </div>
+        <h1 class="hero-title">
+          The Secure <span class="text-gradient">Agentic Control</span> Plane
+        </h1>
+        <p class="hero-subtitle">
+          Orchestrate multi-agent workflows with ecosystem tools (Aider, Claude) using pluggable sandboxes and secure Enterprise Vault credential injection. Deploy complex data analysis and coding workloads safely in the cloud.
+        </p>
+        
+        <div class="hero-actions">
+          <a href="#simulator-section" class="btn btn-primary" id="hero-primary-btn">
+            See Kiwi In Action
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="#quickstart" class="btn btn-outline" id="hero-secondary-btn">View Quickstart</a>
+        </div>
+
+        <div class="hero-cli-install">
+          <div class="cli-container">
+            <span class="cli-prompt">$</span>
+            <code class="cli-command" id="install-command-text">go install github.com/runkiwi/kiwi/cmd/kiwi@latest</code>
+            <button class="cli-copy-btn" id="copy-install-btn" title="Copy to clipboard" aria-label="Copy installation command">
+              <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span class="copy-tooltip" id="copy-tooltip-text">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hero-visual">
+        <div class="canvas-wrapper">
+          <div class="canvas-glow"></div>
+          <canvas id="hero-canvas" aria-label="Interactive 3D particle visualization of the Kiwi orchestration layer and ecosystem agents"></canvas>
+          <div class="canvas-controls">
+            <span class="control-label">Simulation:</span>
+            <button class="btn-control active" id="btn-sim-run">Multi-Agent Loop</button>
+            <button class="btn-control" id="btn-sim-tunnel">Vault Injection</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Propositions Banner -->
+  <section class="banner-section">
+    <div class="container banner-container">
+      <div class="banner-item">
+        <span class="banner-value">100%</span>
+        <span class="banner-label">Credential Security</span>
+      </div>
+      <div class="banner-item">
+        <span class="banner-value">Zero</span>
+        <span class="banner-label">Local Resource Drain</span>
+      </div>
+      <div class="banner-item">
+        <span class="banner-value">Pluggable</span>
+        <span class="banner-label">Sandboxes</span>
+      </div>
+      <div class="banner-item">
+        <span class="banner-value">Multi</span>
+        <span class="banner-label">Agent Orchestration</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Simulator Section -->
+  <section id="how-it-works" class="simulator-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">The Secure Control Plane in Action</h2>
+        <p class="section-subtitle">
+          Explore Kiwi's complete orchestration engine. Select a sandbox, trigger system controls, and observe multi-agent sandboxing, tunneling, budget caps, and safety breakers.
+        </p>
+      </div>
+
+      <!-- Main Simulator Control Console Frame -->
+      <div class="control-console" id="simulator-section">
+        <div class="console-glow"></div>
+        
+        <!-- Console Top bar / Telemetry Bar -->
+        <div class="console-telemetry-bar">
+          <div class="telemetry-item">
+            <span class="t-dot active"></span>
+            <span class="t-label">Control Plane:</span>
+            <span class="t-value text-gradient">ONLINE</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="t-label">Sandboxes:</span>
+            <span class="t-value" id="telemetry-sandboxes">3 Active</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="t-label">Active Tunnels:</span>
+            <span class="t-value" id="telemetry-tunnels">2 / 3 Connected</span>
+          </div>
+          <div class="telemetry-item text-warning" id="telemetry-warning-indicator" style="display:none;">
+            <span class="t-dot warn"></span>
+            <span class="t-value" id="telemetry-warning-text">ALERT DETECTED</span>
+          </div>
+        </div>
+
+        <div class="console-body">
+          <!-- Column 1: Sandbox Workspace Selector -->
+          <div class="console-sidebar">
+            <h4 class="sidebar-title">Active Sandboxes</h4>
+            <div class="sandbox-list">
+              <!-- Sandbox item 1 -->
+              <div class="sandbox-item active" id="sb-steelwing" data-sandbox="steelwing">
+                <div class="sb-header">
+                  <span class="sb-id">task-3831</span>
+                  <span class="sb-badge active" id="sb-badge-steelwing">RUNNING</span>
+                </div>
+                <h5 class="sb-title">steelwing (TDD loop)</h5>
+                <p class="sb-desc">Fix division by zero inside Divide()</p>
+                <div class="sb-tech">Golang • Docker v1.21</div>
+              </div>
+
+              <!-- Sandbox item 2 -->
+              <div class="sandbox-item" id="sb-microfish" data-sandbox="microfish">
+                <div class="sb-header">
+                  <span class="sb-id">task-3832</span>
+                  <span class="sb-badge paused" id="sb-badge-microfish">WAITING</span>
+                </div>
+                <h5 class="sb-title">microfish (data analysis)</h5>
+                <p class="sb-desc">Upload datasets & generate visual charts</p>
+                <div class="sb-tech">Python • E2B Cloud Sandbox</div>
+              </div>
+
+              <!-- Sandbox item 3 -->
+              <div class="sandbox-item" id="sb-threatmapper" data-sandbox="threatmapper">
+                <div class="sb-header">
+                  <span class="sb-id">task-3833</span>
+                  <span class="sb-badge active" id="sb-badge-threatmapper">RUNNING</span>
+                </div>
+                <h5 class="sb-title">threatmapper (multi-agent)</h5>
+                <p class="sb-desc">Researcher & Reviewer personas collaborating</p>
+                <div class="sb-tech">Node.js • Aider Integration</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Sandbox Workspace Details Visualizer -->
+          <div class="console-main-visual">
+            <div class="visual-card">
+              <div class="visual-card-header">
+                <span class="v-title" id="visual-sandbox-title">SANDBOX: task-3831 (steelwing)</span>
+                <span class="v-status-pill running" id="visual-sandbox-status">RUNNING</span>
+              </div>
+              
+              <div class="visual-card-body">
+                <!-- Desktop Sandbox visualizer (horizontal layout) -->
+                <div class="sandbox-graphic-container desktop-only-visual">
+                  <!-- Left: Ecosystem Agent -->
+                  <div class="graphic-node" id="g-node-laptop">
+                    <div class="node-glow-wrapper laptop-glow active" id="laptop-glow-indicator"></div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <span class="node-name">Ecosystem Agent</span>
+                    <span class="node-sub" id="visual-laptop-status">Aider / Claude</span>
+                  </div>
+
+                  <!-- Middle: Vault Injection line -->
+                  <div class="graphic-tunnel-wrapper">
+                    <div class="graphic-tunnel-line active" id="visual-tunnel-line"></div>
+                    <div class="graphic-tunnel-pulse" id="visual-tunnel-pulse"></div>
+                    <span class="graphic-tunnel-label" id="visual-tunnel-label">VAULT INJECTION</span>
+                  </div>
+
+                  <!-- Right: Pluggable Sandbox container inside cloud daemon -->
+                  <div class="graphic-node" id="g-node-container">
+                    <div class="node-glow-wrapper container-glow active" id="container-glow-indicator"></div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span class="node-name">Pluggable Sandbox</span>
+                    <span class="node-sub" id="visual-container-sub">Active Workload</span>
+                  </div>
+                </div>
+
+                <!-- Mobile Sandbox visualizer (vertical layout) -->
+                <div class="sandbox-graphic-container-mobile mobile-only-visual">
+                  <div class="graphic-node-mobile" id="m-node-laptop">
+                    <div class="node-glow-wrapper-mobile laptop-glow active" id="m-laptop-glow"></div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <div class="node-mobile-info">
+                      <span class="node-mobile-name">Ecosystem Agent</span>
+                      <span class="node-mobile-sub" id="m-laptop-status">Aider / Claude</span>
+                    </div>
+                  </div>
+
+                  <div class="graphic-tunnel-wrapper-mobile">
+                    <div class="graphic-tunnel-line-mobile active" id="m-tunnel-line"></div>
+                    <div class="graphic-tunnel-pulse-mobile" id="m-tunnel-pulse"></div>
+                    <span class="graphic-tunnel-label-mobile">VAULT INJECTION</span>
+                  </div>
+
+                  <div class="graphic-node-mobile" id="m-node-container">
+                    <div class="node-glow-wrapper-mobile container-glow active" id="m-container-glow"></div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    </svg>
+                    <div class="node-mobile-info">
+                      <span class="node-mobile-name">Pluggable Sandbox</span>
+                      <span class="node-mobile-sub" id="m-container-sub">Active Workload</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Metrics Grid -->
+                <div class="metrics-grid">
+                  <div class="metric-box">
+                    <span class="m-label">In-Memory Cache:</span>
+                    <div class="m-cache-slots" id="visual-cache-slots">
+                      <span class="cache-pill empty" id="slot-github">GITHUB_TOKEN</span>
+                      <span class="cache-pill empty" id="slot-db">DATABASE_URL</span>
+                      <span class="cache-pill empty" id="slot-aws">AWS_SECRET</span>
+                    </div>
+                  </div>
+                  <div class="metric-box">
+                    <span class="m-label">Safety Budget Cap:</span>
+                    <div class="m-progress-bar">
+                      <div class="m-progress-fill" id="visual-budget-fill" style="width: 15%"></div>
+                    </div>
+                    <div class="m-progress-labels">
+                      <span id="visual-budget-spent">$1.50 spent</span>
+                      <span>$10.00 Limit</span>
+                    </div>
+                  </div>
+                  <div class="metric-box">
+                    <span class="m-label">Circuit Breaker:</span>
+                    <div class="m-breaker-status status-stable" id="visual-breaker-status">
+                      <span class="breaker-dot"></span>
+                      <span class="breaker-txt" id="visual-breaker-text">STABLE (No loops)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Control Panel Controls -->
+          <div class="console-controls">
+            <h4 class="controls-title">Trigger Controls</h4>
+            <p class="controls-desc">Trigger system actions on the active sandbox.</p>
+            
+            <div class="control-actions-list">
+              <!-- Action: Toggle Laptop Client Tunnel -->
+              <div class="control-card">
+                <span class="control-card-label">Multi-Agent Control</span>
+                <button class="btn btn-primary btn-sm btn-full active" id="ctrl-toggle-laptop">
+                  <span class="btn-text">Spawn Reviewer Persona</span>
+                </button>
+              </div>
+
+              <!-- Action: Run TDD Actor Critic Step -->
+              <div class="control-card">
+                <span class="control-card-label">Ecosystem Execution</span>
+                <button class="btn btn-secondary btn-sm btn-full" id="ctrl-step-loop">
+                  Step Agent Workflow
+                </button>
+              </div>
+
+              <!-- Action: Simulate Infinite Recursion (Breaker test) -->
+              <div class="control-card">
+                <span class="control-card-label">Safety & Security Systems</span>
+                <div class="dual-btn-group">
+                  <button class="btn btn-outline btn-sm btn-half" id="ctrl-trigger-breaker">Loop Crash</button>
+                  <button class="btn btn-outline btn-sm btn-half" id="ctrl-trigger-budget">Cap Limit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Panel: Console Diagnostic Logs Output -->
+        <div class="console-footer-logs">
+          <div class="logs-header-bar">
+            <span>Diagnostic Logs Console Output</span>
+            <button class="btn-clear-logs" id="ctrl-clear-logs">Clear</button>
+          </div>
+          <div class="logs-window-content" id="console-logs-content">
+            <div class="log-row info">Initializing Kiwi Secure Control Center simulator...</div>
+            <div class="log-row success">System online. 3 sandboxes state-loaded from local DB (kiwi.db).</div>
+            <div class="log-row info">Task 3831 (steelwing) running Golang test runner suite.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid Section -->
+  <section id="features" class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Built for Enterprise Agent Workflows</h2>
+        <p class="section-subtitle">
+          Secure, resilient execution that bridges the speed of the cloud with the compliance of local keys.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Card 1 -->
+        <div class="feature-card">
+          <div class="card-glow"></div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Multi-Agent Orchestration</h3>
+          <p class="feature-desc">
+            Move beyond simple actor-critic loops. Spawn distinct Researcher, Coder, and Data Analyst personas that share a context bus to solve complex tasks collaboratively.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="feature-card">
+          <div class="card-glow"></div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Pluggable Sandboxes</h3>
+          <p class="feature-desc">
+            Bring your own runtime. Execute workloads seamlessly across built-in Docker environments, E2B cloud containers, or any custom third-party compute provider.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="feature-card">
+          <div class="card-glow"></div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h3 class="feature-title">Ecosystem Integration</h3>
+          <p class="feature-desc">
+            Don't build everything from scratch. Leverage Kiwi's secure sandbox as a powerful orchestration backend for third-party tools like Aider, Devin, or Claude.
+          </p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="feature-card">
+          <div class="card-glow"></div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+          </div>
+          <h3 class="feature-title">Enterprise Vault Injection</h3>
+          <p class="feature-desc">
+            Eliminate reverse tunneling overhead. Inject credentials directly into sandboxes securely using native integrations for HashiCorp Vault and AWS Secrets Manager.
+          </p>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="feature-card">
+          <div class="card-glow"></div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </div>
+          <h3 class="feature-title">Ticket-Based Invocation</h3>
+          <p class="feature-desc">
+            Trigger complex orchestration pipelines natively from issue trackers. Feed full context directly from GitHub, Jira, or Linear using a simple `--ticket` CLI flag.
+          </p>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="feature-card">
+          <div class="card-glow"></div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+              <line x1="9" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="15" x2="21" y2="15"></line>
+            </svg>
+          </div>
+          <h3 class="feature-title">Budget Caps & Safety</h3>
+          <p class="feature-desc">
+            Integrated circuit breakers detect infinite loop structures by tracking duplicate terminal output hashes. Budget caps limit token overhead to guarantee cost-controls.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kanban Showcase Section -->
+  <section id="dashboard" class="dashboard-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Interactive Kanban Control Board</h2>
+        <p class="section-subtitle">
+          Monitor your agent's loops, debug stack traces, edit budgets, and manage offline sessions in real-time.
+        </p>
+      </div>
+
+      <div class="dashboard-mockup-wrapper">
+        <div class="mockup-header-bar">
+          <div class="mockup-window-controls">
+            <div class="window-dot red"></div>
+            <div class="window-dot yellow"></div>
+            <div class="window-dot green"></div>
+          </div>
+          <div class="mockup-browser-url">https://dashboard.runkiwi.dev</div>
+        </div>
+        
+        <div class="dashboard-mockup">
+          <div class="sidebar">
+            <div class="sidebar-item active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+              <span>Dashboard</span>
+            </div>
+            <div class="sidebar-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              <span>Workspaces</span>
+            </div>
+            <div class="sidebar-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
+              <span>Task List</span>
+            </div>
+            <div class="sidebar-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <span>Settings</span>
+            </div>
+          </div>
+          
+          <div class="mockup-content">
+            <div class="mockup-top-bar">
+              <h3>Agent Tasks</h3>
+              <div class="mockup-badge active">4 Running Sandbox Containers</div>
+            </div>
+            
+            <div class="kanban-board">
+              <!-- Column 1 -->
+              <div class="kanban-col">
+                <div class="col-header">
+                  <span>ORCHESTRATING (Aider/Claude)</span>
+                  <span class="count">1</span>
+                </div>
+                <div class="kanban-card paused">
+                  <div class="card-tag">task-3829</div>
+                  <h4 class="card-task-title">Fix AWS S3 client bucket upload issue</h4>
+                  <div class="card-alert-msg">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    AWS_SECRET_ACCESS_KEY retrieved from Vault
+                  </div>
+                  <div class="card-footer">
+                    <span>Waiting on Reviewer Persona</span>
+                    <span class="avatar">U</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column 2 -->
+              <div class="kanban-col">
+                <div class="col-header">
+                  <span>RUNNING (Multi-Agent Workloads)</span>
+                  <span class="count">2</span>
+                </div>
+                <div class="kanban-card">
+                  <div class="card-tag running">task-3831</div>
+                  <h4 class="card-task-title">Resolve nil pointer error in database connector</h4>
+                  <div class="progress-bar-wrapper">
+                    <div class="progress-bar-fill animate-progress"></div>
+                  </div>
+                  <div class="card-log-snippet">
+                    [Coder Persona] Running `go test ./pkg/db...` (Passed 14/15)
+                  </div>
+                  <div class="card-footer">
+                    <span>Vault Cached</span>
+                    <span class="avatar active">K</span>
+                  </div>
+                </div>
+
+                <div class="kanban-card">
+                  <div class="card-tag running">task-3830</div>
+                  <h4 class="card-task-title">Refactor endpoints to support pagination</h4>
+                  <div class="progress-bar-wrapper">
+                    <div class="progress-bar-fill animate-progress-slow"></div>
+                  </div>
+                  <div class="card-log-snippet">
+                    [E2B Sandbox] Deploying data analysis runtime...
+                  </div>
+                  <div class="card-footer">
+                    <span>Ecosystem Agent Online</span>
+                    <span class="avatar active">K</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column 3 -->
+              <div class="kanban-col">
+                <div class="col-header">
+                  <span>RESOLVED</span>
+                  <span class="count">1</span>
+                </div>
+                <div class="kanban-card resolved">
+                  <div class="card-tag completed">task-3825</div>
+                  <h4 class="card-task-title">Fix divide by zero inside AverageCalculation</h4>
+                  <div class="card-success-msg">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Success. Fixed code saved to zip package.
+                  </div>
+                  <div class="card-footer">
+                    <span>Completed 20m ago</span>
+                    <span class="avatar">K</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quickstart Guide Section -->
+  <section id="quickstart" class="quickstart-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Get Started in 60 Seconds</h2>
+        <p class="section-subtitle">
+          Configure the Kiwi daemon host and deploy your first agent task with minimal overhead.
+        </p>
+      </div>
+
+      <div class="quickstart-tabs-wrapper">
+        <div class="quickstart-tabs">
+          <button class="tab-btn active" id="tab-server">1. Start Kiwi Daemon</button>
+          <button class="tab-btn" id="tab-client">2. Run Local CLI Client</button>
+        </div>
+        
+        <div class="tab-content-wrapper">
+          <!-- Server Code Panel -->
+          <div class="code-panel active" id="panel-server">
+            <div class="panel-header">
+              <span>Host Machine Terminal (Server/VPS)</span>
+              <button class="code-copy-btn" id="copy-server-code" aria-label="Copy server daemon commands">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre><code id="code-content-server"># Build Kiwi binaries
+go build -o kiwid cmd/kiwid/main.go
+
+# Start the daemon on port 8080 (Set secure token)
+export USE_DOCKER="true"
+export KIWI_SERVER_TOKEN="production-secure-token-9999"
+
+./kiwid -addr :8080 -db kiwi.db</code></pre>
+          </div>
+
+          <!-- Client Code Panel -->
+          <div class="code-panel" id="panel-client">
+            <div class="panel-header">
+              <span>Local Machine Terminal (Developer CLI)</span>
+              <button class="code-copy-btn" id="copy-client-code" aria-label="Copy local CLI commands">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre><code id="code-content-client"># Configure Enterprise Vault Injection (Optional)
+export KIWI_VAULT_PROVIDER="hashicorp" 
+export VAULT_ADDR="https://vault.yourorg.com"
+
+# Submit the task to the orchestrator using a GitHub ticket
+kiwi run --ticket github:42 \
+     --server "http://kiwi-daemon.yourhost.com:8080" \
+     --token "production-secure-token-9999" \
+     --sandbox e2b</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Footer Section -->
+  <section class="cta-section">
+    <div class="container cta-container">
+      <div class="cta-glow"></div>
+      <h2 class="cta-title">Ready to secure your agentic execution?</h2>
+      <p class="cta-subtitle">Deploy the control plane to your own infrastructure or start developing locally.</p>
+      <div class="cta-buttons">
+        <a href="#quickstart" class="btn btn-primary" id="footer-cta-primary">Deploy Kiwi Server</a>
+        <a href="https://github.com/runkiwi/kiwi" class="btn btn-outline" id="footer-cta-secondary" target="_blank" rel="noopener noreferrer">Star on GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-left">
+        <div class="logo">
+          <img class="logo-icon" src="/kiwi.png" alt="Kiwi Logo" width="24" height="24">
+          <span class="logo-text">Kiwi</span>
+        </div>
+        <p class="footer-tagline">The Universal Orchestration Layer for Enterprise AI Agents.</p>
+      </div>
+      
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#how-it-works" id="footer-link-how">How It Works</a>
+          <a href="#features" id="footer-link-features">Features</a>
+          <a href="#dashboard" id="footer-link-dash">Dashboard</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="#quickstart" id="footer-link-docs">CLI Docs</a>
+          <a href="https://github.com/runkiwi/kiwi" id="footer-link-github">GitHub</a>
+          <a href="#" id="footer-link-api">API Reference</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#" id="footer-link-privacy">Privacy Policy</a>
+          <a href="#" id="footer-link-terms">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Kiwi Control Plane. All rights reserved. Registered domain runkiwi.dev.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
