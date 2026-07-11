@@ -18,7 +18,7 @@ export default function Hero() {
             Run agents like <em className="text-gradient">production</em>, not like a demo.
           </h1>
           <p className="hero-subtitle">
-            Give your AI coding agents a <span className="wavy-underline">safe place</span> to work. Kiwi runs them in isolated sandboxes, keeps your secrets <span className="wavy-underline">on your machine</span>, streams every move live, and never loses a run.
+            Give your AI coding agents a safe place to work. Kiwi runs them in isolated sandboxes, keeps your secrets on your machine, streams every move live, and never loses a run.
           </p>
 
           <div className="hero-actions">

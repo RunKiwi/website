@@ -2910,14 +2910,6 @@ pre {
   .t-dot.warn { animation: none !important; }
 }
 
-.wavy-underline {
-  text-decoration: underline;
-  text-decoration-style: wavy;
-  text-decoration-color: var(--primary);
-  text-underline-offset: 6px;
-  text-decoration-thickness: 2px;
-}
-
 @media (max-width: 1024px) {
   .hero-demo { max-width: 560px; }
 }
