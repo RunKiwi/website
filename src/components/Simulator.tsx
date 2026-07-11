@@ -23,9 +23,9 @@ type Sandbox = {
 const initialSandboxes: Record<string, Sandbox> = {
   steelwing: {
     task: 'task-3831',
-    title: 'steelwing (TDD loop)',
+    title: 'steelwing (Actor–Critic)',
     desc: 'Fix division by zero inside Divide()',
-    tech: 'Golang • Docker v1.21',
+    tech: 'Go • Docker sandbox • Claude',
     status: 'RUNNING',
     budgetSpent: 1.50,
     budgetLimit: 10.00,
@@ -33,18 +33,18 @@ const initialSandboxes: Record<string, Sandbox> = {
     cache: { GITHUB_TOKEN: 'cached', DATABASE_URL: 'empty', AWS_SECRET: 'empty' },
     laptopOpen: true,
     logs: [
-      { text: 'Initializing task-3831 sandbox context...', type: 'info' },
-      { text: 'Local CLI tunnel established. Handshake complete.', type: 'tunnel' },
-      { text: 'Golang compiler environment loaded in Docker container.', type: 'success' },
-      { text: 'Executing tests: `go test ./pkg/math...` - Output: FAILED (Division by zero)', type: 'cmd' },
-      { text: 'Actor editing codebase math_utils.go (L43: add guard check).', type: 'info' }
+      { text: '[initial_test] go test ./demo_project/... — FAILED (division by zero)', type: 'cmd' },
+      { text: 'Reverse tunnel established with local CLI. Handshake complete.', type: 'tunnel' },
+      { text: 'Isolated Docker sandbox provisioned (golang base image).', type: 'success' },
+      { text: '[actor] Proposing guard check in math_utils.go (L43).', type: 'info' },
+      { text: '[critic] Reviewing diff for correctness and safety...', type: 'info' }
     ]
   },
   microfish: {
     task: 'task-3832',
-    title: 'microfish (data analysis)',
-    desc: 'Upload datasets & generate visual charts',
-    tech: 'Python • E2B Cloud Sandbox',
+    title: 'microfish (resumable)',
+    desc: 'Patch nil check in report exporter',
+    tech: 'Go • Docker sandbox • Claude',
     status: 'PAUSED',
     budgetSpent: 0.45,
     budgetLimit: 5.00,
@@ -52,19 +52,19 @@ const initialSandboxes: Record<string, Sandbox> = {
     cache: { GITHUB_TOKEN: 'cached', DATABASE_URL: 'empty', AWS_SECRET: 'empty' },
     laptopOpen: false,
     logs: [
-      { text: 'Task 3832 state restored from db checkpoints.', type: 'info' },
-      { text: 'Boto3 client attempting initialization inside sandbox...', type: 'info' },
-      { text: 'Sandbox requests credentials vault: AWS_SECRET', type: 'tunnel' },
-      { text: 'Cache lookup failed. Requesting credentials via local tunnel...', type: 'warning' },
-      { text: 'Tunnel is offline (Laptop closed). Cannot resolve AWS_SECRET.', type: 'warning' },
-      { text: 'Task state: PAUSED. Waiting for client CLI to reconnect.', type: 'warning' }
+      { text: 'Task state restored from checkpoint on daemon restart.', type: 'info' },
+      { text: '[actor] Preparing edit that reads DATABASE_URL at runtime.', type: 'info' },
+      { text: 'Sandbox requests just-in-time secret: DATABASE_URL', type: 'tunnel' },
+      { text: 'Daemon memory cache miss. Requesting over reverse tunnel...', type: 'warning' },
+      { text: 'Reverse tunnel offline (laptop closed). Cannot resolve DATABASE_URL.', type: 'warning' },
+      { text: 'Task state: PAUSED. Will resume when the CLI reconnects.', type: 'warning' }
     ]
   },
   threatmapper: {
     task: 'task-3833',
-    title: 'threatmapper (multi-agent)',
-    desc: 'Researcher & Reviewer personas collaborating',
-    tech: 'Node.js • Aider Integration',
+    title: 'threatmapper (headless)',
+    desc: 'Add pagination to list endpoint',
+    tech: 'Go • Docker sandbox • Claude',
     status: 'RUNNING',
     budgetSpent: 8.80,
     budgetLimit: 10.00,
@@ -72,11 +72,11 @@ const initialSandboxes: Record<string, Sandbox> = {
     cache: { GITHUB_TOKEN: 'cached', DATABASE_URL: 'cached', AWS_SECRET: 'empty' },
     laptopOpen: true,
     logs: [
-      { text: 'Task 3833 sandbox container initialized successfully.', type: 'info' },
-      { text: 'Multiplexed reverse tunnels connected on port 8080.', type: 'tunnel' },
-      { text: 'Pulled GITHUB_TOKEN and DATABASE_URL on-demand.', type: 'success' },
-      { text: 'Executing checks: `npm run security-scan` inside sandbox container.', type: 'cmd' },
-      { text: 'Analyzing dependency tree files for high CVE alerts...', type: 'info' }
+      { text: 'Isolated Docker sandbox initialized successfully.', type: 'info' },
+      { text: 'Reverse credential tunnel connected on port 8080.', type: 'tunnel' },
+      { text: 'Pulled GITHUB_TOKEN just-in-time; cached in daemon memory for this run.', type: 'success' },
+      { text: '[test] go test ./... inside the sandbox container.', type: 'cmd' },
+      { text: '[critic] Diff approved. Cost accrued this run: $8.80 of $10.00 cap.', type: 'info' }
     ]
   }
 };
@@ -107,14 +107,14 @@ export default function Simulator() {
             if (emptyKeys.length > 0) {
               const keyNeeded = emptyKeys[Math.floor(Math.random() * emptyKeys.length)];
               const timeStr = new Date().toLocaleTimeString();
-              sb.logs.push({ text: `[${timeStr}] Daemon requests remote vault credential: ${keyNeeded}`, type: 'tunnel' });
+              sb.logs.push({ text: `[${timeStr}] Sandbox requests just-in-time secret: ${keyNeeded}`, type: 'tunnel' });
               
               if (sb.laptopOpen) {
                 sb.cache[keyNeeded] = 'cached';
                 sb.logs.push({ text: `[${timeStr}] CLI client resolved ${keyNeeded} over tunnel. Storing in cache.`, type: 'success' });
               } else {
                 sb.status = 'PAUSED';
-                sb.logs.push({ text: `[${timeStr}] Cache vault lookup failed for: ${keyNeeded}. Reverse tunnel is offline.`, type: 'warning' });
+                sb.logs.push({ text: `[${timeStr}] Daemon memory cache miss for: ${keyNeeded}. Reverse tunnel is offline.`, type: 'warning' });
                 sb.logs.push({ text: `[${timeStr}] Task execution state paused. Awaiting CLI client resume.`, type: 'warning' });
               }
               next[k] = sb;
@@ -259,11 +259,39 @@ export default function Simulator() {
     <section id="how-it-works" className="simulator-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">The Secure Control Plane in Action</h2>
+          <h2 className="section-title">How it works</h2>
           <p className="section-subtitle">
-            Explore Kiwi's complete orchestration engine. Select a sandbox, trigger system controls, and observe multi-agent sandboxing, tunneling, budget caps, and safety breakers.
+            Submit, run, resume — from your terminal to a fixed codebase.
           </p>
         </div>
+
+        <div className="how-it-works-triad">
+          <div className="hiw-step">
+            <span className="hiw-step-num">1</span>
+            <h3 className="hiw-step-title">Submit</h3>
+            <p className="hiw-step-desc">
+              Point the CLI at your repo, give it a goal. Kiwi takes it from there.
+            </p>
+          </div>
+          <div className="hiw-step">
+            <span className="hiw-step-num">2</span>
+            <h3 className="hiw-step-title">Run</h3>
+            <p className="hiw-step-desc">
+              A sandbox spins up. One agent fixes, another reviews — secrets pulled only when needed.
+            </p>
+          </div>
+          <div className="hiw-step">
+            <span className="hiw-step-num">3</span>
+            <h3 className="hiw-step-title">Watch &amp; resume</h3>
+            <p className="hiw-step-desc">
+              Stream every step, review the diff, and never lose a run.
+            </p>
+          </div>
+        </div>
+
+        <p className="simulator-preview-note">
+          Preview of the live Actor–Critic timeline. The web console is a monitoring board today — task submission runs through the CLI.
+        </p>
 
         <div className="control-console" id="simulator-section">
           <div className="console-glow"></div>
@@ -327,7 +355,7 @@ export default function Simulator() {
                         <polyline points="16 18 22 12 16 6"></polyline>
                         <polyline points="8 6 2 12 8 18"></polyline>
                       </svg>
-                      <span className="node-name">Ecosystem Agent</span>
+                      <span className="node-name">Local CLI</span>
                       <span className="node-sub" style={{ color: sb.laptopOpen ? 'var(--secondary)' : 'var(--error)' }}>
                         {sb.laptopOpen ? 'Connected' : 'Disconnected'}
                       </span>
@@ -336,7 +364,7 @@ export default function Simulator() {
                     <div className="graphic-tunnel-wrapper">
                       <div className={`graphic-tunnel-line ${sb.laptopOpen ? 'active' : ''}`}></div>
                       {sb.laptopOpen && <div className="graphic-tunnel-pulse"></div>}
-                      <span className="graphic-tunnel-label">VAULT INJECTION</span>
+                      <span className="graphic-tunnel-label">REVERSE TUNNEL</span>
                     </div>
 
                     <div className="graphic-node">
@@ -346,7 +374,7 @@ export default function Simulator() {
                         <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                         <line x1="12" y1="22.08" x2="12" y2="12"></line>
                       </svg>
-                      <span className="node-name">Pluggable Sandbox</span>
+                      <span className="node-name">Docker Sandbox</span>
                       <span className="node-sub">{sb.status === 'RUNNING' ? 'Active Loop' : sb.status === 'PAUSED' ? 'Paused' : sb.status === 'COMPLETED' ? 'Resolved' : 'Stopped'}</span>
                     </div>
                   </div>
@@ -359,7 +387,7 @@ export default function Simulator() {
                         <polyline points="8 6 2 12 8 18"></polyline>
                       </svg>
                       <div className="node-mobile-info">
-                        <span className="node-mobile-name">Ecosystem Agent</span>
+                        <span className="node-mobile-name">Local CLI</span>
                         <span className="node-mobile-sub" style={{ color: sb.laptopOpen ? 'var(--secondary)' : 'var(--error)' }}>
                           {sb.laptopOpen ? 'Connected' : 'Disconnected'}
                         </span>
@@ -369,7 +397,7 @@ export default function Simulator() {
                     <div className="graphic-tunnel-wrapper-mobile">
                       <div className={`graphic-tunnel-line-mobile ${sb.laptopOpen ? 'active' : ''}`}></div>
                       {sb.laptopOpen && <div className="graphic-tunnel-pulse-mobile"></div>}
-                      <span className="graphic-tunnel-label-mobile">VAULT INJECTION</span>
+                      <span className="graphic-tunnel-label-mobile">REVERSE TUNNEL</span>
                     </div>
 
                     <div className="graphic-node-mobile">
@@ -378,7 +406,7 @@ export default function Simulator() {
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                       </svg>
                       <div className="node-mobile-info">
-                        <span className="node-mobile-name">Pluggable Sandbox</span>
+                        <span className="node-mobile-name">Docker Sandbox</span>
                         <span className="node-mobile-sub">{sb.status === 'RUNNING' ? 'Active Loop' : sb.status === 'PAUSED' ? 'Paused' : sb.status === 'COMPLETED' ? 'Resolved' : 'Stopped'}</span>
                       </div>
                     </div>
@@ -386,7 +414,7 @@ export default function Simulator() {
 
                   <div className="metrics-grid">
                     <div className="metric-box">
-                      <span className="m-label">In-Memory Cache:</span>
+                      <span className="m-label">Daemon Memory Cache:</span>
                       <div className="m-cache-slots">
                         <span className={`cache-pill ${sb.cache.GITHUB_TOKEN === 'cached' ? 'cached' : 'empty'}`}>GITHUB_TOKEN: {sb.cache.GITHUB_TOKEN}</span>
                         <span className={`cache-pill ${sb.cache.DATABASE_URL === 'cached' ? 'cached' : 'empty'}`}>DATABASE_URL: {sb.cache.DATABASE_URL}</span>
@@ -421,23 +449,23 @@ export default function Simulator() {
               
               <div className="control-actions-list">
                 <div className="control-card">
-                  <span className="control-card-label">Multi-Agent Control</span>
-                  <button 
+                  <span className="control-card-label">Reverse Tunnel</span>
+                  <button
                     className={`btn btn-primary btn-sm btn-full ${sb.laptopOpen ? 'active' : ''}`}
                     onClick={handleToggleLaptop}
                   >
-                    <span className="btn-text">{sb.laptopOpen ? 'Disconnect Target' : 'Reconnect Target'}</span>
+                    <span className="btn-text">{sb.laptopOpen ? 'Close laptop (sever tunnel)' : 'Reconnect tunnel'}</span>
                   </button>
                 </div>
 
                 <div className="control-card">
-                  <span className="control-card-label">Ecosystem Execution</span>
-                  <button 
+                  <span className="control-card-label">Actor–Critic Loop</span>
+                  <button
                     className="btn btn-secondary btn-sm btn-full"
                     onClick={handleStepLoop}
                     disabled={sb.status !== 'RUNNING'}
                   >
-                    Step Agent Workflow
+                    Step the loop
                   </button>
                 </div>
 
