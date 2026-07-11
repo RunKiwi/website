@@ -16,7 +16,7 @@ const features: Feature[] = [
     title: (
       <>
         A second pair of eyes on every change
-        <span className="feature-tag">Powered by Claude</span>
+        <span className="feature-tag">Bring your own LLM</span>
       </>
     ),
     desc: 'One agent writes the fix, another approves it. No blind auto-edits.',

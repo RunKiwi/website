@@ -32,7 +32,7 @@ export default function Hero() {
           </div>
 
           <p className="hero-microcopy">
-            Bring your own Anthropic key · self-hosted · no credit card
+            Bring your own LLM — Anthropic, Codex, or Gemini · self-hosted · no credit card
           </p>
 
           <div className="hero-cli-install">

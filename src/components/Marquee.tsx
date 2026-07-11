@@ -26,8 +26,11 @@ function Spark() {
 }
 
 export default function Marquee() {
-  // Duplicate the list so the -50% translate loops seamlessly.
-  const loop = [...STACK, ...STACK];
+  // One "group" repeated enough to overflow any viewport, then duplicated so the
+  // -50% translate wraps seamlessly — a circular, never-ending loop.
+  const group = [...STACK, ...STACK, ...STACK];
+  const loop = [...group, ...group];
+  const half = loop.length / 2;
 
   return (
     <section className="marquee-section" aria-label="Kiwi's technology stack">
@@ -37,7 +40,7 @@ export default function Marquee() {
       <div className="marquee-viewport">
         <ul className="marquee-track" aria-hidden="false">
           {loop.map((item, i) => (
-            <li className="marquee-item" key={`${item.label}-${i}`} aria-hidden={i >= STACK.length}>
+            <li className="marquee-item" key={`${item.label}-${i}`} aria-hidden={i >= half}>
               <Spark />
               {item.label}
             </li>

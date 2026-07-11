@@ -1,10 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { Reveal } from './Reveal';
 
+const TABS = ['Dashboard', 'Workspaces', 'Task List', 'Settings'] as const;
+
 export default function KanbanDashboard() {
-  const [activeTab, setActiveTab] = useState('Dashboard');
+  const [activeTab, setActiveTab] = useState<string>('Dashboard');
+  const [paused, setPaused] = useState(false);
+  const reduce = useReducedMotion();
+
+  // Auto-advance through the tabs so the console demos itself — no clicking
+  // required. Pauses on hover; disabled entirely under prefers-reduced-motion.
+  useEffect(() => {
+    if (reduce || paused) return;
+    const id = setInterval(() => {
+      setActiveTab((prev) => TABS[(TABS.indexOf(prev as typeof TABS[number]) + 1) % TABS.length]);
+    }, 3200);
+    return () => clearInterval(id);
+  }, [reduce, paused]);
 
   const renderContent = () => {
     if (activeTab === 'Dashboard') {
@@ -153,8 +168,8 @@ export default function KanbanDashboard() {
             <h3>Control Plane Settings</h3>
           </div>
           <div className="kanban-card" style={{ marginBottom: '16px' }}>
-            <h4 className="card-task-title">Provider Key (Anthropic)</h4>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px', marginBottom: '16px' }}>Per-org Claude API key, encrypted at rest with AES-256-GCM.</p>
+            <h4 className="card-task-title">Provider Key — Bring your own LLM</h4>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px', marginBottom: '16px' }}>Anthropic, Codex, or Gemini — your key, encrypted at rest with AES-256-GCM.</p>
             <button className="btn btn-outline btn-sm">Rotate Key</button>
           </div>
           <div className="kanban-card">
@@ -179,6 +194,10 @@ export default function KanbanDashboard() {
         </Reveal>
 
         <Reveal as="div" className="dashboard-mockup-wrapper">
+          <div
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
           <div className="mockup-header-bar">
             <div className="mockup-window-controls">
               <div className="window-dot red"></div>
@@ -212,6 +231,7 @@ export default function KanbanDashboard() {
             <div className="mockup-content">
               {renderContent()}
             </div>
+          </div>
           </div>
         </Reveal>
       </div>
