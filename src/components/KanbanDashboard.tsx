@@ -1,25 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { useReducedMotion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Reveal } from './Reveal';
 
 const TABS = ['Dashboard', 'Workspaces', 'Task List', 'Settings'] as const;
 
 export default function KanbanDashboard() {
   const [activeTab, setActiveTab] = useState<string>('Dashboard');
-  const [paused, setPaused] = useState(false);
   const reduce = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
 
-  // Auto-advance through the tabs so the console demos itself — no clicking
-  // required. Pauses on hover; disabled entirely under prefers-reduced-motion.
-  useEffect(() => {
-    if (reduce || paused) return;
-    const id = setInterval(() => {
-      setActiveTab((prev) => TABS[(TABS.indexOf(prev as typeof TABS[number]) + 1) % TABS.length]);
-    }, 3200);
-    return () => clearInterval(id);
-  }, [reduce, paused]);
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    if (reduce) return; // fallback to instant or manual clicking if reduced motion
+    
+    // Map scroll progress (0 to 1) to the 4 tabs
+    let index = Math.floor(latest * TABS.length);
+    if (index >= TABS.length) index = TABS.length - 1;
+    if (index < 0) index = 0;
+    
+    setActiveTab(TABS[index]);
+  });
 
   const renderContent = () => {
     if (activeTab === 'Dashboard') {
@@ -183,21 +188,30 @@ export default function KanbanDashboard() {
   };
 
   return (
-    <section id="dashboard" className="dashboard-section">
-      <div className="container">
-        <Reveal as="div" className="section-header">
-          <span className="section-eyebrow">Dashboard</span>
-          <h2 className="section-title">Watch every run on one board</h2>
-          <p className="section-subtitle">
-            Follow each run&apos;s phase, spend, and secret cache across your isolated sandboxes in real time. The web console is a monitoring board today — task submission runs through the CLI.
-          </p>
-        </Reveal>
+    <div ref={containerRef} style={{ height: '400vh', position: 'relative' }}>
+      <section 
+        id="dashboard" 
+        className="dashboard-section"
+        style={{
+          position: 'sticky',
+          top: 0,
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}
+      >
+        <div className="container">
+          <Reveal as="div" className="section-header">
+            <span className="section-eyebrow">Dashboard</span>
+            <h2 className="section-title">Watch every run on one board</h2>
+            <p className="section-subtitle">
+              Follow each run&apos;s phase, spend, and secret cache across your isolated sandboxes in real time. The web console is a monitoring board today — task submission runs through the CLI.
+            </p>
+          </Reveal>
 
-        <Reveal as="div" className="dashboard-mockup-wrapper">
-          <div
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
+          <Reveal as="div" className="dashboard-mockup-wrapper">
+            <div>
           <div className="mockup-header-bar">
             <div className="mockup-window-controls">
               <div className="window-dot red"></div>
@@ -233,8 +247,9 @@ export default function KanbanDashboard() {
             </div>
           </div>
           </div>
-        </Reveal>
-      </div>
-    </section>
+          </Reveal>
+        </div>
+      </section>
+    </div>
   );
 }
