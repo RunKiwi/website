@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { Reveal } from './Reveal';
 
 type Log = { text: string; type: string };
 type SandboxCache = { GITHUB_TOKEN: string; DATABASE_URL: string; AWS_SECRET: string };
@@ -21,9 +22,9 @@ type Sandbox = {
 };
 
 const initialSandboxes: Record<string, Sandbox> = {
-  steelwing: {
+  'demo-api': {
     task: 'task-3831',
-    title: 'steelwing (Actor–Critic)',
+    title: 'demo-api (Actor–Critic)',
     desc: 'Fix division by zero inside Divide()',
     tech: 'Go • Docker sandbox • Claude',
     status: 'RUNNING',
@@ -40,9 +41,9 @@ const initialSandboxes: Record<string, Sandbox> = {
       { text: '[critic] Reviewing diff for correctness and safety...', type: 'info' }
     ]
   },
-  microfish: {
+  'web-app': {
     task: 'task-3832',
-    title: 'microfish (resumable)',
+    title: 'web-app (resumable)',
     desc: 'Patch nil check in report exporter',
     tech: 'Go • Docker sandbox • Claude',
     status: 'PAUSED',
@@ -60,9 +61,9 @@ const initialSandboxes: Record<string, Sandbox> = {
       { text: 'Task state: PAUSED. Will resume when the CLI reconnects.', type: 'warning' }
     ]
   },
-  threatmapper: {
+  'api-service': {
     task: 'task-3833',
-    title: 'threatmapper (headless)',
+    title: 'api-service (headless)',
     desc: 'Add pagination to list endpoint',
     tech: 'Go • Docker sandbox • Claude',
     status: 'RUNNING',
@@ -83,7 +84,7 @@ const initialSandboxes: Record<string, Sandbox> = {
 
 export default function Simulator() {
   const [sandboxes, setSandboxes] = useState<Record<string, Sandbox>>(initialSandboxes);
-  const [activeSandboxKey, setActiveSandboxKey] = useState<string>('steelwing');
+  const [activeSandboxKey, setActiveSandboxKey] = useState<string>('demo-api');
 
   const logsRef = useRef<HTMLDivElement>(null);
   
@@ -258,15 +259,17 @@ export default function Simulator() {
   return (
     <section id="how-it-works" className="simulator-section">
       <div className="container">
-        <div className="section-header">
-          <h2 className="section-title">How it works</h2>
+        <Reveal as="div" className="section-header">
+          <span className="section-eyebrow">How it works</span>
+          <h2 className="section-title">Submit, run, resume</h2>
           <p className="section-subtitle">
-            Submit, run, resume — from your terminal to a fixed codebase.
+            From your terminal to a fixed codebase — in three moves.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="how-it-works-triad">
+        <Reveal as="div" className="how-it-works-triad" stagger>
           <div className="hiw-step">
+            <span className="hiw-step-index" aria-hidden="true">01</span>
             <span className="hiw-step-num">1</span>
             <h3 className="hiw-step-title">Submit</h3>
             <p className="hiw-step-desc">
@@ -274,6 +277,7 @@ export default function Simulator() {
             </p>
           </div>
           <div className="hiw-step">
+            <span className="hiw-step-index" aria-hidden="true">02</span>
             <span className="hiw-step-num">2</span>
             <h3 className="hiw-step-title">Run</h3>
             <p className="hiw-step-desc">
@@ -281,13 +285,14 @@ export default function Simulator() {
             </p>
           </div>
           <div className="hiw-step">
+            <span className="hiw-step-index" aria-hidden="true">03</span>
             <span className="hiw-step-num">3</span>
             <h3 className="hiw-step-title">Watch &amp; resume</h3>
             <p className="hiw-step-desc">
               Stream every step, review the diff, and never lose a run.
             </p>
           </div>
-        </div>
+        </Reveal>
 
         <p className="simulator-preview-note">
           Preview of the live Actor–Critic timeline. The web console is a monitoring board today — task submission runs through the CLI.

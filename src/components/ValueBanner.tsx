@@ -1,7 +1,9 @@
+import { Reveal } from './Reveal';
+
 export default function ValueBanner() {
   return (
     <section className="banner-section" aria-label="What Kiwi is">
-      <div className="container banner-content">
+      <Reveal as="div" className="container banner-content" stagger>
         <p className="banner-positioning">
           The safest way to put AI coding agents to work — <span className="text-gradient">boxed in, watched closely, and impossible to lose.</span>
         </p>
@@ -19,7 +21,7 @@ export default function ValueBanner() {
             Never lose a run
           </li>
         </ul>
-      </div>
+      </Reveal>
     </section>
   );
 }

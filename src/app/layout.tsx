@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import { Inter, Outfit, Fira_Code } from "next/font/google";
+import { Inter, Outfit, Fraunces, Fira_Code } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,9 +8,17 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+// Kept for UI chrome / eyebrows that want a geometric sans.
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+});
+
+// Expressive variable display serif for the hero + section titles.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  axes: ["opsz", "SOFT", "WONK"],
 });
 
 const firaCode = Fira_Code({
@@ -33,7 +41,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${outfit.variable} ${firaCode.variable} antialiased`}>
+      <body className={`${inter.variable} ${outfit.variable} ${fraunces.variable} ${firaCode.variable} antialiased`}>
+        <div className="film-grain" aria-hidden="true" />
         {children}
         <Analytics />
       </body>

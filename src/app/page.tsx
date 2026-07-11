@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import ValueBanner from '@/components/ValueBanner';
+import Marquee from '@/components/Marquee';
 import Simulator from '@/components/Simulator';
 import FeaturesGrid from '@/components/FeaturesGrid';
 import KanbanDashboard from '@/components/KanbanDashboard';
@@ -14,9 +15,11 @@ export default function Home() {
       <main>
         <Hero />
         <ValueBanner />
-        <FeaturesGrid />
+        <Marquee />
+        {/* Alternating dark/cream rhythm: features on cream, console dark. */}
+        <FeaturesGrid theme="cream" />
         <Simulator />
-        <Quickstart />
+        <Quickstart theme="cream" />
         <KanbanDashboard />
       </main>
       <Footer />
