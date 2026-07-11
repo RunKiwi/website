@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Reveal } from './Reveal';
 
 const serverSnippet = `# Build the Kiwi daemon
 go build -ldflags="-linkmode=external" -o kiwid cmd/kiwid/main.go
@@ -28,20 +29,21 @@ const securityBullets = [
   'Budget caps stop runaway spend before a job even starts.',
 ];
 
-export default function Quickstart() {
+export default function Quickstart({ theme }: { theme?: 'cream' }) {
   const [activeTab, setActiveTab] = useState<'server' | 'client'>('server');
 
   return (
-    <section id="quickstart" className="quickstart-section">
+    <section id="quickstart" className={`quickstart-section ${theme === 'cream' ? 'theme-cream' : ''}`}>
       <div className="container">
-        <div className="section-header">
+        <Reveal as="div" className="section-header">
+          <span className="section-eyebrow">Quickstart</span>
           <h2 className="section-title">Start a run in a few commands</h2>
           <p className="section-subtitle">
             Run the self-hosted daemon, then submit a task from the CLI with your own Anthropic key. No credit card, no cloud account required.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="quickstart-tabs-wrapper">
+        <Reveal as="div" className="quickstart-tabs-wrapper">
           <div className="quickstart-tabs">
             <button
               className={`tab-btn ${activeTab === 'server' ? 'active' : ''}`}
@@ -110,7 +112,7 @@ export default function Quickstart() {
               ))}
             </ul>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

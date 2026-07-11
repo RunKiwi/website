@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Reveal } from './Reveal';
 
 export default function KanbanDashboard() {
   const [activeTab, setActiveTab] = useState('Dashboard');
@@ -169,14 +170,15 @@ export default function KanbanDashboard() {
   return (
     <section id="dashboard" className="dashboard-section">
       <div className="container">
-        <div className="section-header">
+        <Reveal as="div" className="section-header">
+          <span className="section-eyebrow">Dashboard</span>
           <h2 className="section-title">Watch every run on one board</h2>
           <p className="section-subtitle">
             Follow each run&apos;s phase, spend, and secret cache across your isolated sandboxes in real time. The web console is a monitoring board today — task submission runs through the CLI.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="dashboard-mockup-wrapper">
+        <Reveal as="div" className="dashboard-mockup-wrapper">
           <div className="mockup-header-bar">
             <div className="mockup-window-controls">
               <div className="window-dot red"></div>
@@ -211,7 +213,7 @@ export default function KanbanDashboard() {
               {renderContent()}
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
