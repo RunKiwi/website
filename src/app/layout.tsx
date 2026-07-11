@@ -19,8 +19,8 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "Kiwi - The Universal Orchestration Layer for Enterprise AI Agents",
-  description: "Orchestrate multi-agent workflows with ecosystem tools (Aider, Claude) using pluggable sandboxes and secure Enterprise Vault credential injection.",
+  title: "Kiwi — A Safe Place for Your AI Coding Agents to Work",
+  description: "Give your AI coding agents a safe place to work. Kiwi runs them in isolated sandboxes, keeps your secrets on your machine (never written to the sandbox), streams every move live, and never loses a run.",
   icons: {
     icon: "/kiwi.png",
   },

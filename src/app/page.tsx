@@ -14,10 +14,10 @@ export default function Home() {
       <main>
         <Hero />
         <ValueBanner />
-        <Simulator />
         <FeaturesGrid />
-        <KanbanDashboard />
+        <Simulator />
         <Quickstart />
+        <KanbanDashboard />
       </main>
       <Footer />
     </>

@@ -3,14 +3,14 @@ export default function FeaturesGrid() {
     <section id="features" className="features-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">Built for Enterprise Agent Workflows</h2>
+          <h2 className="section-title">Everything you need to actually trust an agent</h2>
           <p className="section-subtitle">
-            Secure, resilient execution that bridges the speed of the cloud with the compliance of local keys.
+            Reviewed changes, secrets that stay home, contained runs, and nothing lost.
           </p>
         </div>
 
         <div className="features-grid">
-          {/* Card 1 */}
+          {/* Pillar 1 */}
           <div className="feature-card">
             <div className="card-glow"></div>
             <div className="feature-icon">
@@ -18,27 +18,16 @@ export default function FeaturesGrid() {
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
               </svg>
             </div>
-            <h3 className="feature-title">Multi-Agent Orchestration</h3>
+            <h3 className="feature-title">
+              A second pair of eyes on every change
+              <span className="feature-tag">Powered by Claude</span>
+            </h3>
             <p className="feature-desc">
-              Move beyond simple actor-critic loops. Spawn distinct Researcher, Coder, and Data Analyst personas that share a context bus to solve complex tasks collaboratively.
+              One agent writes the fix, another approves it. No blind auto-edits.
             </p>
           </div>
 
-          {/* Card 2 */}
-          <div className="feature-card">
-            <div className="card-glow"></div>
-            <div className="feature-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </div>
-            <h3 className="feature-title">Pluggable Sandboxes</h3>
-            <p className="feature-desc">
-              Bring your own runtime. Execute workloads seamlessly across built-in Docker environments, E2B cloud containers, or any custom third-party compute provider.
-            </p>
-          </div>
-
-          {/* Card 3 */}
+          {/* Pillar 2 */}
           <div className="feature-card">
             <div className="card-glow"></div>
             <div className="feature-icon">
@@ -47,58 +36,53 @@ export default function FeaturesGrid() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <h3 className="feature-title">Ecosystem Integration</h3>
+            <h3 className="feature-title">Your secrets stay yours</h3>
             <p className="feature-desc">
-              Don't build everything from scratch. Leverage Kiwi's secure sandbox as a powerful orchestration backend for third-party tools like Aider, Devin, or Claude.
+              Credentials pulled from your machine only when needed — never written to the sandbox. Close your laptop; the run keeps going.
             </p>
           </div>
 
-          {/* Card 4 */}
+          {/* Pillar 3 */}
           <div className="feature-card">
             <div className="card-glow"></div>
             <div className="feature-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-                <line x1="6" y1="6" x2="6.01" y2="6"></line>
-                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
             </div>
-            <h3 className="feature-title">Enterprise Vault Injection</h3>
+            <h3 className="feature-title">Runs that can&apos;t run away</h3>
             <p className="feature-desc">
-              Eliminate reverse tunneling overhead. Inject credentials directly into sandboxes securely using native integrations for HashiCorp Vault and AWS Secrets Manager.
+              Isolated, network-locked sandboxes with hard cost caps. No runaway host — or bill.
             </p>
           </div>
 
-          {/* Card 5 */}
+          {/* Pillar 4 */}
           <div className="feature-card">
             <div className="card-glow"></div>
             <div className="feature-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
               </svg>
             </div>
-            <h3 className="feature-title">Ticket-Based Invocation</h3>
+            <h3 className="feature-title">Watch your agent think</h3>
             <p className="feature-desc">
-              Trigger complex orchestration pipelines natively from issue trackers. Feed full context directly from GitHub, Jira, or Linear using a simple `--ticket` CLI flag.
+              Every plan, edit, and test — live, with token and cost counts. No black-box runs.
             </p>
           </div>
 
-          {/* Card 6 */}
+          {/* Pillar 5 */}
           <div className="feature-card">
             <div className="card-glow"></div>
             <div className="feature-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="9" y1="3" x2="9" y2="21"></line>
-                <line x1="9" y1="9" x2="21" y2="9"></line>
-                <line x1="9" y1="15" x2="21" y2="15"></line>
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
               </svg>
             </div>
-            <h3 className="feature-title">Budget Caps & Safety</h3>
+            <h3 className="feature-title">Never lose a run</h3>
             <p className="feature-desc">
-              Integrated circuit breakers detect infinite loop structures by tracking duplicate terminal output hashes. Budget caps limit token overhead to guarantee cost-controls.
+              Restarts resume from the last checkpoint, not from scratch. Retries never double-charge.
             </p>
           </div>
         </div>

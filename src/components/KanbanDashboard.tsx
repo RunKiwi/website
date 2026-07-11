@@ -10,26 +10,26 @@ export default function KanbanDashboard() {
       return (
         <>
           <div className="mockup-top-bar">
-            <h3>Agent Tasks</h3>
-            <div className="mockup-badge active">4 Running Sandbox Containers</div>
+            <h3>Agent Runs</h3>
+            <div className="mockup-badge active">3 isolated sandboxes</div>
           </div>
-          
+
           <div className="kanban-board">
             {/* Column 1 */}
             <div className="kanban-col">
               <div className="col-header">
-                <span>ORCHESTRATING (Aider/Claude)</span>
+                <span>PAUSED (awaiting tunnel)</span>
                 <span className="count">1</span>
               </div>
               <div className="kanban-card paused">
                 <div className="card-tag">task-3829</div>
-                <h4 className="card-task-title">Fix AWS S3 client bucket upload issue</h4>
+                <h4 className="card-task-title">Patch nil check in report exporter</h4>
                 <div className="card-alert-msg">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                  AWS_SECRET_ACCESS_KEY retrieved from Vault
+                  Reverse tunnel offline — will resume from checkpoint
                 </div>
                 <div className="card-footer">
-                  <span>Waiting on Reviewer Persona</span>
+                  <span>Waiting for CLI reconnect</span>
                   <span className="avatar">U</span>
                 </div>
               </div>
@@ -38,35 +38,35 @@ export default function KanbanDashboard() {
             {/* Column 2 */}
             <div className="kanban-col">
               <div className="col-header">
-                <span>RUNNING (Multi-Agent Workloads)</span>
+                <span>RUNNING (Actor–Critic)</span>
                 <span className="count">2</span>
               </div>
               <div className="kanban-card">
                 <div className="card-tag running">task-3831</div>
-                <h4 className="card-task-title">Resolve nil pointer error in database connector</h4>
+                <h4 className="card-task-title">Fix division by zero in Divide()</h4>
                 <div className="progress-bar-wrapper">
                   <div className="progress-bar-fill animate-progress"></div>
                 </div>
                 <div className="card-log-snippet">
-                  [Coder Persona] Running `go test ./pkg/db...` (Passed 14/15)
+                  [test] go test ./demo_project/... (13/14 passing)
                 </div>
                 <div className="card-footer">
-                  <span>Vault Cached</span>
+                  <span>Secret cached in daemon memory</span>
                   <span className="avatar active">K</span>
                 </div>
               </div>
 
               <div className="kanban-card">
                 <div className="card-tag running">task-3830</div>
-                <h4 className="card-task-title">Refactor endpoints to support pagination</h4>
+                <h4 className="card-task-title">Add pagination to list endpoint</h4>
                 <div className="progress-bar-wrapper">
                   <div className="progress-bar-fill animate-progress-slow"></div>
                 </div>
                 <div className="card-log-snippet">
-                  [E2B Sandbox] Deploying data analysis runtime...
+                  [critic] Reviewing diff — $6.20 of $10.00 cap
                 </div>
                 <div className="card-footer">
-                  <span>Ecosystem Agent Online</span>
+                  <span>Isolated Docker sandbox</span>
                   <span className="avatar active">K</span>
                 </div>
               </div>
@@ -80,10 +80,10 @@ export default function KanbanDashboard() {
               </div>
               <div className="kanban-card resolved">
                 <div className="card-tag completed">task-3825</div>
-                <h4 className="card-task-title">Fix divide by zero inside AverageCalculation</h4>
+                <h4 className="card-task-title">Fix divide by zero in AverageCalculation</h4>
                 <div className="card-success-msg">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  Success. Fixed code saved to zip package.
+                  Critic approved. Tests green, fix synced back.
                 </div>
                 <div className="card-footer">
                   <span>Completed 20m ago</span>
@@ -105,13 +105,13 @@ export default function KanbanDashboard() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div className="kanban-card">
-              <h4 className="card-task-title">Production Cluster Sandbox</h4>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px' }}>E2B Container environment for high-security analysis.</p>
+              <h4 className="card-task-title">Isolated Docker Sandbox</h4>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px' }}>Per-run container with timeout and disk limits.</p>
               <div style={{ marginTop: '16px' }}><span className="card-tag running">Online</span></div>
             </div>
             <div className="kanban-card">
-              <h4 className="card-task-title">Local Dev Tunnel</h4>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px' }}>Laptop reverse tunnel for local testing loops.</p>
+              <h4 className="card-task-title">Reverse Credential Tunnel</h4>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px' }}>Just-in-time secrets from the local CLI, cached in daemon memory.</p>
               <div style={{ marginTop: '16px' }}><span className="card-tag running">Online</span></div>
             </div>
           </div>
@@ -128,15 +128,15 @@ export default function KanbanDashboard() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div className="kanban-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h4 className="card-task-title" style={{ margin: 0 }}>Migrate to Next.js</h4>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Pending execution via Aider...</span>
+                <h4 className="card-task-title" style={{ margin: 0 }}>Fix flaky retry test in queue worker</h4>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Queued — waiting on org concurrency slot</span>
               </div>
               <span className="card-tag paused">Queued</span>
             </div>
             <div className="kanban-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h4 className="card-task-title" style={{ margin: 0 }}>Generate API Documentation</h4>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Pending execution via Claude...</span>
+                <h4 className="card-task-title" style={{ margin: 0 }}>Handle empty slice in Summarize()</h4>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Queued — budget checked, within monthly cap</span>
               </div>
               <span className="card-tag paused">Queued</span>
             </div>
@@ -152,13 +152,13 @@ export default function KanbanDashboard() {
             <h3>Control Plane Settings</h3>
           </div>
           <div className="kanban-card" style={{ marginBottom: '16px' }}>
-            <h4 className="card-task-title">Enterprise Vault Integration</h4>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px', marginBottom: '16px' }}>Configure AWS Secrets Manager or HashiCorp Vault.</p>
-            <button className="btn btn-outline btn-sm">Configure Vault</button>
+            <h4 className="card-task-title">Provider Key (Anthropic)</h4>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px', marginBottom: '16px' }}>Per-org Claude API key, encrypted at rest with AES-256-GCM.</p>
+            <button className="btn btn-outline btn-sm">Rotate Key</button>
           </div>
           <div className="kanban-card">
-            <h4 className="card-task-title">Global Safety Limits</h4>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px', marginBottom: '16px' }}>Default budget cap per agent workspace: $10.00</p>
+            <h4 className="card-task-title">Budget &amp; Concurrency Caps</h4>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px', marginBottom: '16px' }}>Per-job cap $10.00 · monthly cap enforced before enqueue.</p>
             <button className="btn btn-primary btn-sm">Edit Limits</button>
           </div>
         </div>
@@ -170,9 +170,9 @@ export default function KanbanDashboard() {
     <section id="dashboard" className="dashboard-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">Interactive Kanban Control Board</h2>
+          <h2 className="section-title">Watch every run on one board</h2>
           <p className="section-subtitle">
-            Monitor your agent's loops, debug stack traces, edit budgets, and manage offline sessions in real-time.
+            Follow each run&apos;s phase, spend, and secret cache across your isolated sandboxes in real time. The web console is a monitoring board today — task submission runs through the CLI.
           </p>
         </div>
 
@@ -184,6 +184,7 @@ export default function KanbanDashboard() {
               <div className="window-dot green"></div>
             </div>
             <div className="mockup-browser-url">https://dashboard.runkiwi.dev</div>
+            <span className="mockup-preview-label">Illustrative preview</span>
           </div>
           
           <div className="dashboard-mockup">

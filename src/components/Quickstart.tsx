@@ -1,7 +1,32 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+
+const serverSnippet = `# Build the Kiwi daemon
+go build -ldflags="-linkmode=external" -o kiwid cmd/kiwid/main.go
+
+# Start the self-hosted daemon with Docker sandboxing + SQLite
+export USE_DOCKER="true"
+export KIWI_SERVER_TOKEN="my-secret-token-1234"
+
+./kiwid -addr :8080 -db kiwi.db`;
+
+const clientSnippet = `# Bring your own Anthropic key + a Bearer token for the daemon
+export ANTHROPIC_API_KEY="sk-ant-..."
+
+# Submit a task: repo/file + goal + test command
+./kiwi -token "my-secret-token-1234" \\
+     -task "Fix division by zero in Divide()" \\
+     -file demo_project/math_utils.go \\
+     -test-cmd "go test ./demo_project/..."`;
+
+const securityBullets = [
+  'Your secrets stay on your machine — pulled just-in-time over the reverse tunnel, cached only in the daemon’s memory for the run, and never written to the sandbox.',
+  'Every run is network-locked (--network=none), so a rogue agent can’t phone home or reach your host.',
+  'Your Anthropic key is encrypted at rest and only decrypted to make a call (AES-256-GCM).',
+  'Each org gets its own walled-off space, with per-org limits and an audit trail of every task.',
+  'Budget caps stop runaway spend before a job even starts.',
+];
 
 export default function Quickstart() {
   const [activeTab, setActiveTab] = useState<'server' | 'client'>('server');
@@ -10,37 +35,37 @@ export default function Quickstart() {
     <section id="quickstart" className="quickstart-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">Get Started in 60 Seconds</h2>
+          <h2 className="section-title">Start a run in a few commands</h2>
           <p className="section-subtitle">
-            Configure the Kiwi daemon host and deploy your first agent task with minimal overhead.
+            Run the self-hosted daemon, then submit a task from the CLI with your own Anthropic key. No credit card, no cloud account required.
           </p>
         </div>
 
         <div className="quickstart-tabs-wrapper">
           <div className="quickstart-tabs">
-            <button 
-              className={`tab-btn ${activeTab === 'server' ? 'active' : ''}`} 
+            <button
+              className={`tab-btn ${activeTab === 'server' ? 'active' : ''}`}
               onClick={() => setActiveTab('server')}
             >
-              1. Start Kiwi Daemon
+              1. Start the daemon
             </button>
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'client' ? 'active' : ''}`}
               onClick={() => setActiveTab('client')}
             >
-              2. Run Local CLI Client
+              2. Submit a task
             </button>
           </div>
-          
+
           <div className="tab-content-wrapper">
             {/* Server Code Panel */}
             <div className={`code-panel ${activeTab === 'server' ? 'active' : ''}`}>
               <div className="panel-header">
-                <span>Host Machine Terminal (Server/VPS)</span>
-                <button 
-                  className="code-copy-btn" 
-                  aria-label="Copy server daemon commands"
-                  onClick={() => navigator.clipboard.writeText('# Build Kiwi binaries\ngo build -o kiwid cmd/kiwid/main.go\n\n# Start the daemon on port 8080 (Set secure token)\nexport USE_DOCKER="true"\nexport KIWI_SERVER_TOKEN="production-secure-token-9999"\n\n./kiwid -addr :8080 -db kiwi.db')}
+                <span>Daemon host (self-hosted server)</span>
+                <button
+                  className="code-copy-btn"
+                  aria-label="Copy daemon commands"
+                  onClick={() => navigator.clipboard.writeText(serverSnippet)}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -49,24 +74,17 @@ export default function Quickstart() {
                   Copy
                 </button>
               </div>
-              <pre><code>{`# Build Kiwi binaries
-go build -o kiwid cmd/kiwid/main.go
-
-# Start the daemon on port 8080 (Set secure token)
-export USE_DOCKER="true"
-export KIWI_SERVER_TOKEN="production-secure-token-9999"
-
-./kiwid -addr :8080 -db kiwi.db`}</code></pre>
+              <pre><code>{serverSnippet}</code></pre>
             </div>
 
             {/* Client Code Panel */}
             <div className={`code-panel ${activeTab === 'client' ? 'active' : ''}`}>
               <div className="panel-header">
-                <span>Local Machine Terminal (Developer CLI)</span>
-                <button 
-                  className="code-copy-btn" 
-                  aria-label="Copy local CLI commands"
-                  onClick={() => navigator.clipboard.writeText('# Configure Enterprise Vault Injection (Optional)\nexport KIWI_VAULT_PROVIDER="hashicorp" \nexport VAULT_ADDR="https://vault.yourorg.com"\n\n# Submit the task to the orchestrator using a GitHub ticket\nkiwi run --ticket github:42 \\\n     --server "http://kiwi-daemon.yourhost.com:8080" \\\n     --token "production-secure-token-9999" \\\n     --sandbox e2b')}
+                <span>Local machine (developer CLI)</span>
+                <button
+                  className="code-copy-btn"
+                  aria-label="Copy CLI commands"
+                  onClick={() => navigator.clipboard.writeText(clientSnippet)}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -75,16 +93,22 @@ export KIWI_SERVER_TOKEN="production-secure-token-9999"
                   Copy
                 </button>
               </div>
-              <pre><code>{`# Configure Enterprise Vault Injection (Optional)
-export KIWI_VAULT_PROVIDER="hashicorp" 
-export VAULT_ADDR="https://vault.yourorg.com"
-
-# Submit the task to the orchestrator using a GitHub ticket
-kiwi run --ticket github:42 \\
-     --server "http://kiwi-daemon.yourhost.com:8080" \\
-     --token "production-secure-token-9999" \\
-     --sandbox e2b`}</code></pre>
+              <pre><code>{clientSnippet}</code></pre>
             </div>
+          </div>
+
+          <div className="security-panel">
+            <h3 className="security-panel-title">Safe by default, from the very first run</h3>
+            <ul className="security-list">
+              {securityBullets.map((bullet, i) => (
+                <li key={i} className="security-list-item">
+                  <svg className="security-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
