@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducedMotion } from 'framer-motion';
+// Removed unused import
 import { useEffect as useReactEffect, useRef as useReactRef, useState } from 'react';
 
 /**
@@ -80,30 +80,16 @@ function Line({ step }: { step: Step }) {
 }
 
 export default function HeroDemo() {
-  const preferReduce = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-  useReactEffect(() => setMounted(true), []);
-  const reduce = mounted ? preferReduce : false;
-
   const [visibleCount, setVisibleCount] = useState(0);
   const [tokens, setTokens] = useState(0);
   const [cost, setCost] = useState(0);
 
-  useReactEffect(() => {
-    if (reduce) {
-      setVisibleCount(STEPS.length);
-      setTokens(TOKENS_MAX);
-      setCost(COST_MAX);
-    }
-  }, [reduce]);
   const consoleRef = useReactRef<HTMLDivElement>(null);
   const startRef = useReactRef<number>(0);
   const rafRef = useReactRef<number>(0);
 
-  // Timeline driver (skipped entirely under reduced motion).
+  // Timeline driver.
   useReactEffect(() => {
-    if (reduce) return;
-
     const tick = (now: number) => {
       if (!startRef.current) startRef.current = now;
       const elapsed = (now - startRef.current) % LOOP_MS;
@@ -129,7 +115,7 @@ export default function HeroDemo() {
 
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [reduce]);
+  }, []);
 
   // Keep newest line in view.
   useReactEffect(() => {
@@ -143,7 +129,7 @@ export default function HeroDemo() {
   const failed = visibleCount >= 3 && visibleCount < 7; // between FAIL and critic-approve
 
   const status =
-    reduce || done ? { cls: 'passed', label: 'PASSED' }
+    done ? { cls: 'passed', label: 'PASSED' }
     : failed ? { cls: 'failed', label: 'FIXING' }
     : { cls: 'running', label: 'RUNNING' };
 
