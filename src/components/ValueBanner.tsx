@@ -10,7 +10,7 @@ export default function ValueBanner() {
         <ul className="banner-trust-strip">
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
-            Secrets never leave your machine
+            Secrets never leave <span className="wavy-underline">your machine</span>
           </li>
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
@@ -18,7 +18,7 @@ export default function ValueBanner() {
           </li>
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
-            Never lose a run
+            <span className="wavy-underline">Never lose</span> a run
           </li>
         </ul>
       </Reveal>
