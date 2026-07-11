@@ -1,7 +1,14 @@
 'use client';
 
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect as useReactEffect, useState } from 'react';
+
+function useMountedReducedMotion() {
+  const preferReduce = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useReactEffect(() => setMounted(true), []);
+  return mounted ? preferReduce : false;
+}
 
 /**
  * Reveal — the site's single reveal-on-scroll vocabulary.
@@ -31,7 +38,7 @@ export function Reveal({
   stagger?: boolean;
   y?: number;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useMountedReducedMotion();
   const MotionTag = motion[as] as typeof motion.div;
 
   if (reduce) {
@@ -85,7 +92,7 @@ export function RevealItem({
   as?: 'div' | 'li';
   className?: string;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useMountedReducedMotion();
   const MotionTag = motion[as] as typeof motion.div;
 
   if (reduce) {

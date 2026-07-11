@@ -80,10 +80,22 @@ function Line({ step }: { step: Step }) {
 }
 
 export default function HeroDemo() {
-  const reduce = useReducedMotion();
-  const [visibleCount, setVisibleCount] = useState(reduce ? STEPS.length : 0);
-  const [tokens, setTokens] = useState(reduce ? TOKENS_MAX : 0);
-  const [cost, setCost] = useState(reduce ? COST_MAX : 0);
+  const preferReduce = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useReactEffect(() => setMounted(true), []);
+  const reduce = mounted ? preferReduce : false;
+
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [tokens, setTokens] = useState(0);
+  const [cost, setCost] = useState(0);
+
+  useReactEffect(() => {
+    if (reduce) {
+      setVisibleCount(STEPS.length);
+      setTokens(TOKENS_MAX);
+      setCost(COST_MAX);
+    }
+  }, [reduce]);
   const consoleRef = useReactRef<HTMLDivElement>(null);
   const startRef = useReactRef<number>(0);
   const rafRef = useReactRef<number>(0);
