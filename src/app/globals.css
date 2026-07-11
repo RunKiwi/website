@@ -2686,7 +2686,8 @@ pre {
 .hero-demo-console {
   background: #0A0B08;
   padding: 16px 18px;
-  min-height: 232px;
+  height: 380px;
+  overflow-y: hidden;
   font-family: var(--custom-font-mono);
   font-size: 0.78rem;
   line-height: 1.7;
@@ -2872,7 +2873,7 @@ pre {
 }
 
 @media (max-width: 768px) {
-  .hero-demo-console { font-size: 0.72rem; min-height: 210px; }
+  .hero-demo-console { font-size: 0.72rem; height: 340px; overflow-y: hidden; }
   .hero-demo-meters { gap: 14px; font-size: 0.7rem; }
   .hiw-step-index { font-size: 2rem; top: 16px; right: 18px; }
 }
@@ -2881,6 +2882,6 @@ pre {
   .hero-title { font-size: 2rem; }
   .section-title { font-size: 1.95rem; }
   .cta-title { font-size: 2rem; }
-  .hero-demo-console { font-size: 0.66rem; padding: 12px 14px; }
+  .hero-demo-console { font-size: 0.66rem; padding: 12px 14px; height: 320px; overflow-y: hidden; }
   .hero-demo-meters { padding: 10px 14px; }
 }
