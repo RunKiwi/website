@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useReducedMotion, useScroll, useMotionValueEvent } from 'framer-motion';
+import { useReducedMotion, useScroll, useMotionValueEvent, AnimatePresence, motion } from 'framer-motion';
 import { Reveal } from './Reveal';
 
 const TABS = ['Dashboard', 'Workspaces', 'Task List', 'Settings'] as const;
@@ -243,7 +243,17 @@ export default function KanbanDashboard() {
             </div>
             
             <div className="mockup-content">
-              {renderContent()}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {renderContent()}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
           </div>

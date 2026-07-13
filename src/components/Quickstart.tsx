@@ -3,20 +3,19 @@
 import { useState } from 'react';
 import { Reveal } from './Reveal';
 
-const serverSnippet = `# Build the Kiwi daemon
-go build -ldflags="-linkmode=external" -o kiwid cmd/kiwid/main.go
+const serverSnippet = `# Spin up the distributed Control Plane locally
+# (PostgreSQL, NATS JetStream, MinIO, API server, and LLMO)
+docker-compose up -d
 
-# Start the self-hosted daemon with Docker sandboxing + SQLite
-export USE_DOCKER="true"
-export KIWI_SERVER_TOKEN="my-secret-token-1234"
+# Or deploy the enterprise BYOC Runner in your VPC
+./kiwi-runner --saas-url wss://api.runkiwi.dev \\
+              --runner-token "your-org-token"`;
 
-./kiwid -addr :8080 -db kiwi.db`;
-
-const clientSnippet = `# Bring your own Anthropic key + a Bearer token for the daemon
+const clientSnippet = `# Bring your own Anthropic key (encrypted at rest)
 export ANTHROPIC_API_KEY="sk-ant-..."
 
-# Submit a task: repo/file + goal + test command
-./kiwi -token "my-secret-token-1234" \\
+# Submit a task to the Control Plane
+./kiwi -server "http://localhost:8080" \\
      -task "Fix division by zero in Divide()" \\
      -file demo_project/math_utils.go \\
      -test-cmd "go test ./demo_project/..."`;
