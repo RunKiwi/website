@@ -87,10 +87,17 @@ export default function Simulator() {
   const [activeSandboxKey, setActiveSandboxKey] = useState<string>('demo-api');
 
   const logsRef = useRef<HTMLDivElement>(null);
+  const isUserScrolledUp = useRef(false);
+
+  const handleLogsScroll = () => {
+    if (!logsRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = logsRef.current;
+    isUserScrolledUp.current = scrollTop + clientHeight < scrollHeight - 10;
+  };
   
   // Auto-scroll logs
   useEffect(() => {
-    if (logsRef.current) {
+    if (logsRef.current && !isUserScrolledUp.current) {
       logsRef.current.scrollTop = logsRef.current.scrollHeight;
     }
   }, [sandboxes, activeSandboxKey]);
@@ -118,6 +125,7 @@ export default function Simulator() {
                 sb.logs.push({ text: `[${timeStr}] Daemon memory cache miss for: ${keyNeeded}. Reverse tunnel is offline.`, type: 'warning' });
                 sb.logs.push({ text: `[${timeStr}] Task execution state paused. Awaiting CLI client resume.`, type: 'warning' });
               }
+              if (sb.logs.length > 100) sb.logs = sb.logs.slice(-100);
               next[k] = sb;
               updated = true;
             }
@@ -133,13 +141,17 @@ export default function Simulator() {
 
   const log = (text: string, type = 'info') => {
     const timeStr = new Date().toLocaleTimeString();
-    setSandboxes(prev => ({
-      ...prev,
-      [activeSandboxKey]: {
-        ...prev[activeSandboxKey],
-        logs: [...prev[activeSandboxKey].logs, { text: `[${timeStr}] ${text}`, type }]
-      }
-    }));
+    setSandboxes(prev => {
+      const newLogs = [...prev[activeSandboxKey].logs, { text: `[${timeStr}] ${text}`, type }];
+      if (newLogs.length > 100) newLogs.splice(0, newLogs.length - 100);
+      return {
+        ...prev,
+        [activeSandboxKey]: {
+          ...prev[activeSandboxKey],
+          logs: newLogs
+        }
+      };
+    });
   };
 
   const handleToggleLaptop = () => {
@@ -353,66 +365,37 @@ export default function Simulator() {
                 </div>
                 
                 <div className="visual-card-body">
-                  <div className="sandbox-graphic-container desktop-only-visual">
-                    <div className="graphic-node">
+                  <div className="sandbox-graphic-container w-full flex flex-col md:flex-row items-center justify-between relative py-4">
+                    <div className="graphic-node flex flex-row md:flex-col items-center gap-4 md:gap-2 w-full max-w-[280px] md:max-w-none md:w-auto bg-white/5 md:bg-transparent border border-white/10 md:border-transparent rounded-lg p-3 md:p-0 relative">
                       <div className={`node-glow-wrapper laptop-glow ${sb.laptopOpen ? 'active' : ''}`}></div>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" strokeWidth="2">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" strokeWidth="2" className="relative z-10">
                         <polyline points="16 18 22 12 16 6"></polyline>
                         <polyline points="8 6 2 12 8 18"></polyline>
                       </svg>
-                      <span className="node-name">Local CLI</span>
-                      <span className="node-sub" style={{ color: sb.laptopOpen ? 'var(--secondary)' : 'var(--error)' }}>
-                        {sb.laptopOpen ? 'Connected' : 'Disconnected'}
-                      </span>
-                    </div>
-
-                    <div className="graphic-tunnel-wrapper">
-                      <div className={`graphic-tunnel-line ${sb.laptopOpen ? 'active' : ''}`}></div>
-                      {sb.laptopOpen && <div className="graphic-tunnel-pulse"></div>}
-                      <span className="graphic-tunnel-label">REVERSE TUNNEL</span>
-                    </div>
-
-                    <div className="graphic-node">
-                      <div className={`node-glow-wrapper container-glow ${containerGlowActive ? 'active' : ''}`} style={{ borderColor: containerGlowColor, boxShadow: containerGlowShadow }}></div>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                      </svg>
-                      <span className="node-name">Docker Sandbox</span>
-                      <span className="node-sub">{sb.status === 'RUNNING' ? 'Active Loop' : sb.status === 'PAUSED' ? 'Paused' : sb.status === 'COMPLETED' ? 'Resolved' : 'Stopped'}</span>
-                    </div>
-                  </div>
-
-                  <div className="sandbox-graphic-container-mobile mobile-only-visual">
-                    <div className="graphic-node-mobile">
-                      <div className={`node-glow-wrapper-mobile laptop-glow ${sb.laptopOpen ? 'active' : ''}`}></div>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" strokeWidth="2">
-                        <polyline points="16 18 22 12 16 6"></polyline>
-                        <polyline points="8 6 2 12 8 18"></polyline>
-                      </svg>
-                      <div className="node-mobile-info">
-                        <span className="node-mobile-name">Local CLI</span>
-                        <span className="node-mobile-sub" style={{ color: sb.laptopOpen ? 'var(--secondary)' : 'var(--error)' }}>
+                      <div className="flex flex-col text-left md:text-center relative z-10 flex-1 md:flex-auto">
+                        <span className="node-name text-sm md:text-base">Local CLI</span>
+                        <span className="node-sub text-xs md:text-sm" style={{ color: sb.laptopOpen ? 'var(--secondary)' : 'var(--error)' }}>
                           {sb.laptopOpen ? 'Connected' : 'Disconnected'}
                         </span>
                       </div>
                     </div>
 
-                    <div className="graphic-tunnel-wrapper-mobile">
-                      <div className={`graphic-tunnel-line-mobile ${sb.laptopOpen ? 'active' : ''}`}></div>
-                      {sb.laptopOpen && <div className="graphic-tunnel-pulse-mobile"></div>}
-                      <span className="graphic-tunnel-label-mobile">REVERSE TUNNEL</span>
+                    <div className="graphic-tunnel-wrapper w-1 md:w-32 h-12 md:h-auto my-4 md:my-0 flex items-center justify-center relative">
+                      <div className={`graphic-tunnel-line absolute inset-0 ${sb.laptopOpen ? 'active' : ''}`}></div>
+                      {sb.laptopOpen && <div className="graphic-tunnel-pulse"></div>}
+                      <span className="graphic-tunnel-label absolute left-6 md:left-1/2 md:-translate-x-1/2 md:-top-6 text-[10px] md:text-xs whitespace-nowrap text-muted font-mono">REVERSE TUNNEL</span>
                     </div>
 
-                    <div className="graphic-node-mobile">
-                      <div className={`node-glow-wrapper-mobile container-glow ${containerGlowActive ? 'active' : ''}`} style={{ borderColor: containerGlowColor, boxShadow: containerGlowShadow }}></div>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2">
+                    <div className="graphic-node flex flex-row md:flex-col items-center gap-4 md:gap-2 w-full max-w-[280px] md:max-w-none md:w-auto bg-white/5 md:bg-transparent border border-white/10 md:border-transparent rounded-lg p-3 md:p-0 relative">
+                      <div className={`node-glow-wrapper container-glow ${containerGlowActive ? 'active' : ''}`} style={{ borderColor: containerGlowColor, boxShadow: containerGlowShadow }}></div>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" className="relative z-10">
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
                       </svg>
-                      <div className="node-mobile-info">
-                        <span className="node-mobile-name">Docker Sandbox</span>
-                        <span className="node-mobile-sub">{sb.status === 'RUNNING' ? 'Active Loop' : sb.status === 'PAUSED' ? 'Paused' : sb.status === 'COMPLETED' ? 'Resolved' : 'Stopped'}</span>
+                      <div className="flex flex-col text-left md:text-center relative z-10 flex-1 md:flex-auto">
+                        <span className="node-name text-sm md:text-base">Docker Sandbox</span>
+                        <span className="node-sub text-xs md:text-sm">{sb.status === 'RUNNING' ? 'Active Loop' : sb.status === 'PAUSED' ? 'Paused' : sb.status === 'COMPLETED' ? 'Resolved' : 'Stopped'}</span>
                       </div>
                     </div>
                   </div>
@@ -502,7 +485,7 @@ export default function Simulator() {
               <span>Diagnostic Logs Console Output</span>
               <button className="btn-clear-logs" onClick={handleClearLogs}>Clear</button>
             </div>
-            <div className="logs-window-content" ref={logsRef}>
+            <div className="logs-window-content" ref={logsRef} onScroll={handleLogsScroll}>
               {sb.logs.map((l, i) => (
                 <div key={i} className={`log-row ${l.type}`}>{l.text}</div>
               ))}
