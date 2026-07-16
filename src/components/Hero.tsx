@@ -15,15 +15,15 @@ export default function Hero() {
             <span className="badge-text">The Swarm Control Center</span>
           </div>
           <h1 className="hero-title">
-            The BYOC Swarm Engine for <em className="text-gradient">Startup Engineering.</em>
+            The <em className="text-gradient">swarm intelligence</em> for software engineering.
           </h1>
           <p className="hero-subtitle">
-            Massively parallel AI execution in your own AWS/GCP account. Zero-knowledge security. Native SDKs. Build the product, we'll orchestrate the swarm.
+            Stop waiting on single-agent loops. Assign a complex epic and watch Kiwi deploy a fleet of parallel agents to architect, build, test, and ship a production-ready PR.
           </p>
 
           <div className="hero-actions">
             <Link href="#quickstart" className="btn btn-primary" id="hero-primary-btn">
-              Get the Terraform snippet
+              Deploy your swarm
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -32,7 +32,7 @@ export default function Hero() {
           </div>
 
           <p className="hero-microcopy">
-            Bring your own cloud · zero-knowledge security · headless by design
+            Bring your own LLM · Zero-knowledge security · Headless by design
           </p>
 
           <div className="hero-cli-install">

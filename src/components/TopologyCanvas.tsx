@@ -5,98 +5,114 @@ import { Reveal } from './Reveal';
 
 export default function TopologyCanvas() {
   return (
-    <section className="dashboard-section py-24 bg-black text-white relative overflow-hidden">
-      <div className="container mx-auto px-6 relative z-10">
-        <Reveal as="div" className="section-header text-center mb-16 max-w-3xl mx-auto">
-          <span className="text-indigo-400 font-mono text-sm tracking-wider uppercase mb-4 block">Topology Canvas</span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">Interactive DAG Visualization</h2>
-          <p className="text-gray-400 text-lg md:text-xl">
+    <section id="topology" className="simulator-section" style={{ borderTop: '1px solid var(--border)' }}>
+      <div className="container">
+        <Reveal as="div" className="section-header">
+          <span className="section-eyebrow">Topology Canvas</span>
+          <h2 className="section-title">Interactive DAG Visualization</h2>
+          <p className="section-subtitle">
             As the Orchestrator plans out the task, the Topology Canvas maps the dependencies in real-time. Follow the dependency chain until every node lights up green.
           </p>
         </Reveal>
 
-        <Reveal as="div" className="relative w-full max-w-5xl mx-auto h-[500px] bg-[#0a0a0a] border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
-          {/* SVG Lines connecting nodes */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-            {/* From Root to sub-tasks */}
-            <path d="M 500 80 C 500 150, 250 150, 250 200" stroke="#333" strokeWidth="2" fill="none" />
-            <path d="M 500 80 C 500 150, 500 150, 500 200" stroke="#333" strokeWidth="2" fill="none" />
-            <path d="M 500 80 C 500 150, 750 150, 750 200" stroke="#333" strokeWidth="2" fill="none" />
+        <Reveal as="div" className="control-console" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div className="console-glow"></div>
+          
+          <div className="console-telemetry-bar" style={{ justifyContent: 'space-between' }}>
+            <div className="telemetry-item">
+              <span className="t-dot active"></span>
+              <span className="t-label">DAG Planner:</span>
+              <span className="t-value text-gradient">ACTIVE</span>
+            </div>
+            <div className="mockup-browser-url" style={{ fontFamily: 'var(--custom-font-mono)', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+              Epic #4421 Execution Graph
+            </div>
+          </div>
+          
+          <div className="console-body" style={{ position: 'relative', height: '540px', background: 'var(--bg-inset)', display: 'block', overflow: 'hidden' }}>
             
-            {/* From sub-tasks to Final PR */}
-            <path d="M 250 280 C 250 350, 500 350, 500 420" stroke="#333" strokeWidth="2" fill="none" />
-            <path d="M 500 280 C 500 350, 500 350, 500 420" stroke="#333" strokeWidth="2" fill="none" />
-            <path d="M 750 280 C 750 350, 500 350, 500 420" stroke="#333" strokeWidth="2" fill="none" />
-          </svg>
+            {/* SVG Lines connecting nodes */}
+            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
+              {/* From Root to sub-tasks */}
+              <path d="M 500 110 C 500 180, 250 180, 250 230" stroke="var(--border)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+              <path d="M 500 110 C 500 180, 500 180, 500 230" stroke="var(--border)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+              <path d="M 500 110 C 500 180, 750 180, 750 230" stroke="var(--border)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+              
+              {/* From sub-tasks to Final PR */}
+              <path d="M 250 310 C 250 380, 500 380, 500 450" stroke="var(--border)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+              <path d="M 500 310 C 500 380, 500 380, 500 450" stroke="var(--border)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+              <path d="M 750 310 C 750 380, 500 380, 500 450" stroke="var(--border)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+            </svg>
 
-          {/* Root Node */}
-          <motion.div 
-            className="absolute left-1/2 top-[40px] -translate-x-1/2 w-64 bg-gray-900 border-2 border-indigo-500 rounded-lg p-4 z-10 flex flex-col items-center shadow-[0_0_15px_rgba(99,102,241,0.5)]"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <span className="text-xs font-mono text-indigo-400 mb-1">Epic #4421</span>
-            <span className="font-semibold text-center text-sm">Implement OAuth Login Flow</span>
-            <span className="mt-2 text-[10px] bg-indigo-900/50 text-indigo-300 px-2 py-1 rounded-full uppercase tracking-wide">Planner Active</span>
-          </motion.div>
+            {/* Root Node */}
+            <motion.div 
+              style={{ position: 'absolute', left: '50%', top: '50px', transform: 'translateX(-50%)', width: '280px', background: 'var(--bg-card)', border: '1px solid var(--primary)', borderRadius: '12px', padding: '16px', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 0 20px var(--primary-glow)' }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <span style={{ fontSize: '0.75rem', fontFamily: 'var(--custom-font-mono)', color: 'var(--primary)', marginBottom: '4px' }}>Epic #4421</span>
+              <span style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-main)', textAlign: 'center' }}>Implement OAuth Login Flow</span>
+              <span style={{ marginTop: '12px', fontSize: '0.65rem', background: 'var(--primary-glow)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '99px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Planner Active</span>
+            </motion.div>
 
-          {/* Sub-Task 1 */}
-          <motion.div 
-            className="absolute left-[250px] top-[200px] -translate-x-1/2 w-56 bg-gray-900 border border-green-500 rounded-lg p-3 z-10 flex flex-col items-center"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <span className="text-xs font-mono text-gray-500 mb-1">T-4421-A</span>
-            <span className="text-center text-sm mb-2 text-gray-300">Google OAuth Provider</span>
-            <span className="text-[10px] bg-green-900/50 text-green-400 px-2 py-1 rounded-full uppercase tracking-wide flex items-center gap-1">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              Resolved
-            </span>
-          </motion.div>
+            {/* Sub-Task 1 */}
+            <motion.div 
+              style={{ position: 'absolute', left: '250px', top: '230px', transform: 'translateX(-50%)', width: '220px', background: 'var(--bg-panel)', border: '1px solid var(--success)', borderRadius: '12px', padding: '16px', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <span style={{ fontSize: '0.7rem', fontFamily: 'var(--custom-font-mono)', color: 'var(--text-muted)', marginBottom: '4px' }}>T-4421-A</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', textAlign: 'center', marginBottom: '12px' }}>Google OAuth Provider</span>
+              <span style={{ fontSize: '0.65rem', background: 'rgba(79, 180, 119, 0.15)', color: 'var(--success)', padding: '4px 10px', borderRadius: '99px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Resolved
+              </span>
+            </motion.div>
 
-          {/* Sub-Task 2 */}
-          <motion.div 
-            className="absolute left-1/2 top-[200px] -translate-x-1/2 w-56 bg-gray-900 border border-blue-500 rounded-lg p-3 z-10 flex flex-col items-center shadow-[0_0_10px_rgba(59,130,246,0.3)]"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            <span className="text-xs font-mono text-gray-500 mb-1">T-4421-B</span>
-            <span className="text-center text-sm mb-2 text-white">GitHub OAuth Provider</span>
-            <span className="text-[10px] bg-blue-900/50 text-blue-400 px-2 py-1 rounded-full uppercase tracking-wide flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
-              Running...
-            </span>
-          </motion.div>
+            {/* Sub-Task 2 */}
+            <motion.div 
+              style={{ position: 'absolute', left: '500px', top: '230px', transform: 'translateX(-50%)', width: '220px', background: 'var(--bg-card)', border: '1px solid var(--primary)', borderRadius: '12px', padding: '16px', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 0 15px var(--primary-glow)' }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <span style={{ fontSize: '0.7rem', fontFamily: 'var(--custom-font-mono)', color: 'var(--text-muted)', marginBottom: '4px' }}>T-4421-B</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', textAlign: 'center', marginBottom: '12px' }}>GitHub OAuth Provider</span>
+              <span style={{ fontSize: '0.65rem', background: 'var(--primary-glow)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '99px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary)', animation: 'pulse-dot 1.5s infinite alternate' }}></div>
+                Running...
+              </span>
+            </motion.div>
 
-          {/* Sub-Task 3 */}
-          <motion.div 
-            className="absolute left-[750px] top-[200px] -translate-x-1/2 w-56 bg-gray-900 border border-yellow-500 rounded-lg p-3 z-10 flex flex-col items-center"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            <span className="text-xs font-mono text-gray-500 mb-1">T-4421-C</span>
-            <span className="text-center text-sm mb-2 text-gray-300">Session JWT Middleware</span>
-            <span className="text-[10px] bg-yellow-900/50 text-yellow-400 px-2 py-1 rounded-full uppercase tracking-wide">
-              Paused (Needs Env)
-            </span>
-          </motion.div>
+            {/* Sub-Task 3 */}
+            <motion.div 
+              style={{ position: 'absolute', left: '750px', top: '230px', transform: 'translateX(-50%)', width: '220px', background: 'var(--bg-panel)', border: '1px solid var(--warning)', borderRadius: '12px', padding: '16px', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <span style={{ fontSize: '0.7rem', fontFamily: 'var(--custom-font-mono)', color: 'var(--text-muted)', marginBottom: '4px' }}>T-4421-C</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', textAlign: 'center', marginBottom: '12px' }}>Session JWT Middleware</span>
+              <span style={{ fontSize: '0.65rem', background: 'rgba(232, 161, 59, 0.15)', color: 'var(--warning)', padding: '4px 10px', borderRadius: '99px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Paused (Needs Env)
+              </span>
+            </motion.div>
 
-          {/* Final PR Node */}
-          <motion.div 
-            className="absolute left-1/2 top-[420px] -translate-x-1/2 w-64 bg-[#0a0a0a] border border-gray-700 rounded-lg p-4 z-10 flex flex-col items-center opacity-50"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 0.5 }}
-            transition={{ delay: 1.0 }}
-          >
-            <span className="text-xs font-mono text-gray-500 mb-1">Merge Gate</span>
-            <span className="font-semibold text-center text-sm text-gray-400">Generate Pull Request</span>
-            <span className="mt-2 text-[10px] bg-gray-800 text-gray-500 px-2 py-1 rounded-full uppercase tracking-wide">Awaiting Dependencies</span>
-          </motion.div>
+            {/* Final PR Node */}
+            <motion.div 
+              style={{ position: 'absolute', left: '500px', top: '450px', transform: 'translateX(-50%)', width: '260px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 0.6 }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 0.6 }}
+              transition={{ delay: 1.0 }}
+            >
+              <span style={{ fontSize: '0.7rem', fontFamily: 'var(--custom-font-mono)', color: 'var(--text-dim)', marginBottom: '4px' }}>Merge Gate</span>
+              <span style={{ fontWeight: 500, fontSize: '0.9rem', color: 'var(--text-muted)', textAlign: 'center', marginBottom: '12px' }}>Generate Pull Request</span>
+              <span style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.05)', color: 'var(--text-dim)', padding: '4px 10px', borderRadius: '99px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Awaiting Dependencies</span>
+            </motion.div>
 
+          </div>
         </Reveal>
       </div>
     </section>
