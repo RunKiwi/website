@@ -15,11 +15,11 @@ const features: Feature[] = [
     ),
     title: (
       <>
-        A second pair of eyes on every change
-        <span className="feature-tag">Bring your own LLM</span>
+        Bring Your Own Cloud (BYOC)
+        <span className="feature-tag">1-Click Terraform</span>
       </>
     ),
-    desc: 'One agent writes the fix, another approves it. No blind auto-edits.',
+    desc: 'Deploy the KiwiDaemon via Terraform. Your proprietary code never leaves your VPC. We just send the instructions.',
   },
   {
     icon: (
@@ -28,8 +28,8 @@ const features: Feature[] = [
         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
       </svg>
     ),
-    title: 'Your secrets stay yours',
-    desc: 'Credentials pulled from your machine only when needed — never written to the sandbox. Close your laptop; the run keeps going.',
+    title: 'Zero-Knowledge Credentials',
+    desc: 'API keys are encrypted at the edge using Asymmetric cryptography. Our Control Plane never sees your plaintext keys.',
   },
   {
     icon: (
@@ -37,8 +37,8 @@ const features: Feature[] = [
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
       </svg>
     ),
-    title: 'Runs that can’t run away',
-    desc: 'Isolated, network-locked sandboxes with hard cost caps. No runaway host — or bill.',
+    title: 'Massive Swarm Parallelization',
+    desc: 'Our Orchestrator breaks massive issues into a DAG of sub-tasks, executing across 50+ sandboxes simultaneously.',
   },
   {
     icon: (
@@ -48,8 +48,8 @@ const features: Feature[] = [
         <line x1="6" y1="20" x2="6" y2="14"></line>
       </svg>
     ),
-    title: 'Watch your agent think',
-    desc: 'Every plan, edit, and test — live, with token and cost counts. No black-box runs.',
+    title: 'Lightning-Fast Caching',
+    desc: 'Utilizing LFU git-worktree isolation, sandboxes are provisioned in milliseconds without redownloading heavy dependencies.',
   },
   {
     icon: (
@@ -57,8 +57,8 @@ const features: Feature[] = [
         <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
       </svg>
     ),
-    title: 'Never lose a run',
-    desc: 'Restarts resume from the last checkpoint, not from scratch. Retries never double-charge.',
+    title: 'Headless Integrations',
+    desc: 'Trigger the Swarm automatically from Linear ticket transitions, GitHub comments, or natively via our Node/Python SDK.',
   },
 ];
 

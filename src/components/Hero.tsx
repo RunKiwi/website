@@ -12,39 +12,39 @@ export default function Hero() {
         <Reveal as="div" className="hero-content" stagger>
           <div className="badge" id="hero-announcement-badge">
             <span className="badge-dot"></span>
-            <span className="badge-text">Control Plane for LLM Agents</span>
+            <span className="badge-text">The Swarm Control Center</span>
           </div>
           <h1 className="hero-title">
-            Run agents like <em className="text-gradient">production</em>, not like a demo.
+            The BYOC Swarm Engine for <em className="text-gradient">Startup Engineering.</em>
           </h1>
           <p className="hero-subtitle">
-            Give your AI coding agents a safe place to work. Kiwi runs them in isolated sandboxes, keeps your secrets on your machine, streams every move live, and never loses a run.
+            Massively parallel AI execution in your own AWS/GCP account. Zero-knowledge security. Native SDKs. Build the product, we'll orchestrate the swarm.
           </p>
 
           <div className="hero-actions">
             <Link href="#quickstart" className="btn btn-primary" id="hero-primary-btn">
-              Start a run
+              Get the Terraform snippet
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </Link>
-            <Link href="#how-it-works" className="btn btn-outline" id="hero-secondary-btn">See it live</Link>
+            <Link href="#how-it-works" className="btn btn-outline" id="hero-secondary-btn">See the swarm</Link>
           </div>
 
           <p className="hero-microcopy">
-            Bring your own LLM — Anthropic, Codex, or Gemini · self-hosted · no credit card
+            Bring your own cloud · zero-knowledge security · headless by design
           </p>
 
           <div className="hero-cli-install">
             <div className="cli-container">
               <span className="cli-prompt" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>$</span>
-              <code className="cli-command" id="install-command-text" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>git clone https://github.com/runkiwi/kiwi</code>
+              <code className="cli-command" id="install-command-text" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>npm install -g kiwi-cli</code>
               <button
                 className="cli-copy-btn"
                 id="copy-install-btn"
                 title="Copy to clipboard"
-                aria-label="Copy clone command"
-                onClick={() => navigator.clipboard.writeText('git clone https://github.com/runkiwi/kiwi')}
+                aria-label="Copy install command"
+                onClick={() => navigator.clipboard.writeText('npm install -g kiwi-cli')}
               >
                 <svg className="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>

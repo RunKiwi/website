@@ -2,9 +2,9 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import ValueBanner from '@/components/ValueBanner';
 import Marquee from '@/components/Marquee';
-import Simulator from '@/components/Simulator';
+import GodView from '@/components/GodView';
 import FeaturesGrid from '@/components/FeaturesGrid';
-import KanbanDashboard from '@/components/KanbanDashboard';
+import TopologyCanvas from '@/components/TopologyCanvas';
 import Quickstart from '@/components/Quickstart';
 import Footer from '@/components/Footer';
 
@@ -18,9 +18,9 @@ export default function Home() {
         <Marquee />
         {/* Alternating dark/cream rhythm: features on cream, console dark. */}
         <FeaturesGrid theme="cream" />
-        <Simulator />
+        <GodView />
         <Quickstart theme="cream" />
-        <KanbanDashboard />
+        <TopologyCanvas />
       </main>
       <Footer />
     </>
