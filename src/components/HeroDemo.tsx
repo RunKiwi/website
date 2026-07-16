@@ -30,16 +30,15 @@ type Step = {
 
 // Timeline (ms offsets). Total loop ~ 8.2s then restart.
 const STEPS: Step[] = [
-  { kind: 'cmd',    lead: '$', text: 'kiwi run --test "go test ./..."', atMs: 400 },
-  { kind: 'cmd',    lead: '→', text: '[initial_test] go test ./...', atMs: 1100 },
-  { kind: 'fail',   lead: '✗', text: 'panic: runtime error: integer divide by zero', atMs: 1900 },
-  { kind: 'actor',  lead: '[actor]', text: 'proposing guard in math_utils.go:43', atMs: 2700 },
-  { kind: 'diff',   atMs: 3300 },
-  { kind: 'chip',   text: '🔒 secret pulled just-in-time', atMs: 4300 },
-  { kind: 'critic', lead: '[critic]', text: 'approved — safe, minimal fix', atMs: 5100 },
-  { kind: 'cmd',    lead: '→', text: '[verify] go test ./...', atMs: 5900 },
-  { kind: 'pass',   lead: '✓', text: 'ok  demo_project  0.42s — 14/14 passing', atMs: 6700 },
-  { kind: 'success',lead: '●', text: 'RESOLVED — diff synced back to your machine', atMs: 7400 },
+  { kind: 'cmd',    lead: '$', text: 'kiwi submit "Migrate database to Postgres"', atMs: 400 },
+  { kind: 'actor',  lead: '[orchestrator]', text: 'Planning DAG... 5 sub-tasks identified.', atMs: 1400 },
+  { kind: 'chip',   text: '🚀 Spinning up 5 isolated sandboxes in parallel', atMs: 2500 },
+  { kind: 'info' as StepKind, lead: '[swarm]', text: 'Task 1 (Schema) ... RUNNING', atMs: 3200 },
+  { kind: 'info' as StepKind, lead: '[swarm]', text: 'Task 2 (Data Migrator) ... RUNNING', atMs: 3700 },
+  { kind: 'pass',   lead: '✓', text: 'Task 1 (Schema) ... RESOLVED', atMs: 4800 },
+  { kind: 'pass',   lead: '✓', text: 'Task 2 (Data Migrator) ... RESOLVED', atMs: 5300 },
+  { kind: 'critic', lead: '[verify]', text: 'Integration tests passed. (12/12)', atMs: 6200 },
+  { kind: 'success',lead: '●', text: 'RESOLVED — Shipped PR #42 to GitHub', atMs: 7200 },
 ];
 
 const LOOP_MS = 8600;

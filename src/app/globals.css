@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
 
 /* CSS Design System for runkiwi.dev */
 
@@ -1921,89 +1922,139 @@ code {
   line-height: 1.6;
 }
 
-/* Quickstart security panel */
+/* Quickstart security panel (Redesigned Bento Box) */
 .security-panel {
   margin-top: 28px;
   background-color: var(--bg-card);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--primary);
-  border-radius: 16px;
-  padding: 28px 32px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .security-panel-head {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 22px;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 .security-panel-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--primary-glow);
   color: var(--primary);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 0 15px var(--primary-glow);
 }
 
 .security-eyebrow {
   display: block;
   font-family: var(--font-heading);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 4px;
+  color: var(--primary);
+  margin-bottom: 6px;
 }
 
 .security-panel-title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.8rem;
   font-weight: 560;
   margin: 0;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
 }
 
 .theme-cream .security-panel {
-  background-color: #fbfaf6;
+  background-color: rgba(255, 255, 255, 0.85);
   border-color: rgba(0, 0, 0, 0.08);
-  border-left: 3px solid var(--primary-dark);
   box-shadow: 0 12px 34px rgba(40, 40, 30, 0.10);
 }
-.theme-cream .security-panel-icon { color: var(--primary-dark); background: rgba(78, 144, 24, 0.12); }
+.theme-cream .security-panel-icon { color: var(--primary-dark); background: rgba(78, 144, 24, 0.12); border-color: rgba(78, 144, 24, 0.2); }
 
-.security-list {
-  list-style: none;
+.security-bento-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px 28px;
-  padding: 0;
-  margin: 0;
+  gap: 16px;
 }
 
-.security-list-item {
+.security-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 24px;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  flex-direction: column;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.security-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(140, 230, 44, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(140, 230, 44, 0.05);
+}
+
+.theme-cream .security-card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.theme-cream .security-card:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(78, 144, 24, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.security-card-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--primary-glow);
+  color: var(--primary);
+  margin-bottom: 16px;
+  border: 1px solid var(--border-glow);
+}
+
+.theme-cream .security-card-icon-wrapper {
+  background: rgba(78, 144, 24, 0.12);
+  color: var(--primary-dark);
+  border-color: rgba(78, 144, 24, 0.2);
+}
+
+.security-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
+.security-card-desc {
   color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-.security-check {
-  color: var(--primary);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
 @media (max-width: 768px) {
-  .security-list {
+  .security-bento-grid {
     grid-template-columns: 1fr;
+  }
+  .security-panel {
+    padding: 24px;
   }
 }
 

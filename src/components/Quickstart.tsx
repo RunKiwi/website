@@ -2,34 +2,62 @@
 
 import { useState } from 'react';
 import { Reveal } from './Reveal';
+import { Copy, ShieldCheck, Check, Lock, Network, Key, Database } from 'lucide-react';
 
-const serverSnippet = `# Spin up the distributed Control Plane locally
-# (PostgreSQL, NATS JetStream, MinIO, API server, and LLMO)
-docker-compose up -d
+const byocSnippet = `# 1. Login to the SaaS Control Plane
+kiwi login
 
-# Or deploy the enterprise BYOC Runner in your VPC
-./kiwi-runner --saas-url wss://api.runkiwi.dev \\
-              --runner-token "your-org-token"`;
+# 2. Deploy the secure daemon in your VPC
+kiwidaemon --token <ORG_TOKEN>
 
-const clientSnippet = `# Bring your own Anthropic key (encrypted at rest)
-export ANTHROPIC_API_KEY="sk-ant-..."
+# 3. Submit a massive epic to the Swarm
+kiwi submit "Migrate auth to NextAuth"`;
 
-# Submit a task to the Control Plane
-./kiwi -server "http://localhost:8080" \\
-     -task "Fix division by zero in Divide()" \\
-     -file demo_project/math_utils.go \\
-     -test-cmd "go test ./demo_project/..."`;
+const ossSnippet = `# Deploy the entire orchestrator, database, queue, 
+# and agents on your own hardware using Docker.
 
-const securityBullets = [
-  'Your secrets stay on your machine — pulled just-in-time over the reverse tunnel, cached only in the daemon’s memory for the run, and never written to the sandbox.',
-  'Every run is network-locked (--network=none), so a rogue agent can’t phone home or reach your host.',
-  'Your Anthropic key is encrypted at rest and only decrypted to make a call (AES-256-GCM).',
-  'Each org gets its own walled-off space, with per-org limits and an audit trail of every task.',
-  'Budget caps stop runaway spend before a job even starts.',
+git clone https://github.com/runkiwi/kiwi.git
+cd kiwi
+docker-compose up -d`;
+
+const securityFeatures = [
+  {
+    icon: <Lock className="w-5 h-5 text-primary" />,
+    title: 'Zero-Knowledge Execution',
+    desc: 'Secrets are pulled JIT over a reverse tunnel, cached in-memory only, and never written to disk.',
+  },
+  {
+    icon: <Network className="w-5 h-5 text-primary" />,
+    title: 'Network-Locked Sandboxes',
+    desc: 'Every run is isolated (--network=none). Rogue agents cannot phone home or reach your internal network.',
+  },
+  {
+    icon: <Key className="w-5 h-5 text-primary" />,
+    title: 'Asymmetric Encryption',
+    desc: 'API keys are encrypted at rest (AES-256-GCM) and decrypted only to make a secure outbound call.',
+  },
+  {
+    icon: <Database className="w-5 h-5 text-primary" />,
+    title: 'Walled-Off Organization',
+    desc: 'Isolated spaces per organization with strict limits, budget caps, and full audit trails of every task.',
+  },
 ];
 
 export default function Quickstart({ theme }: { theme?: 'cream' }) {
-  const [activeTab, setActiveTab] = useState<'server' | 'client'>('server');
+  const [activeTab, setActiveTab] = useState<'byoc' | 'oss'>('byoc');
+  const [copiedByoc, setCopiedByoc] = useState(false);
+  const [copiedOss, setCopiedOss] = useState(false);
+
+  const handleCopy = (text: string, type: 'byoc' | 'oss') => {
+    navigator.clipboard.writeText(text);
+    if (type === 'byoc') {
+      setCopiedByoc(true);
+      setTimeout(() => setCopiedByoc(false), 2000);
+    } else {
+      setCopiedOss(true);
+      setTimeout(() => setCopiedOss(false), 2000);
+    }
+  };
 
   return (
     <section id="quickstart" className={`quickstart-section ${theme === 'cream' ? 'theme-cream' : ''}`}>
@@ -38,89 +66,81 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
           <span className="section-eyebrow">Quickstart</span>
           <h2 className="section-title">Start a run in a few commands</h2>
           <p className="section-subtitle">
-            Run the self-hosted daemon, then submit a task from the CLI with your own Anthropic key. No credit card, no cloud account required.
+            Use our managed Control Plane to orchestrate the swarm in your own VPC, or self-host the entire stack open-source.
           </p>
         </Reveal>
 
         <Reveal as="div" className="quickstart-tabs-wrapper">
           <div className="quickstart-tabs">
             <button
-              className={`tab-btn ${activeTab === 'server' ? 'active' : ''}`}
-              onClick={() => setActiveTab('server')}
+              className={`tab-btn ${activeTab === 'byoc' ? 'active' : ''}`}
+              onClick={() => setActiveTab('byoc')}
             >
-              1. Start the daemon
+              Cloud Control + BYOC
             </button>
             <button
-              className={`tab-btn ${activeTab === 'client' ? 'active' : ''}`}
-              onClick={() => setActiveTab('client')}
+              className={`tab-btn ${activeTab === 'oss' ? 'active' : ''}`}
+              onClick={() => setActiveTab('oss')}
             >
-              2. Submit a task
+              Full Open Source
             </button>
           </div>
 
           <div className="tab-content-wrapper">
-            {/* Server Code Panel */}
-            <div className={`code-panel ${activeTab === 'server' ? 'active' : ''}`}>
+            {/* BYOC Code Panel */}
+            <div className={`code-panel ${activeTab === 'byoc' ? 'active' : ''}`}>
               <div className="panel-header">
-                <span>Daemon host (self-hosted server)</span>
+                <span>Developer CLI (app.runkiwi.dev)</span>
                 <button
                   className="code-copy-btn"
-                  aria-label="Copy daemon commands"
-                  onClick={() => navigator.clipboard.writeText(serverSnippet)}
+                  aria-label="Copy BYOC commands"
+                  onClick={() => handleCopy(byocSnippet, 'byoc')}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                  </svg>
-                  Copy
+                  {copiedByoc ? <Check className="w-4 h-4 mr-1 text-green-500" /> : <Copy className="w-4 h-4 mr-1" />}
+                  {copiedByoc ? 'Copied' : 'Copy'}
                 </button>
               </div>
-              <pre><code>{serverSnippet}</code></pre>
+              <pre><code>{byocSnippet}</code></pre>
             </div>
 
-            {/* Client Code Panel */}
-            <div className={`code-panel ${activeTab === 'client' ? 'active' : ''}`}>
+            {/* OSS Code Panel */}
+            <div className={`code-panel ${activeTab === 'oss' ? 'active' : ''}`}>
               <div className="panel-header">
-                <span>Local machine (developer CLI)</span>
+                <span>On-Prem Host</span>
                 <button
                   className="code-copy-btn"
-                  aria-label="Copy CLI commands"
-                  onClick={() => navigator.clipboard.writeText(clientSnippet)}
+                  aria-label="Copy OSS commands"
+                  onClick={() => handleCopy(ossSnippet, 'oss')}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                  </svg>
-                  Copy
+                  {copiedOss ? <Check className="w-4 h-4 mr-1 text-green-500" /> : <Copy className="w-4 h-4 mr-1" />}
+                  {copiedOss ? 'Copied' : 'Copy'}
                 </button>
               </div>
-              <pre><code>{clientSnippet}</code></pre>
+              <pre><code>{ossSnippet}</code></pre>
             </div>
           </div>
 
           <div className="security-panel">
             <div className="security-panel-head">
               <span className="security-panel-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+                <ShieldCheck className="w-6 h-6 text-primary" />
               </span>
               <div>
                 <span className="security-eyebrow">Built-in security</span>
                 <h3 className="security-panel-title">Safe by default, from the very first run</h3>
               </div>
             </div>
-            <ul className="security-list">
-              {securityBullets.map((bullet, i) => (
-                <li key={i} className="security-list-item">
-                  <svg className="security-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  <span>{bullet}</span>
-                </li>
+            <div className="security-bento-grid">
+              {securityFeatures.map((feature, i) => (
+                <div key={i} className="security-card">
+                  <div className="security-card-icon-wrapper">
+                    {feature.icon}
+                  </div>
+                  <h4 className="security-card-title">{feature.title}</h4>
+                  <p className="security-card-desc">{feature.desc}</p>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </Reveal>
       </div>
