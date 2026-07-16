@@ -1,0 +1,17 @@
+
+> runkiwi-website-next@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.31.237:3000
+- Environments: .env.local
+✓ Ready in 377ms
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+
+ GET / 200 in 447ms (next.js: 113ms, application-code: 333ms)
+ GET / 200 in 77ms (next.js: 4ms, application-code: 73ms)
+[?25h

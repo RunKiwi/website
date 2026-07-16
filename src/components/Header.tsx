@@ -14,12 +14,11 @@ export default function Header() {
           <Link href="#features" className="nav-link" id="nav-features-link">Features</Link>
           <Link href="#how-it-works" className="nav-link" id="nav-how-link">How It Works</Link>
           <Link href="#quickstart" className="nav-link" id="nav-quickstart-link">Quickstart</Link>
-          <Link href="#dashboard" className="nav-link" id="nav-dashboard-link">Dashboard</Link>
         </nav>
 
         <div className="header-actions">
-          <Link href="#quickstart" className="btn btn-secondary btn-sm" id="header-docs-btn">Read the docs</Link>
-          <Link href="#quickstart" className="btn btn-primary btn-sm" id="header-cta-btn">Start a run</Link>
+          <Link href="https://app.runkiwi.dev" className="btn btn-secondary btn-sm" id="header-docs-btn">Sign In</Link>
+          <Link href="#quickstart" className="btn btn-primary btn-sm" id="header-cta-btn">Deploy BYOC</Link>
         </div>
       </div>
     </header>
