@@ -4,6 +4,7 @@ import ValueBanner from '@/components/ValueBanner';
 import Marquee from '@/components/Marquee';
 import GodView from '@/components/GodView';
 import FeaturesGrid from '@/components/FeaturesGrid';
+import TierLadder from '@/components/TierLadder';
 import TopologyCanvas from '@/components/TopologyCanvas';
 import Quickstart from '@/components/Quickstart';
 import Footer from '@/components/Footer';
@@ -16,11 +17,14 @@ export default function Home() {
         <Hero />
         <ValueBanner />
         <Marquee />
-        {/* Alternating dark/cream rhythm: features on cream, console dark. */}
-        <FeaturesGrid theme="cream" />
+        {/* Story order: what it does (how-it-works) → why (features) →
+            the tier ladder → the architecture → start.
+            Alternating dark/cream rhythm for editorial contrast. */}
         <GodView />
-        <Quickstart theme="cream" />
+        <FeaturesGrid theme="cream" />
+        <TierLadder />
         <TopologyCanvas />
+        <Quickstart theme="cream" />
       </main>
       <Footer />
     </>

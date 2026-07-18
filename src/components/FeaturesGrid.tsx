@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { Cloud, Shield, Network, Zap, Terminal } from 'lucide-react';
+import { GitBranch, Network, GitPullRequest, RefreshCw, ShieldCheck, Terminal } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -9,34 +9,44 @@ type Feature = {
 
 const features: Feature[] = [
   {
-    icon: <Cloud className="w-6 h-6 text-primary" />,
+    icon: <GitBranch className="w-6 h-6 text-primary" />,
     title: (
       <>
-        Bring Your Own Cloud (BYOC)
-        <span className="feature-tag">1-Click Terraform</span>
+        A planner, not a prompt box
+        <span className="feature-tag">The moat</span>
       </>
     ),
-    desc: 'Deploy the KiwiDaemon via Terraform. Your proprietary code never leaves your VPC. We just send the instructions.',
-  },
-  {
-    icon: <Shield className="w-6 h-6 text-primary" />,
-    title: 'Zero-Knowledge Credentials',
-    desc: 'API keys are encrypted at the edge using Asymmetric cryptography. Our Control Plane never sees your plaintext keys.',
+    desc: 'A frontier-model planner decomposes one issue into a dependency graph of scoped workers — each with its own files, tools, and passing test command. This is the layer sandbox vendors hand back to you.',
   },
   {
     icon: <Network className="w-6 h-6 text-primary" />,
-    title: 'Massive Swarm Parallelization',
-    desc: 'Our Orchestrator breaks massive issues into a DAG of sub-tasks, executing across 50+ sandboxes simultaneously.',
+    title: 'A swarm that runs in parallel',
+    desc: 'The scheduler releases each worker the moment its dependencies go green, fanning out across dozens of isolated sandboxes at once. The ceiling is model inference, not machines.',
   },
   {
-    icon: <Zap className="w-6 h-6 text-primary" />,
-    title: 'Lightning-Fast Caching',
-    desc: 'Utilizing LFU git-worktree isolation, sandboxes are provisioned in milliseconds without redownloading heavy dependencies.',
+    icon: <GitPullRequest className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        One job, one branch, one PR
+        <span className="feature-tag">No review pile-up</span>
+      </>
+    ),
+    desc: 'Every worker commits to the same job branch, so 50 agents produce one reviewable PR — not 50 diffs. A terminal verify worker runs the full suite before the PR ever opens.',
+  },
+  {
+    icon: <RefreshCw className="w-6 h-6 text-primary" />,
+    title: 'Actor–Critic execution loop',
+    desc: 'Inside each sandbox an Actor writes the patch and a Critic reviews it, iterating against your test command until it passes — bounded by per-task step and USD budget caps.',
+  },
+  {
+    icon: <ShieldCheck className="w-6 h-6 text-primary" />,
+    title: 'Sealed credentials, default-deny egress',
+    desc: 'Credentials are sealed with X25519 and injected by a local proxy, so model-generated code never holds a raw key. Sandbox egress is allowlisted to the model, registries, and your VCS.',
   },
   {
     icon: <Terminal className="w-6 h-6 text-primary" />,
-    title: 'Headless Integrations',
-    desc: 'Trigger the Swarm automatically from Linear ticket transitions, GitHub comments, or natively via our Node/Python SDK.',
+    title: 'Integrations over dashboards',
+    desc: 'Fire the swarm from the kiwi CLI, the Node/Python SDK in CI, a labeled Linear ticket, or kiwi claude — a wrapper that offloads work straight from your terminal agent.',
   },
 ];
 
@@ -46,9 +56,9 @@ export default function FeaturesGrid({ theme }: { theme?: 'cream' }) {
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">Why Kiwi</span>
-          <h2 className="section-title">Everything you need to actually trust an agent</h2>
+          <h2 className="section-title">The layer above the sandbox</h2>
           <p className="section-subtitle">
-            Reviewed changes, secrets that stay home, contained runs, and nothing lost.
+            Anyone can hand you a container. Kiwi plans the work, runs the swarm, composes the result, and keeps the whole thing verified and contained.
           </p>
         </Reveal>
 

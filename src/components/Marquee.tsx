@@ -8,13 +8,15 @@
 
 type Item = { label: string };
 
-// The genuine Kiwi stack & integrations.
+// The genuine Kiwi stack & integrations — no logos we don't actually use.
 const STACK: Item[] = [
   { label: 'Anthropic Claude' },
   { label: 'Go' },
   { label: 'Docker' },
+  { label: 'Postgres' },
   { label: 'GitHub' },
-  { label: 'SQLite' },
+  { label: 'Linear' },
+  { label: 'Terraform' },
 ];
 
 function Spark() {
@@ -35,7 +37,7 @@ export default function Marquee() {
   return (
     <section className="marquee-section" aria-label="Kiwi's technology stack">
       <div className="container">
-        <p className="marquee-heading">Built on a stack you already trust</p>
+        <p className="marquee-heading">Built on a stack you already trust · Triggers from the tools you already use</p>
       </div>
       <div className="marquee-viewport">
         <ul className="marquee-track" aria-hidden="false">

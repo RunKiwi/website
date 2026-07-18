@@ -10,10 +10,10 @@ export default function TopologyCanvas() {
     <section id="topology" className="simulator-section" style={{ borderTop: '1px solid var(--border)' }}>
       <div className="container">
         <Reveal as="div" className="section-header">
-          <span className="section-eyebrow">Topology Canvas</span>
-          <h2 className="section-title">Interactive DAG Visualization</h2>
+          <span className="section-eyebrow">The architecture</span>
+          <h2 className="section-title">Control plane plans. Data plane pulls.</h2>
           <p className="section-subtitle">
-            As the Orchestrator plans out the task, the Topology Canvas maps the dependencies in real-time. Follow the dependency chain until every node lights up green.
+            The Control Plane never reaches into your network. Your daemon polls it over outbound HTTPS, leases a worker only once its dependencies are green, and executes in a sandbox next door. Watch the DAG light up as the swarm works it.
           </p>
         </Reveal>
 
@@ -23,11 +23,11 @@ export default function TopologyCanvas() {
           <div className="console-telemetry-bar" style={{ justifyContent: 'space-between', background: '#090A08' }}>
             <div className="telemetry-item">
               <span className="t-dot active"></span>
-              <span className="t-label">Swarm Network:</span>
-              <span className="t-value text-gradient">ONLINE (45 Nodes)</span>
+              <span className="t-label">Daemon heartbeat:</span>
+              <span className="t-value text-gradient">POLLING · OUTBOUND HTTPS</span>
             </div>
             <div className="mockup-browser-url" style={{ fontFamily: 'var(--custom-font-mono)', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-              Cluster: Nebula-9
+              org · us-east-1
             </div>
           </div>
           

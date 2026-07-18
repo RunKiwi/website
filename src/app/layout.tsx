@@ -27,8 +27,8 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "Kiwi — A Safe Place for Your AI Coding Agents to Work",
-  description: "Give your AI coding agents a safe place to work. Kiwi runs them in isolated sandboxes, keeps your secrets on your machine (never written to the sandbox), streams every move live, and never loses a run.",
+  title: "Kiwi — One issue in. One PR out.",
+  description: "Kiwi is the planner and the swarm for shipping teams. Describe a task; Kiwi decomposes it into a worker DAG, runs a swarm of agents in parallel on one branch, and opens a single verified PR. Start on our managed cloud with zero setup, or bring your own.",
   icons: {
     icon: "/kiwi.png",
   },

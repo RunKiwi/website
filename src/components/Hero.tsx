@@ -9,8 +9,10 @@ import { Copy, Check, ChevronRight } from 'lucide-react';
 export default function Hero() {
   const [copied, setCopied] = useState(false);
 
+  const installCmd = 'npm i -g kiwi && kiwi submit "Fix issue #50"';
+
   const handleCopy = () => {
-    navigator.clipboard.writeText('npm install -g kiwi-cli');
+    navigator.clipboard.writeText(installCmd);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -22,31 +24,31 @@ export default function Hero() {
         <Reveal as="div" className="hero-content" stagger>
           <div className="badge" id="hero-announcement-badge">
             <span className="badge-dot"></span>
-            <span className="badge-text">The Swarm Control Center</span>
+            <span className="badge-text">One planner · One swarm · One PR</span>
           </div>
           <h1 className="hero-title">
-            The infinite workforce for <em className="text-gradient">fast-moving startups.</em>
+            Ship a night&apos;s worth of PRs <em className="text-gradient">before standup.</em>
           </h1>
           <p className="hero-subtitle">
-            Close your laptop. The Swarm is taking the night shift. Assign a massive epic and watch Kiwi orchestrate a fleet of parallel agents to plan, build, test, and ship production-ready PRs—all without your secrets ever leaving your VPC.
+            Describe a task in plain English. Kiwi&apos;s planner breaks it into a dependency graph, a swarm of agents builds it in parallel, and it all lands as <strong>one reviewable PR—verified green</strong>. Start on our cloud with zero setup; move it into your own when you&apos;re ready.
           </p>
 
           <div className="hero-actions">
             <Link href="#quickstart" className="btn btn-primary" id="hero-primary-btn">
-              Deploy your swarm
+              Start free — no cloud setup
               <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
             <Link href="#how-it-works" className="btn btn-outline" id="hero-secondary-btn">See the swarm</Link>
           </div>
 
           <p className="hero-microcopy">
-            Bring your own LLM · Zero-knowledge security · Headless by design
+            Managed by default · Bring your own cloud when you graduate · 50 agents, not 50 diffs
           </p>
 
           <div className="hero-cli-install">
             <div className="cli-container">
               <span className="cli-prompt" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>$</span>
-              <code className="cli-command" id="install-command-text" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>npm install -g kiwi-cli</code>
+              <code className="cli-command" id="install-command-text" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>{installCmd}</code>
               <button
                 className="cli-copy-btn"
                 id="copy-install-btn"
