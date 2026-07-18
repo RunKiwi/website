@@ -11,14 +11,15 @@ export default function Header() {
         </Link>
         
         <nav className="nav-links">
+          <Link href="#how-it-works" className="nav-link" id="nav-how-link">How it works</Link>
           <Link href="#features" className="nav-link" id="nav-features-link">Features</Link>
-          <Link href="#how-it-works" className="nav-link" id="nav-how-link">How It Works</Link>
+          <Link href="#tiers" className="nav-link" id="nav-tiers-link">Managed &amp; BYOC</Link>
           <Link href="#quickstart" className="nav-link" id="nav-quickstart-link">Quickstart</Link>
         </nav>
 
         <div className="header-actions">
-          <Link href="https://app.runkiwi.dev" className="btn btn-secondary btn-sm" id="header-docs-btn">Sign In</Link>
-          <Link href="#quickstart" className="btn btn-primary btn-sm" id="header-cta-btn">Deploy BYOC</Link>
+          <Link href="https://app.runkiwi.dev" className="btn btn-secondary btn-sm" id="header-docs-btn">Sign in</Link>
+          <Link href="#quickstart" className="btn btn-primary btn-sm" id="header-cta-btn">Start free</Link>
         </div>
       </div>
     </header>

@@ -4,22 +4,22 @@
 import { useEffect as useReactEffect, useRef as useReactRef, useState } from 'react';
 
 /**
- * HeroDemo — a diegetic, self-playing "live run" of Kiwi's Actor–Critic loop.
+ * HeroDemo — a diegetic, self-playing "live run" of a Kiwi swarm.
  *
- * It steps through the real product story on a timer:
- *   initial_test → FAIL (panic: divide by zero)
- *   [Actor] proposes a 3-line diff (red/green)
- *   🔒 secret pulled just-in-time
- *   [Critic] approves (safe, minimal fix)
- *   go test ./... → PASS → SUCCESS
+ * It mirrors the "How it works" section beat for beat, so the hero and the
+ * page below tell one coherent story (same task, same job branch, same PR):
+ *   kiwi submit "Migrate auth to Postgres"
+ *   [planner] decomposes it into a worker DAG on branch kiwi/job-42
+ *   w1 analyze hands findings to the parallel impl workers (w2–w4)
+ *   each impl worker commits to the one job branch
+ *   [w5 verify] runs the full suite → opens ONE PR (#42)
  * ...with a live-incrementing token + USD counter, then loops.
  *
  * Under prefers-reduced-motion it renders the full, legible end-state
- * (all steps shown, PASS) with no animation.
+ * (all steps shown, PASSED) with no animation.
  */
 
-type StepKind =
-  | 'cmd' | 'fail' | 'actor' | 'diff' | 'chip' | 'critic' | 'pass' | 'success';
+type StepKind = 'cmd' | 'actor' | 'info' | 'chip' | 'critic' | 'pass' | 'success';
 
 type Step = {
   kind: StepKind;
@@ -28,44 +28,30 @@ type Step = {
   atMs: number; // when this line appears in the timeline
 };
 
-// Timeline (ms offsets). Total loop ~ 8.2s then restart.
+// Timeline (ms offsets). Total loop ~ 8.6s then restart.
 const STEPS: Step[] = [
-  { kind: 'cmd',    lead: '$', text: 'kiwi submit "Migrate database to Postgres"', atMs: 400 },
-  { kind: 'actor',  lead: '[orchestrator]', text: 'Planning DAG... 5 sub-tasks identified.', atMs: 1400 },
-  { kind: 'chip',   text: '🚀 Spinning up 5 isolated sandboxes in parallel', atMs: 2500 },
-  { kind: 'info' as StepKind, lead: '[swarm]', text: 'Task 1 (Schema) ... RUNNING', atMs: 3200 },
-  { kind: 'info' as StepKind, lead: '[swarm]', text: 'Task 2 (Data Migrator) ... RUNNING', atMs: 3700 },
-  { kind: 'pass',   lead: '✓', text: 'Task 1 (Schema) ... RESOLVED', atMs: 4800 },
-  { kind: 'pass',   lead: '✓', text: 'Task 2 (Data Migrator) ... RESOLVED', atMs: 5300 },
-  { kind: 'critic', lead: '[verify]', text: 'Integration tests passed. (12/12)', atMs: 6200 },
-  { kind: 'success',lead: '●', text: 'RESOLVED — Shipped PR #42 to GitHub', atMs: 7200 },
+  { kind: 'cmd',     lead: '$', text: 'kiwi submit "Migrate auth to Postgres"', atMs: 400 },
+  { kind: 'actor',   lead: '[planner]', text: 'Decomposing into a worker DAG… 5 workers.', atMs: 1400 },
+  { kind: 'chip',    text: '🌿 branch kiwi/job-42 · workers fan out in parallel', atMs: 2500 },
+  { kind: 'info',    lead: '[w1·analyze]', text: '3 call sites assume non-nil → findings passed on', atMs: 3300 },
+  { kind: 'info',    lead: '[w2·impl]', text: 'auth handler → commit to job branch', atMs: 4000 },
+  { kind: 'info',    lead: '[w3·impl]', text: 'session store → commit to job branch', atMs: 4500 },
+  { kind: 'pass',    lead: '✓', text: 'w4·impl migration script → committed', atMs: 5300 },
+  { kind: 'critic',  lead: '[w5·verify]', text: 'Full suite green — 128 passed, 0 failed.', atMs: 6300 },
+  { kind: 'success', lead: '●', text: 'Opened PR #42 → main · 4 workers, 1 branch', atMs: 7200 },
 ];
 
 const LOOP_MS = 8600;
 const TOKENS_MAX = 3120;
 const COST_MAX = 0.041;
 
-function DiffCard() {
-  return (
-    <div className="hero-demo-diff" role="figure" aria-label="Proposed code diff">
-      <div className="hd-diff-head">math_utils.go</div>
-      <div className="hd-diff-line hd-diff-ctx"> func Divide(a, b int) int {'{'}</div>
-      <div className="hd-diff-line hd-diff-del">-  return a / b</div>
-      <div className="hd-diff-line hd-diff-add">+  if b == 0 {'{'} return 0 {'}'}</div>
-      <div className="hd-diff-line hd-diff-add">+  return a / b</div>
-      <div className="hd-diff-line hd-diff-ctx"> {'}'}</div>
-    </div>
-  );
-}
-
 function Line({ step }: { step: Step }) {
-  if (step.kind === 'diff') return <DiffCard />;
   if (step.kind === 'chip') return <span className="hero-demo-chip">{step.text}</span>;
 
   const cls =
     step.kind === 'cmd' ? 'hd-cmd'
-    : step.kind === 'fail' ? 'hd-fail'
     : step.kind === 'actor' ? 'hd-actor'
+    : step.kind === 'info' ? 'hd-info'
     : step.kind === 'critic' ? 'hd-critic'
     : step.kind === 'pass' ? 'hd-pass'
     : 'hd-success';
@@ -125,18 +111,16 @@ export default function HeroDemo() {
 
   const shown = STEPS.slice(0, visibleCount);
   const done = visibleCount >= STEPS.length;
-  const failed = visibleCount >= 3 && visibleCount < 7; // between FAIL and critic-approve
 
   const status =
     done ? { cls: 'passed', label: 'PASSED' }
-    : failed ? { cls: 'failed', label: 'FIXING' }
     : { cls: 'running', label: 'RUNNING' };
 
   return (
-    <div className="hero-demo" role="img" aria-label="A live Kiwi run: a failing test is fixed by an Actor agent, approved by a Critic agent, then passes — with just-in-time secrets and live token and cost counters.">
+    <div className="hero-demo" role="img" aria-label="A live Kiwi run: the planner decomposes 'Migrate auth to Postgres' into a DAG of workers on branch kiwi/job-42, they run in parallel and commit to one branch, a verify worker runs the full suite, and it all lands as a single PR — with live token and cost counters.">
       <div className="hero-demo-titlebar">
         <div className="hero-demo-dots" aria-hidden="true"><span /><span /><span /></div>
-        <span className="hero-demo-file">demo-api · task-3831</span>
+        <span className="hero-demo-file">kiwi/job-42 · migrate-auth</span>
         <span className="hero-demo-live"><span className="live-dot" aria-hidden="true" />Live run</span>
       </div>
 

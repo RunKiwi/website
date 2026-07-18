@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
-import { type ReactNode, useEffect as useReactEffect, useState } from 'react';
+import { type CSSProperties, type ReactNode, useEffect as useReactEffect, useState } from 'react';
 
 function useMountedReducedMotion() {
   const preferReduce = useReducedMotion();
@@ -27,13 +27,17 @@ export function Reveal({
   children,
   as = 'div',
   className,
+  id,
+  style,
   delay = 0,
   stagger = false,
   y = 24,
 }: {
   children: ReactNode;
-  as?: 'div' | 'section' | 'ul' | 'li' | 'header';
+  as?: 'div' | 'section' | 'ul' | 'ol' | 'li' | 'header';
   className?: string;
+  id?: string;
+  style?: CSSProperties;
   delay?: number;
   stagger?: boolean;
   y?: number;
@@ -43,7 +47,7 @@ export function Reveal({
 
   if (reduce) {
     const StaticTag = as as 'div';
-    return <StaticTag className={className}>{children}</StaticTag>;
+    return <StaticTag className={className} id={id} style={style}>{children}</StaticTag>;
   }
 
   const container: Variants = {
@@ -68,6 +72,8 @@ export function Reveal({
   return (
     <MotionTag
       className={`reveal-root ${className ?? ''}`}
+      id={id}
+      style={style}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}

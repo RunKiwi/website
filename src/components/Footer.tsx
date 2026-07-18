@@ -10,16 +10,16 @@ export default function Footer() {
             <Image className="logo-icon" src="/kiwi.png" alt="Kiwi logo" width={24} height={24} />
             <span className="logo-text">Kiwi</span>
           </div>
-          <p className="footer-tagline">The control plane for running LLM agents in production — isolated, cost-governed, observable, and safely resumable.</p>
+          <p className="footer-tagline">The planner and the swarm for shipping teams. One issue in, one verified PR out — on our cloud, or in yours.</p>
         </div>
 
         <div className="footer-links-group">
           <div className="footer-col">
             <h4>Product</h4>
+            <Link href="#how-it-works">How it works</Link>
             <Link href="#features">Features</Link>
-            <Link href="#how-it-works">How It Works</Link>
+            <Link href="#tiers">Managed &amp; BYOC</Link>
             <Link href="#quickstart">Quickstart</Link>
-            <Link href="#dashboard">Dashboard</Link>
           </div>
 
           <div className="footer-col">
@@ -32,7 +32,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="container footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Kiwi. Bring your own Anthropic key · self-hosted daemon.</p>
+        <p>&copy; {new Date().getFullYear()} Kiwi. Managed cloud, or bring your own · the planner and the swarm.</p>
       </div>
     </footer>
   );

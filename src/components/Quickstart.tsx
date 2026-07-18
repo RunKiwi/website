@@ -2,60 +2,64 @@
 
 import { useState } from 'react';
 import { Reveal } from './Reveal';
-import { Copy, ShieldCheck, Check, Lock, Network, Key, Database } from 'lucide-react';
+import { Copy, ShieldCheck, Check, Lock, Network, Key, Gauge } from 'lucide-react';
 
-const byocSnippet = `# 1. Login to the SaaS Control Plane
-kiwi login
+const managedSnippet = `# 1. Install the CLI and log in
+npm i -g kiwi && kiwi login
 
-# 2. Deploy the secure daemon in your VPC
-kiwidaemon --token <ORG_TOKEN>
+# 2. Submit a task — no cloud account, no VM
+kiwi submit "Migrate auth to Postgres"
 
-# 3. Submit a massive epic to the Swarm
-kiwi submit "Migrate auth to NextAuth"`;
+# Kiwi plans it, runs the swarm on our cloud,
+# and opens one verified PR. That's it.`;
 
-const ossSnippet = `# Deploy the entire orchestrator, database, queue, 
-# and agents on your own hardware using Docker.
+const byocSnippet = `# Graduate to your own cloud when you're ready.
 
-git clone https://github.com/runkiwi/kiwi.git
-cd kiwi
-docker-compose up -d`;
+# 1. Provision the daemon in your VPC
+terraform apply   # VPC + VM + kiwidaemon
+
+# 2. Register it with a single-use join token
+kiwidaemon --join-token "$KIWI_JOIN_TOKEN"
+
+# 3. Same command — now it runs in YOUR account
+kiwi submit "Migrate auth to Postgres"`;
 
 const securityFeatures = [
   {
-    icon: <Lock className="w-5 h-5 text-primary" />,
-    title: 'Zero-Knowledge Execution',
-    desc: 'Secrets are pulled JIT over a reverse tunnel, cached in-memory only, and never written to disk.',
+    icon: <Key className="w-5 h-5 text-primary" />,
+    title: 'Sealed credentials',
+    desc: 'Keys are sealed to the daemon with X25519 and only ever opened in memory. In BYOC that key lives only on your machine — the Control Plane cannot decrypt them.',
   },
   {
     icon: <Network className="w-5 h-5 text-primary" />,
-    title: 'Network-Locked Sandboxes',
-    desc: 'Every run is isolated (--network=none). Rogue agents cannot phone home or reach your internal network.',
+    title: 'Default-deny egress',
+    desc: 'Sandbox traffic is allowlisted to the model endpoint, package registries, and your VCS — so model-generated code can’t exfiltrate a repo, but real builds still work.',
   },
   {
-    icon: <Key className="w-5 h-5 text-primary" />,
-    title: 'Asymmetric Encryption',
-    desc: 'API keys are encrypted at rest (AES-256-GCM) and decrypted only to make a secure outbound call.',
+    icon: <Lock className="w-5 h-5 text-primary" />,
+    title: 'The sandbox never holds a key',
+    desc: 'A local proxy injects auth headers on the daemon side. A prompt-injected agent has nothing to steal, because the raw credential never enters the container.',
   },
   {
-    icon: <Database className="w-5 h-5 text-primary" />,
-    title: 'Walled-Off Organization',
-    desc: 'Isolated spaces per organization with strict limits, budget caps, and full audit trails of every task.',
+    icon: <Gauge className="w-5 h-5 text-primary" />,
+    title: 'Per-org budgets & isolation',
+    desc: 'Every org gets enforced concurrency, per-task step and USD caps, and a hard spend ceiling — so “50 agents overnight” can never become a runaway bill.',
   },
 ];
 
 export default function Quickstart({ theme }: { theme?: 'cream' }) {
-  const [activeTab, setActiveTab] = useState<'byoc' | 'oss'>('byoc');
+  const [activeTab, setActiveTab] = useState<'managed' | 'byoc'>('managed');
+  const [copiedManaged, setCopiedManaged] = useState(false);
   const [copiedByoc, setCopiedByoc] = useState(false);
-  const [copiedOss, setCopiedOss] = useState(false);
 
-  const handleCopy = (text: string, type: 'byoc' | 'oss') => {
+  const handleCopy = (text: string, type: 'managed' | 'byoc') => {
     navigator.clipboard.writeText(text);
-    if (type === 'byoc') {
+    if (type === 'managed') {
+      setCopiedManaged(true);
+      setTimeout(() => setCopiedManaged(false), 2000);
+    } else {
       setCopiedByoc(true);
       setTimeout(() => setCopiedByoc(false), 2000);
-    } else {
-      setCopiedOss(true);
-      setTimeout(() => setCopiedOss(false), 2000);
     }
   };
 
@@ -64,33 +68,49 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">Quickstart</span>
-          <h2 className="section-title">Start a run in a few commands</h2>
+          <h2 className="section-title">Your first PR in one command</h2>
           <p className="section-subtitle">
-            Use our managed Control Plane to orchestrate the swarm in your own VPC, or self-host the entire stack open-source.
+            Start on our managed cloud with nothing to provision. Graduate to your own VPC later — the command you type never changes.
           </p>
         </Reveal>
 
         <Reveal as="div" className="quickstart-tabs-wrapper">
           <div className="quickstart-tabs">
             <button
+              className={`tab-btn ${activeTab === 'managed' ? 'active' : ''}`}
+              onClick={() => setActiveTab('managed')}
+            >
+              Managed <span className="tab-pill">start here</span>
+            </button>
+            <button
               className={`tab-btn ${activeTab === 'byoc' ? 'active' : ''}`}
               onClick={() => setActiveTab('byoc')}
             >
-              Cloud Control + BYOC
-            </button>
-            <button
-              className={`tab-btn ${activeTab === 'oss' ? 'active' : ''}`}
-              onClick={() => setActiveTab('oss')}
-            >
-              Full Open Source
+              Bring Your Own Cloud
             </button>
           </div>
 
           <div className="tab-content-wrapper">
+            {/* Managed Code Panel */}
+            <div className={`code-panel ${activeTab === 'managed' ? 'active' : ''}`}>
+              <div className="panel-header">
+                <span>Managed — no setup (app.runkiwi.dev)</span>
+                <button
+                  className="code-copy-btn"
+                  aria-label="Copy managed commands"
+                  onClick={() => handleCopy(managedSnippet, 'managed')}
+                >
+                  {copiedManaged ? <Check className="w-4 h-4 mr-1 text-green-500" /> : <Copy className="w-4 h-4 mr-1" />}
+                  {copiedManaged ? 'Copied' : 'Copy'}
+                </button>
+              </div>
+              <pre><code>{managedSnippet}</code></pre>
+            </div>
+
             {/* BYOC Code Panel */}
             <div className={`code-panel ${activeTab === 'byoc' ? 'active' : ''}`}>
               <div className="panel-header">
-                <span>Developer CLI (app.runkiwi.dev)</span>
+                <span>BYOC — your AWS/GCP account</span>
                 <button
                   className="code-copy-btn"
                   aria-label="Copy BYOC commands"
@@ -101,22 +121,6 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
                 </button>
               </div>
               <pre><code>{byocSnippet}</code></pre>
-            </div>
-
-            {/* OSS Code Panel */}
-            <div className={`code-panel ${activeTab === 'oss' ? 'active' : ''}`}>
-              <div className="panel-header">
-                <span>On-Prem Host</span>
-                <button
-                  className="code-copy-btn"
-                  aria-label="Copy OSS commands"
-                  onClick={() => handleCopy(ossSnippet, 'oss')}
-                >
-                  {copiedOss ? <Check className="w-4 h-4 mr-1 text-green-500" /> : <Copy className="w-4 h-4 mr-1" />}
-                  {copiedOss ? 'Copied' : 'Copy'}
-                </button>
-              </div>
-              <pre><code>{ossSnippet}</code></pre>
             </div>
           </div>
 
