@@ -44,7 +44,7 @@ export default function TierLadder() {
               <li><Check className="w-4 h-4" /> Bounded free tier, then usage-based</li>
               <li><Check className="w-4 h-4" /> Best way to evaluate the swarm</li>
             </ul>
-            <Link href="https://app.runkiwi.dev" className="tier-cta">
+            <Link href="https://app.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="tier-cta">
               Get started at app.runkiwi.dev
               <ArrowRight className="w-4 h-4" />
             </Link>

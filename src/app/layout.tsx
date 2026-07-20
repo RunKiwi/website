@@ -29,9 +29,7 @@ const firaCode = Fira_Code({
 export const metadata: Metadata = {
   title: "Kiwi — One issue in. One PR out.",
   description: "Kiwi is the planner and the swarm for shipping teams. Describe a task; Kiwi decomposes it into a worker DAG, runs a swarm of agents in parallel on one branch, and opens a single verified PR. Start on our managed cloud with zero setup, or bring your own.",
-  icons: {
-    icon: "/kiwi.png",
-  },
+  // Favicon is served by the app/icon.svg file convention (kiwi-bird mark).
 };
 
 export default function RootLayout({

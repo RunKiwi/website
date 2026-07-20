@@ -76,7 +76,7 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
             Start on our managed cloud with nothing to provision. Graduate to your own VPC later — the command you type never changes.
           </p>
           <div className="quickstart-cta">
-            <Link href="https://app.runkiwi.dev" className="btn btn-primary" id="quickstart-app-btn">
+            <Link href="https://app.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="btn btn-primary" id="quickstart-app-btn">
               Open app.runkiwi.dev
               <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
