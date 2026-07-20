@@ -34,7 +34,7 @@ export default function Hero() {
           </p>
 
           <div className="hero-actions">
-            <Link href="https://app.runkiwi.dev" className="btn btn-primary" id="hero-primary-btn">
+            <Link href="https://app.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="btn btn-primary" id="hero-primary-btn">
               Start free — sign in with GitHub
               <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
