@@ -19,7 +19,7 @@ export default function Header() {
 
         <div className="header-actions">
           <Link href="https://app.runkiwi.dev" className="btn btn-secondary btn-sm" id="header-docs-btn">Sign in</Link>
-          <Link href="#quickstart" className="btn btn-primary btn-sm" id="header-cta-btn">Start free</Link>
+          <Link href="https://app.runkiwi.dev" className="btn btn-primary btn-sm" id="header-cta-btn">Get started</Link>
         </div>
       </div>
     </header>

@@ -24,7 +24,7 @@ export default function Hero() {
         <Reveal as="div" className="hero-content" stagger>
           <div className="badge" id="hero-announcement-badge">
             <span className="badge-dot"></span>
-            <span className="badge-text">One planner · One swarm · One PR</span>
+            <span className="badge-text">Now live — sign in with GitHub at app.runkiwi.dev</span>
           </div>
           <h1 className="hero-title">
             Ship a night&apos;s worth of PRs <em className="text-gradient">before standup.</em>
@@ -34,8 +34,8 @@ export default function Hero() {
           </p>
 
           <div className="hero-actions">
-            <Link href="#quickstart" className="btn btn-primary" id="hero-primary-btn">
-              Start free — no cloud setup
+            <Link href="https://app.runkiwi.dev" className="btn btn-primary" id="hero-primary-btn">
+              Start free — sign in with GitHub
               <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
             <Link href="#how-it-works" className="btn btn-outline" id="hero-secondary-btn">See the swarm</Link>

@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { Reveal } from './Reveal';
-import { Cloud, Server, Check } from 'lucide-react';
+import { Cloud, Server, Check, ArrowRight } from 'lucide-react';
 
 type Row = { label: string; managed: string; byoc: string };
 
@@ -43,6 +44,10 @@ export default function TierLadder() {
               <li><Check className="w-4 h-4" /> Bounded free tier, then usage-based</li>
               <li><Check className="w-4 h-4" /> Best way to evaluate the swarm</li>
             </ul>
+            <Link href="https://app.runkiwi.dev" className="tier-cta">
+              Get started at app.runkiwi.dev
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
 
           {/* BYOC */}

@@ -16,6 +16,7 @@ export default function Footer() {
         <div className="footer-links-group">
           <div className="footer-col">
             <h4>Product</h4>
+            <Link href="https://app.runkiwi.dev">Open the app</Link>
             <Link href="#how-it-works">How it works</Link>
             <Link href="#features">Features</Link>
             <Link href="#tiers">Managed &amp; BYOC</Link>
