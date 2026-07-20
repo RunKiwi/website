@@ -3294,3 +3294,26 @@ pre {
   .pipeline-step .pipeline-v { display: none; }
   .swarm-grid { padding: 16px; gap: 12px; }
 }
+
+/* ---- Live-app CTAs (link to app.runkiwi.dev) ---- */
+.quickstart-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.tier-cta {
+  margin-top: auto;
+  padding-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--primary-dark);
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+.tier-cta:hover { gap: 10px; color: var(--primary); }
+.tier-cta svg { flex-shrink: 0; }
