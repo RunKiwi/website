@@ -1,22 +1,22 @@
 'use client';
 
 /**
- * Marquee — edge-masked, horizontally-scrolling strip of the REAL stack.
- * Fades at both edges via a CSS mask. Honest items only: no tool or
- * customer logos we don't actually integrate.
+ * Marquee — edge-masked, horizontally-scrolling strip of the swarm's capabilities.
+ * Fades at both edges via a CSS mask. Highlights the pain points Kiwi handles
+ * so the user can focus on the architecture.
  */
 
 type Item = { label: string };
 
-// The genuine Kiwi stack & integrations — no logos we don't actually use.
-const STACK: Item[] = [
-  { label: 'Anthropic Claude' },
-  { label: 'Go' },
-  { label: 'Docker' },
-  { label: 'Postgres' },
-  { label: 'GitHub' },
-  { label: 'Linear' },
-  { label: 'Terraform' },
+// The capabilities of the Kiwi swarm
+const CAPABILITIES: Item[] = [
+  { label: 'Bug Triage' },
+  { label: 'Feature Implementation' },
+  { label: 'Code Review' },
+  { label: 'Refactoring' },
+  { label: 'Test Generation' },
+  { label: 'Dependency Updates' },
+  { label: 'Security Patching' },
 ];
 
 function Spark() {
@@ -30,14 +30,14 @@ function Spark() {
 export default function Marquee() {
   // One "group" repeated enough to overflow any viewport, then duplicated so the
   // -50% translate wraps seamlessly — a circular, never-ending loop.
-  const group = [...STACK, ...STACK, ...STACK];
+  const group = [...CAPABILITIES, ...CAPABILITIES, ...CAPABILITIES];
   const loop = [...group, ...group];
   const half = loop.length / 2;
 
   return (
-    <section className="marquee-section" aria-label="Kiwi's technology stack">
+    <section className="marquee-section" aria-label="Kiwi's swarm capabilities">
       <div className="container">
-        <p className="marquee-heading">Built on a stack you already trust · Triggers from the tools you already use</p>
+        <p className="marquee-heading">Offload the grind · Focus on the architecture</p>
       </div>
       <div className="marquee-viewport">
         <ul className="marquee-track" aria-hidden="false">
