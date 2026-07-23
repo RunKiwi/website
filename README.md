@@ -18,23 +18,18 @@ npm run dev      # http://localhost:3000
 Other scripts: `npm run build` (production build), `npm run start` (serve the build),
 `npm run lint`.
 
-## Positioning (source of truth for copy)
+## Content accuracy
 
-The site's messaging tracks the product RFCs in the `kiwi` repo — most importantly the
-**Managed Execution Tier RFC**, which sets the current strategy:
+Keep site copy faithful to how the product actually works — the engineering lives in the
+[`kiwi`](https://github.com/RunKiwi/kiwi) repo, so check claims against its README before shipping:
 
-- **Managed is the default entry path** (`npm i kiwi && kiwi submit "…"`, zero setup); **BYOC is
-  the graduation tier** for compliance and cost. The hero, quickstart, and CTAs lead with managed.
-- **The differentiator is the planner + the swarm** — decomposing an issue into a worker DAG and
-  composing the result into **one branch / one PR** — not BYOC and not the sandbox (BYOC is table
-  stakes in this category).
-- **"Zero-knowledge" is a BYOC-only claim.** In managed mode Kiwi operates the machine that holds
-  the key and can read credentials. Never present zero-knowledge as a blanket promise.
-- Security copy reflects the real model: **X25519-sealed credentials**, a **credential-injecting
-  proxy** (the sandbox never holds a raw key), and **default-deny egress allowlists** — not
-  `--network=none`, reverse tunnels, or AES-256-GCM.
-
-If you change product-facing claims, check them against the RFCs before shipping.
+- **What Kiwi does:** decomposes a task into a worker **DAG** and runs a swarm of agents that
+  converge on **one branch / one verified PR** — on Kiwi's managed cloud, or BYOC in your own.
+- **Security model:** customer credentials are **X25519-sealed** to the daemon; the LLM Actor/Critic
+  run **in the daemon process**, and only the **test command** runs in the sandbox with
+  **default-deny networking** — so model-generated code never sees the key.
+- **"Zero-knowledge" is a BYOC-only property.** In managed mode Kiwi operates the machine that
+  holds the private key and can decrypt — never present zero-knowledge as a blanket promise.
 
 ## Structure
 
@@ -51,10 +46,10 @@ src/
     ValueBanner.tsx   # one-line positioning + trust strip
     Marquee.tsx       # honest stack/integration strip (only tools we actually use)
     GodView.tsx       # "How it works" — the DAG → swarm → one-branch → one-PR console
-    FeaturesGrid.tsx  # six differentiation-led feature cards
+    FeaturesGrid.tsx  # differentiation-led feature cards
     TierLadder.tsx    # Managed → BYOC comparison (the honest ladder)
     TopologyCanvas.tsx# control-plane/data-plane pull-model DAG canvas (@xyflow/react)
-    Quickstart.tsx    # Managed-first / BYOC tabs + accurate security panel
+    Quickstart.tsx    # Managed / BYOC tabs + security panel
     Footer.tsx
     Reveal.tsx        # the single reveal-on-scroll animation vocabulary (framer-motion)
 ```
