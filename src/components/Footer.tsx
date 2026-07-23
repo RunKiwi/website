@@ -25,8 +25,8 @@ export default function Footer() {
 
           <div className="footer-col">
             <h4>Project</h4>
-            <Link href="https://github.com/runkiwi/kiwi" target="_blank" rel="noopener noreferrer">GitHub</Link>
-            <Link href="#quickstart">Documentation</Link>
+            <Link href="https://github.com/RunKiwi/kiwi" target="_blank" rel="noopener noreferrer">GitHub</Link>
+            <Link href="https://docs.runkiwi.dev" target="_blank" rel="noopener noreferrer">Documentation</Link>
             <Link href="#">Releases</Link>
             <Link href="#">Discussions</Link>
           </div>

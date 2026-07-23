@@ -36,12 +36,12 @@ const securityFeatures = [
   {
     icon: <Network className="w-5 h-5 text-primary" />,
     title: 'Default-deny egress',
-    desc: 'Sandbox traffic is allowlisted to the model endpoint, package registries, and your VCS — so model-generated code can’t exfiltrate a repo, but real builds still work.',
+    desc: 'Only your test command runs in the sandbox, and it runs with default-deny networking — so a prompt-injected agent has no path to exfiltrate your repo.',
   },
   {
     icon: <Lock className="w-5 h-5 text-primary" />,
     title: 'The sandbox never holds a key',
-    desc: 'A local proxy injects auth headers on the daemon side. A prompt-injected agent has nothing to steal, because the raw credential never enters the container.',
+    desc: 'The model runs in the daemon process, not the sandbox, so the raw credential never enters the container. A prompt-injected agent running your test command has nothing to steal.',
   },
   {
     icon: <Gauge className="w-5 h-5 text-primary" />,

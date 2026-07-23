@@ -15,6 +15,7 @@ export default function Header() {
           <Link href="#features" className="nav-link" id="nav-features-link">Features</Link>
           <Link href="#tiers" className="nav-link" id="nav-tiers-link">Managed &amp; BYOC</Link>
           <Link href="#quickstart" className="nav-link" id="nav-quickstart-link">Quickstart</Link>
+          <Link href="https://docs.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="nav-link" id="nav-docs-link">Docs</Link>
         </nav>
 
         <div className="header-actions">
