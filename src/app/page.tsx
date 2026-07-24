@@ -5,6 +5,7 @@ import Marquee from '@/components/Marquee';
 import GodView from '@/components/GodView';
 import FeaturesGrid from '@/components/FeaturesGrid';
 import TierLadder from '@/components/TierLadder';
+import PricingTiers from '@/components/PricingTiers';
 import TopologyCanvas from '@/components/TopologyCanvas';
 import Quickstart from '@/components/Quickstart';
 import Footer from '@/components/Footer';
@@ -23,6 +24,7 @@ export default function Home() {
         <GodView />
         <FeaturesGrid theme="cream" />
         <TierLadder />
+        <PricingTiers theme="cream" />
         <TopologyCanvas />
         <Quickstart theme="cream" />
       </main>

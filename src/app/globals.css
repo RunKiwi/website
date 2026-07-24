@@ -3295,6 +3295,166 @@ pre {
   .swarm-grid { padding: 16px; gap: 12px; }
 }
 
+
+/* Pricing Section */
+.pricing-section {
+  padding: 100px 0;
+}
+
+.pricing-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 900px) {
+  .pricing-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pricing-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, background-color 0.2s;
+  position: relative;
+}
+
+.pricing-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.pricing-card-pro {
+  border-color: var(--primary);
+  box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.pricing-pro-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pricing-card-header {
+  margin-bottom: 32px;
+  flex-grow: 1;
+}
+
+.pricing-tier-name {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.pricing-price {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+}
+
+.price-value {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.price-value-custom {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.price-period {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-left: 8px;
+}
+
+.pricing-subtext {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.pricing-note {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.pricing-cta-wrap {
+  margin-top: auto;
+}
+
+.pricing-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow-x: auto;
+}
+
+.pricing-table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.pricing-table th, .pricing-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pricing-table thead th {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-main);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.pricing-table tbody th {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.pricing-table tbody td {
+  color: var(--text-muted);
+}
+
+.pricing-table tbody tr:last-child th,
+.pricing-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pricing-badge-soon {
+  display: inline-block;
+  font-size: 0.7rem;
+  background: rgba(140, 230, 44, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(140, 230, 44, 0.2);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 /* ---- Live-app CTAs (link to app.runkiwi.dev) ---- */
 .quickstart-cta {
   display: flex;
@@ -3333,3 +3493,4 @@ pre {
 .logo-bird { width: 20px; height: 20px; color: var(--primary); }
 .footer .logo-chip { width: 28px; height: 28px; border-radius: 7px; box-shadow: 0 0 10px rgba(147, 198, 69, 0.22); }
 .footer .logo-bird { width: 17px; height: 17px; }
+
