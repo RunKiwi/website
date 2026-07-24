@@ -1,17 +1,20 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { Reveal } from './Reveal';
-import { Copy, ShieldCheck, Check, Lock, Network, Key, Gauge } from 'lucide-react';
+import { Copy, ShieldCheck, Check, Lock, Network, Key, Gauge, ArrowRight } from 'lucide-react';
 
-const managedSnippet = `# 1. Install the CLI and log in
+const managedSnippet = `# Sign in with GitHub at app.runkiwi.dev — or use the CLI:
+
+# 1. Install the CLI and log in
 npm i -g kiwi && kiwi login
 
 # 2. Submit a task — no cloud account, no VM
 kiwi submit "Migrate auth to Postgres"
 
-# Kiwi plans it, runs the swarm on our cloud,
-# and opens one verified PR. That's it.`;
+# Kiwi plans it, runs the swarm, and opens
+# one verified PR. That's it.`;
 
 const byocSnippet = `# Graduate to your own cloud when you're ready.
 
@@ -33,12 +36,12 @@ const securityFeatures = [
   {
     icon: <Network className="w-5 h-5 text-primary" />,
     title: 'Default-deny egress',
-    desc: 'Sandbox traffic is allowlisted to the model endpoint, package registries, and your VCS — so model-generated code can’t exfiltrate a repo, but real builds still work.',
+    desc: 'Only your test command runs in the sandbox, and it runs with default-deny networking — so a prompt-injected agent has no path to exfiltrate your repo.',
   },
   {
     icon: <Lock className="w-5 h-5 text-primary" />,
     title: 'The sandbox never holds a key',
-    desc: 'A local proxy injects auth headers on the daemon side. A prompt-injected agent has nothing to steal, because the raw credential never enters the container.',
+    desc: 'The model runs in the daemon process, not the sandbox, so the raw credential never enters the container. A prompt-injected agent running your test command has nothing to steal.',
   },
   {
     icon: <Gauge className="w-5 h-5 text-primary" />,
@@ -72,6 +75,12 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
           <p className="section-subtitle">
             Start on our managed cloud with nothing to provision. Graduate to your own VPC later — the command you type never changes.
           </p>
+          <div className="quickstart-cta">
+            <Link href="https://app.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="btn btn-primary" id="quickstart-app-btn">
+              Open app.runkiwi.dev
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
         </Reveal>
 
         <Reveal as="div" className="quickstart-tabs-wrapper">

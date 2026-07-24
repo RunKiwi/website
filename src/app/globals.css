@@ -4,19 +4,19 @@
 /* CSS Design System for runkiwi.dev */
 
 :root {
-  /* ---- Warm editorial palette (dark theme = default) ----
-     Base is a warm near-black, greens stay as THE accent with a
-     deeper companion, and a warm amber/terracotta is the only
-     secondary. The old cyberpunk cyan/indigo are gone. */
-  --bg-dark: #0B0C0A;          /* warm near-black */
-  --bg-card: rgba(20, 22, 18, 0.62);
-  --bg-card-hover: rgba(28, 31, 25, 0.86);
-  --bg-panel: #111310;
-  --bg-inset: #080907;         /* deepest wells (canvas/log floors) */
+  /* ---- Nocturnal palette (dark theme = default) ----
+     The kiwi is a night forager, so the ground is a deep night-navy
+     (#0E1A24 is the brand mark's chip). The kiwi-bird green is the one
+     living accent; a warm feather-amber is the only secondary. */
+  --bg-dark: #0A1017;          /* night navy — near-black blue */
+  --bg-card: rgba(16, 26, 36, 0.62);
+  --bg-card-hover: rgba(22, 34, 46, 0.86);
+  --bg-panel: #0E1A24;         /* brand navy — the logo chip */
+  --bg-inset: #070C12;         /* deepest wells (canvas/log floors) */
 
-  --primary: #8CE62C;          /* fresh Kiwi green — the accent */
-  --primary-glow: rgba(140, 230, 44, 0.18);
-  --primary-dark: #5BA524;     /* deeper companion green */
+  --primary: #93C645;          /* kiwi-bird green — the one living accent */
+  --primary-glow: rgba(147, 198, 69, 0.18);
+  --primary-dark: #6FA232;     /* deeper companion green */
 
   /* Secondary is a warm amber/terracotta (used with restraint) */
   --secondary: #E8823B;
@@ -26,13 +26,13 @@
   --accent: #E8823B;
   --accent-glow: rgba(232, 130, 59, 0.14);
 
-  /* Warm neutrals (no cool slate) */
-  --text-main: #F3F1E9;
-  --text-muted: #A8A597;
-  --text-dim: #8C887A;
+  /* Moonlit neutrals (cool, on navy) */
+  --text-main: #EAF0F2;
+  --text-muted: #9DB0BC;
+  --text-dim: #6E8290;
 
-  --border: rgba(244, 242, 236, 0.09);
-  --border-glow: rgba(140, 230, 44, 0.25);
+  --border: rgba(234, 240, 242, 0.09);
+  --border-glow: rgba(147, 198, 69, 0.25);
 
   --success: #4FB477;
   --warning: #E8A13B;
@@ -55,20 +55,20 @@
    Applied via .theme-cream on a <section>. Retunes the tokens so all
    child components inherit AA-contrast colors on the light background. */
 .theme-cream {
-  --bg-dark: #F4F2EC;
+  --bg-dark: #EFF1EA;
   --bg-card: rgba(255, 255, 255, 0.66);
   --bg-card-hover: rgba(255, 255, 255, 0.92);
-  --bg-panel: #EDEAE0;
-  --bg-inset: #E7E3D7;
+  --bg-panel: #E6E9DF;
+  --bg-inset: #DFE3D6;
 
-  --primary-dark: #4E9018;
+  --primary-dark: #4E8F1E;
 
-  --text-main: #1A1A17;
-  --text-muted: #55524A;   /* ~5.6:1 on cream */
-  --text-dim: #6E6B60;     /* ~4.7:1 on cream */
+  --text-main: #171B1A;
+  --text-muted: #52564E;   /* AA on dawn paper */
+  --text-dim: #6A6E64;
 
-  --border: rgba(26, 26, 23, 0.12);
-  --border-glow: rgba(91, 165, 36, 0.35);
+  --border: rgba(23, 27, 26, 0.12);
+  --border-glow: rgba(147, 198, 69, 0.35);
 
   background-color: var(--bg-dark);
   color: var(--text-main);
@@ -178,7 +178,7 @@ section {
 .btn-primary:hover {
   background-color: var(--primary-dark);
   border-color: var(--primary-dark);
-  box-shadow: 0 6px 20px rgba(140, 230, 44, 0.3);
+  box-shadow: 0 6px 20px rgba(147, 198, 69, 0.3);
   transform: translateY(-2px);
 }
 
@@ -305,8 +305,8 @@ section {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(140, 230, 44, 0.08);
-  border: 1px solid rgba(140, 230, 44, 0.25);
+  background-color: rgba(147, 198, 69, 0.08);
+  border: 1px solid rgba(147, 198, 69, 0.25);
   padding: 6px 12px;
   border-radius: 9999px;
   margin-bottom: 24px;
@@ -429,7 +429,7 @@ section {
 .cli-copy-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--primary);
-  border-color: rgba(140, 230, 44, 0.3);
+  border-color: rgba(147, 198, 69, 0.3);
 }
 
 .copy-tooltip {
@@ -516,7 +516,7 @@ section {
 }
 
 .btn-control:hover, .btn-control.active {
-  background: rgba(140, 230, 44, 0.08);
+  background: rgba(147, 198, 69, 0.08);
   border-color: var(--primary);
   color: var(--primary);
 }
@@ -658,8 +658,8 @@ section {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background-color: rgba(140, 230, 44, 0.08);
-  border: 1px solid rgba(140, 230, 44, 0.25);
+  background-color: rgba(147, 198, 69, 0.08);
+  border: 1px solid rgba(147, 198, 69, 0.25);
   color: var(--primary);
   font-family: var(--font-heading);
   font-weight: 800;
@@ -706,7 +706,7 @@ section {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle 200px at var(--mouse-x, 0) var(--mouse-y, 0), rgba(140, 230, 44, 0.04), transparent 70%);
+  background: radial-gradient(circle 200px at var(--mouse-x, 0) var(--mouse-y, 0), rgba(147, 198, 69, 0.04), transparent 70%);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
@@ -810,7 +810,7 @@ section {
 }
 
 .sandbox-item.active {
-  background: rgba(140, 230, 44, 0.03);
+  background: rgba(147, 198, 69, 0.03);
   border-color: var(--primary);
   box-shadow: 0 0 10px var(--primary-glow);
 }
@@ -836,7 +836,7 @@ section {
 }
 
 .sb-badge.active {
-  background: rgba(140, 230, 44, 0.1);
+  background: rgba(147, 198, 69, 0.1);
   color: var(--primary);
 }
 
@@ -913,9 +913,9 @@ section {
 }
 
 .v-status-pill.running {
-  background: rgba(140, 230, 44, 0.1);
+  background: rgba(147, 198, 69, 0.1);
   color: var(--primary);
-  border: 1px solid rgba(140, 230, 44, 0.3);
+  border: 1px solid rgba(147, 198, 69, 0.3);
 }
 
 .v-status-pill.paused {
@@ -1218,7 +1218,7 @@ section {
 }
 
 .cache-pill.cached {
-  background: rgba(140, 230, 44, 0.06);
+  background: rgba(147, 198, 69, 0.06);
   border-color: var(--primary);
   color: var(--primary);
 }
@@ -1407,7 +1407,7 @@ section {
 }
 
 .logs-window-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(140, 230, 44, 0.2);
+  background: rgba(147, 198, 69, 0.2);
 }
 
 .log-row {
@@ -1458,7 +1458,7 @@ section {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle 100px at var(--mouse-x, 0) var(--mouse-y, 0), rgba(140, 230, 44, 0.06), transparent 80%);
+  background: radial-gradient(circle 100px at var(--mouse-x, 0) var(--mouse-y, 0), rgba(147, 198, 69, 0.06), transparent 80%);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
@@ -1472,8 +1472,8 @@ section {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background-color: rgba(140, 230, 44, 0.06);
-  border: 1px solid rgba(140, 230, 44, 0.15);
+  background-color: rgba(147, 198, 69, 0.06);
+  border: 1px solid rgba(147, 198, 69, 0.15);
   color: var(--primary);
   display: flex;
   align-items: center;
@@ -1638,8 +1638,8 @@ section {
 }
 
 .mockup-badge {
-  background-color: rgba(140, 230, 44, 0.08);
-  border: 1px solid rgba(140, 230, 44, 0.2);
+  background-color: rgba(147, 198, 69, 0.08);
+  border: 1px solid rgba(147, 198, 69, 0.2);
   color: var(--primary);
   font-size: 0.75rem;
   font-family: var(--custom-font-mono);
@@ -1715,8 +1715,8 @@ section {
 
 .card-tag.completed {
   color: var(--primary);
-  border-color: rgba(140, 230, 44, 0.2);
-  background-color: rgba(140, 230, 44, 0.03);
+  border-color: rgba(147, 198, 69, 0.2);
+  background-color: rgba(147, 198, 69, 0.03);
 }
 
 .card-task-title {
@@ -1906,7 +1906,7 @@ section {
 .code-copy-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--primary);
-  border-color: rgba(140, 230, 44, 0.25);
+  border-color: rgba(147, 198, 69, 0.25);
 }
 
 pre {
@@ -2000,8 +2000,8 @@ code {
 
 .security-card:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(140, 230, 44, 0.3);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(140, 230, 44, 0.05);
+  border-color: rgba(147, 198, 69, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(147, 198, 69, 0.05);
 }
 
 .theme-cream .security-card {
@@ -2555,7 +2555,7 @@ pre {
   }
 
   .tab-btn.active {
-    background: rgba(140, 230, 44, 0.05);
+    background: rgba(147, 198, 69, 0.05);
     border-radius: 4px;
   }
 
@@ -2821,8 +2821,8 @@ pre {
   font-size: 0.68rem;
   font-weight: 600;
   color: var(--primary);
-  background: rgba(140, 230, 44, 0.08);
-  border: 1px solid rgba(140, 230, 44, 0.28);
+  background: rgba(147, 198, 69, 0.08);
+  border: 1px solid rgba(147, 198, 69, 0.28);
 }
 
 /* meter footer */
@@ -3023,7 +3023,7 @@ pre {
 }
 .worker-card.status-running {
   border-color: var(--border-glow);
-  box-shadow: 0 4px 18px rgba(140, 230, 44, 0.08);
+  box-shadow: 0 4px 18px rgba(147, 198, 69, 0.08);
 }
 .worker-card.status-done { opacity: 0.9; }
 
@@ -3295,6 +3295,7 @@ pre {
   .swarm-grid { padding: 16px; gap: 12px; }
 }
 
+
 /* Pricing Section */
 .pricing-section {
   padding: 100px 0;
@@ -3453,3 +3454,43 @@ pre {
   margin-left: 8px;
   vertical-align: middle;
 }
+
+/* ---- Live-app CTAs (link to app.runkiwi.dev) ---- */
+.quickstart-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.tier-cta {
+  margin-top: auto;
+  padding-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--primary-dark);
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+.tier-cta:hover { gap: 10px; color: var(--primary); }
+.tier-cta svg { flex-shrink: 0; }
+
+/* ---- Kiwi-bird mark (header + footer) ---- */
+.logo-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--bg-panel);
+  box-shadow: 0 0 14px rgba(147, 198, 69, 0.28);
+  flex-shrink: 0;
+}
+.logo-bird { width: 20px; height: 20px; color: var(--primary); }
+.footer .logo-chip { width: 28px; height: 28px; border-radius: 7px; box-shadow: 0 0 10px rgba(147, 198, 69, 0.22); }
+.footer .logo-bird { width: 17px; height: 17px; }
+

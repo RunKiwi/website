@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { GitBranch, Network, GitPullRequest, RefreshCw, ShieldCheck, Terminal } from 'lucide-react';
+import { GitBranch, Network, GitPullRequest, RefreshCw, ShieldCheck, Terminal, Sparkles } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -24,6 +24,16 @@ const features: Feature[] = [
     desc: 'The scheduler releases each worker the moment its dependencies go green, fanning out across dozens of isolated sandboxes at once. The ceiling is model inference, not machines.',
   },
   {
+    icon: <Sparkles className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        Plans that learn from past jobs
+        <span className="feature-tag">Opt-in</span>
+      </>
+    ),
+    desc: 'Opt in and the planner draws on your org’s prior jobs when it decomposes a new task — Auto finds the most relevant past work by semantic search, or pick jobs by hand. Strictly scoped to your own org’s jobs, and used only at plan time.',
+  },
+  {
     icon: <GitPullRequest className="w-6 h-6 text-primary" />,
     title: (
       <>
@@ -41,7 +51,7 @@ const features: Feature[] = [
   {
     icon: <ShieldCheck className="w-6 h-6 text-primary" />,
     title: 'Sealed credentials, default-deny egress',
-    desc: 'Credentials are sealed with X25519 and injected by a local proxy, so model-generated code never holds a raw key. Sandbox egress is allowlisted to the model, registries, and your VCS.',
+    desc: 'Credentials are sealed with X25519 and unsealed only in the daemon’s memory. The model runs in the daemon, not the sandbox — only your test command runs sandboxed, with default-deny networking — so model-generated code never sees a key.',
   },
   {
     icon: <Terminal className="w-6 h-6 text-primary" />,
