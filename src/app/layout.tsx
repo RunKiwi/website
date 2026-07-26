@@ -27,8 +27,8 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "Kiwi — One issue in. One PR out.",
-  description: "Kiwi is the planner and the swarm for shipping teams. Describe a task; Kiwi decomposes it into a worker DAG, runs a swarm of agents in parallel on one branch, and opens a single verified PR. Start on our managed cloud with zero setup, or bring your own.",
+  title: "Kiwi — Coding agents that run where you say.",
+  description: "Kiwi runs coding agents inside infrastructure you control. Model-generated code executes in a sandbox with default-deny networking and never holds an API key, every edit and review verdict is recorded step by step, and the work lands as one PR verified against your own test command. Run it on our managed cloud, or entirely inside your own VPC.",
   // Favicon is served by the app/icon.svg file convention (kiwi-bird mark).
 };
 

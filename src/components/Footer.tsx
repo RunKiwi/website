@@ -10,7 +10,7 @@ export default function Footer() {
             <span className="logo-chip"><Logo className="logo-bird" /></span>
             <span className="logo-text">Kiwi</span>
           </div>
-          <p className="footer-tagline">The planner and the swarm for shipping teams. One issue in, one verified PR out — on our cloud, or in yours.</p>
+          <p className="footer-tagline">Coding agents that run where you say. One issue in, one verified PR out — contained, recorded, and on our cloud or in yours.</p>
         </div>
 
         <div className="footer-links-group">
@@ -33,7 +33,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="container footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Kiwi. Managed cloud, or bring your own · the planner and the swarm.</p>
+        <p>&copy; {new Date().getFullYear()} Kiwi. Managed cloud, or bring your own · contained execution, on the record.</p>
       </div>
     </footer>
   );

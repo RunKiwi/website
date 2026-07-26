@@ -5,16 +5,16 @@ export default function ValueBanner() {
     <section className="banner-section" aria-label="What Kiwi is">
       <Reveal as="div" className="container banner-content" stagger>
         <p className="banner-positioning">
-          Copilots hand you suggestions. Sandbox vendors hand you a box. <span className="text-gradient">Kiwi plans the work and runs the swarm—end to end.</span>
+          Copilots hand you suggestions. Sandbox vendors hand you a box. <span className="text-gradient">Kiwi runs the work end to end—inside a boundary you set, with a record of what happened.</span>
         </p>
         <ul className="banner-trust-strip">
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
-            Planner decomposes issues into a worker DAG
+            Model code runs sandboxed, default-deny, key-free
           </li>
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
-            One job → one branch → one PR
+            Every edit, verdict and test run recorded
           </li>
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
