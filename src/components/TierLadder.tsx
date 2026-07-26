@@ -23,7 +23,7 @@ export default function TierLadder() {
           <span className="section-eyebrow">One product · Two operators</span>
           <h2 className="section-title">Start on our cloud. Move to yours when you outgrow trusting us.</h2>
           <p className="section-subtitle">
-            The exact same daemon, protocol, and swarm. The only thing that changes is who runs the machine — so graduating is a flag, not a migration.
+            The exact same daemon, protocol, and execution loop. The only thing that changes is who runs the machine — so graduating is a flag, not a migration.
           </p>
         </Reveal>
 
@@ -42,7 +42,7 @@ export default function TierLadder() {
             <ul className="tier-points">
               <li><Check className="w-4 h-4" /> No AWS account, no Terraform, no VM</li>
               <li><Check className="w-4 h-4" /> Bounded free tier, then usage-based</li>
-              <li><Check className="w-4 h-4" /> Best way to evaluate the swarm</li>
+              <li><Check className="w-4 h-4" /> Fastest way to see a real PR</li>
             </ul>
             <Link href="https://app.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="tier-cta">
               Get started at app.runkiwi.dev

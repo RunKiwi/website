@@ -27,10 +27,10 @@ export default function Hero() {
             <span className="badge-text">Now live — sign in with GitHub at app.runkiwi.dev</span>
           </div>
           <h1 className="hero-title">
-            Ship a night&apos;s worth of PRs <em className="text-gradient">before standup.</em>
+            Coding agents your security review <em className="text-gradient">can actually approve.</em>
           </h1>
           <p className="hero-subtitle">
-            Describe a task in plain English. Kiwi&apos;s planner breaks it into a dependency graph, a swarm of agents builds it in parallel, and it all lands as <strong>one reviewable PR—verified green</strong>. Start on our cloud with zero setup; move it into your own when you&apos;re ready.
+            Describe a task in plain English. Kiwi plans it, runs it against <strong>your own test command</strong>, and lands one reviewable PR. Model-generated code executes in a sandbox with default-deny networking and <strong>never holds an API key</strong> — and every edit, review verdict and test run is recorded step by step. Run it on our cloud, or entirely inside your own VPC.
           </p>
 
           <div className="hero-actions">
@@ -38,11 +38,11 @@ export default function Hero() {
               Start free — sign in with GitHub
               <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
-            <Link href="#how-it-works" className="btn btn-outline" id="hero-secondary-btn">See the swarm</Link>
+            <Link href="#how-it-works" className="btn btn-outline" id="hero-secondary-btn">See how it runs</Link>
           </div>
 
           <p className="hero-microcopy">
-            Managed by default · Bring your own cloud when you graduate · 50 agents, not 50 diffs
+            Managed cloud or your own VPC · Actor–Critic verdicts recorded per step · One job → one branch → one PR
           </p>
 
           <div className="hero-cli-install">

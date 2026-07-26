@@ -60,7 +60,7 @@ export default function PricingTiers({ theme }: { theme?: 'cream' }) {
               <div className="pricing-price">
                 <span className="price-value">$0</span>
               </div>
-              <p className="pricing-subtext">Perfect for evaluating the swarm on personal projects.</p>
+              <p className="pricing-subtext">Perfect for evaluating Kiwi on personal projects.</p>
             </div>
             <div className="pricing-cta-wrap">
               <Link href="https://app.runkiwi.dev" className="btn btn-secondary w-full">Start free</Link>

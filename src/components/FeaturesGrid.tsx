@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { GitBranch, Network, GitPullRequest, RefreshCw, ShieldCheck, Terminal, Sparkles } from 'lucide-react';
+import { GitBranch, Server, GitPullRequest, RefreshCw, ShieldCheck, FileCheck, Terminal, Sparkles } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -9,19 +9,39 @@ type Feature = {
 
 const features: Feature[] = [
   {
-    icon: <GitBranch className="w-6 h-6 text-primary" />,
+    icon: <ShieldCheck className="w-6 h-6 text-primary" />,
     title: (
       <>
-        A planner, not a prompt box
-        <span className="feature-tag">The moat</span>
+        Sealed credentials, default-deny egress
+        <span className="feature-tag">Containment</span>
       </>
     ),
-    desc: 'A frontier-model planner decomposes one issue into a dependency graph of scoped workers — each with its own files, tools, and passing test command. This is the layer sandbox vendors hand back to you.',
+    desc: 'Credentials are sealed with X25519 and unsealed only in the daemon’s memory. The model runs in the daemon, not the sandbox — only your test command runs sandboxed, with default-deny networking — so model-generated code never sees a key.',
   },
   {
-    icon: <Network className="w-6 h-6 text-primary" />,
-    title: 'A swarm that runs in parallel',
-    desc: 'The scheduler releases each worker the moment its dependencies go green, fanning out across dozens of isolated sandboxes at once. The ceiling is model inference, not machines.',
+    icon: <FileCheck className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        Every step on the record
+        <span className="feature-tag">Evidence</span>
+      </>
+    ),
+    desc: 'Each iteration writes a structured event: which model proposed the edit, whether the Critic approved or rejected it and why, whether the test passed, plus tokens, cost and duration. A run that took three attempts shows you the two that were turned down.',
+  },
+  {
+    icon: <RefreshCw className="w-6 h-6 text-primary" />,
+    title: 'Actor–Critic, not autopilot',
+    desc: 'An Actor proposes a patch and a Critic reviews it before a single byte is written to disk. Rejected edits never reach your test command — they go back to the Actor with the reason attached. Bounded by per-task step and USD budget caps.',
+  },
+  {
+    icon: <Server className="w-6 h-6 text-primary" />,
+    title: 'Your cloud, or ours',
+    desc: 'The same daemon and protocol run either way. In BYOC it runs in your own AWS or GCP account, so source and credentials never cross your VPC edge — and the key that opens them is one we never hold.',
+  },
+  {
+    icon: <GitBranch className="w-6 h-6 text-primary" />,
+    title: 'A planner, not a prompt box',
+    desc: 'A frontier-model planner decomposes one issue into a dependency graph of scoped workers, each with its own files and passing test command. The scheduler releases each worker the moment its dependencies go green.',
   },
   {
     icon: <Sparkles className="w-6 h-6 text-primary" />,
@@ -41,22 +61,12 @@ const features: Feature[] = [
         <span className="feature-tag">No review pile-up</span>
       </>
     ),
-    desc: 'Every worker commits to the same job branch, so 50 agents produce one reviewable PR — not 50 diffs. A terminal verify worker runs the full suite before the PR ever opens.',
-  },
-  {
-    icon: <RefreshCw className="w-6 h-6 text-primary" />,
-    title: 'Actor–Critic execution loop',
-    desc: 'Inside each sandbox an Actor writes the patch and a Critic reviews it, iterating against your test command until it passes — bounded by per-task step and USD budget caps.',
-  },
-  {
-    icon: <ShieldCheck className="w-6 h-6 text-primary" />,
-    title: 'Sealed credentials, default-deny egress',
-    desc: 'Credentials are sealed with X25519 and unsealed only in the daemon’s memory. The model runs in the daemon, not the sandbox — only your test command runs sandboxed, with default-deny networking — so model-generated code never sees a key.',
+    desc: 'Every worker commits to the same job branch, so a fan-out produces one reviewable PR — not a diff per agent. A terminal verify worker runs the full suite before the PR ever opens.',
   },
   {
     icon: <Terminal className="w-6 h-6 text-primary" />,
     title: 'Integrations over dashboards',
-    desc: 'Fire the swarm from the kiwi CLI, the Node/Python SDK in CI, a labeled Linear ticket, or kiwi claude — a wrapper that offloads work straight from your terminal agent.',
+    desc: 'Submit from the kiwi CLI, the Node/Python SDK in CI, a labeled Linear ticket, or kiwi claude — a wrapper that offloads work straight from your terminal agent.',
   },
 ];
 
@@ -66,9 +76,9 @@ export default function FeaturesGrid({ theme }: { theme?: 'cream' }) {
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">Why Kiwi</span>
-          <h2 className="section-title">The layer above the sandbox</h2>
+          <h2 className="section-title">Containment and evidence, not just throughput</h2>
           <p className="section-subtitle">
-            Anyone can hand you a container. Kiwi plans the work, runs the swarm, composes the result, and keeps the whole thing verified and contained.
+            Generating a diff is the easy part now. The hard part is deciding it&apos;s safe to merge. Kiwi runs the work inside a boundary you define and keeps the record of what produced it, what reviewed it, and what proved it.
           </p>
         </Reveal>
 
