@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Outfit, Fraunces, Fira_Code } from "next/font/google";
+import { REPO_URL, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,10 +27,79 @@ const firaCode = Fira_Code({
   subsets: ["latin"],
 });
 
+const TITLE = "Kiwi — Coding agents that run where you say.";
+const DESCRIPTION =
+  "Kiwi runs coding agents inside infrastructure you control. Model-generated code executes in a sandbox with default-deny networking and never holds an API key, every edit and review verdict is recorded step by step, and the work lands as one PR verified against your own test command. Run it on our managed cloud, or entirely inside your own VPC.";
+
 export const metadata: Metadata = {
-  title: "Kiwi — Coding agents that run where you say.",
-  description: "Kiwi runs coding agents inside infrastructure you control. Model-generated code executes in a sandbox with default-deny networking and never holds an API key, every edit and review verdict is recorded step by step, and the work lands as one PR verified against your own test command. Run it on our managed cloud, or entirely inside your own VPC.",
+  // metadataBase is what makes every relative URL below resolve to an absolute
+  // one. Without it the generated og:image is a relative path, which most
+  // unfurlers drop — so shares render as a bare link.
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  applicationName: "Kiwi",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Kiwi",
+    url: SITE_URL,
+    title: TITLE,
+    description: DESCRIPTION,
+    // og:image comes from app/opengraph-image.tsx automatically.
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
   // Favicon is served by the app/icon.svg file convention (kiwi-bird mark).
+};
+
+// Structured data. Deliberately limited to facts that are true today: what the
+// product is, who publishes it, and that a free tier exists. No aggregateRating
+// or review markup — inventing those is both a fabrication and a manual-action
+// risk, and we have no real ratings to cite.
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "Kiwi",
+      url: SITE_URL,
+      logo: `${SITE_URL}/icon.svg`,
+      sameAs: [REPO_URL],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "Kiwi",
+      description: DESCRIPTION,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Kiwi",
+      url: SITE_URL,
+      description: DESCRIPTION,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Linux, macOS",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        description: "Free tier on the Kiwi-operated shared fleet.",
+      },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -40,6 +110,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} ${fraunces.variable} ${firaCode.variable} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <div className="film-grain" aria-hidden="true" />
         {children}
         <Analytics />
