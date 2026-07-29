@@ -1,12 +1,14 @@
 import type { NextConfig } from "next";
+import createMDX from "@next/mdx";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Blog posts are authored as MDX pages, so those extensions must be routable.
+  pageExtensions: ["ts", "tsx", "md", "mdx"],
   typescript: {
     ignoreBuildErrors: true,
   },
 };
 
-export default nextConfig;
+const withMDX = createMDX({});
+
+export default withMDX(nextConfig);

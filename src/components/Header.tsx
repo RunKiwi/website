@@ -5,17 +5,18 @@ export default function Header() {
   return (
     <header className="header">
       <div className="container header-container">
-        <Link href="#" className="logo" id="header-logo-link">
+        <Link href="/" className="logo" id="header-logo-link">
           <span className="logo-chip"><Logo className="logo-bird" /></span>
           <span className="logo-text">Kiwi</span>
         </Link>
 
         <nav className="nav-links">
-          <Link href="#how-it-works" className="nav-link" id="nav-how-link">How it works</Link>
-          <Link href="#features" className="nav-link" id="nav-features-link">Features</Link>
-          <Link href="#tiers" className="nav-link" id="nav-tiers-link">Managed &amp; BYOC</Link>
-          <Link href="#pricing" className="nav-link" id="nav-pricing-link">Pricing</Link>
-          <Link href="#quickstart" className="nav-link" id="nav-quickstart-link">Quickstart</Link>
+          <Link href="/#how-it-works" className="nav-link" id="nav-how-link">How it works</Link>
+          <Link href="/#features" className="nav-link" id="nav-features-link">Features</Link>
+          <Link href="/#tiers" className="nav-link" id="nav-tiers-link">Managed &amp; BYOC</Link>
+          <Link href="/#pricing" className="nav-link" id="nav-pricing-link">Pricing</Link>
+          <Link href="/#quickstart" className="nav-link" id="nav-quickstart-link">Quickstart</Link>
+          <Link href="/blog" className="nav-link" id="nav-blog-link">Blog</Link>
           <Link href="https://docs.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="nav-link" id="nav-docs-link">Docs</Link>
         </nav>
 

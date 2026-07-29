@@ -1,0 +1,78 @@
+Somewhere in your setup there is a moment where a model writes code and something runs it. Maybe it's a test suite, maybe it's a build, maybe it's the agent trying its change to see whether it worked. That moment is the one worth designing carefully, and it's usually the one people design last.
+
+The word "sandbox" hides a lot. Before choosing a technology it helps to be precise about what you're defending against, because the three common threats want different controls and only one of them is likely to actually happen to you.
+
+## Three threats that get conflated
+
+**Accidental damage.** The model writes something destructive without meaning to — a recursive delete rooted a directory too high, a migration against the wrong database, a test that spawns processes until the host falls over. This is by far the most frequent failure and the least interesting: it's solved by running in a disposable workspace with resource limits, and nobody needs a threat model to arrive at that.
+
+**Exfiltration.** The code that runs reads something it shouldn't — your source, your environment, a token on disk — and sends it somewhere. This does not require the model to be malicious. A dependency in your tree can do it, a prompt-injected instruction hidden in an issue comment can do it, and a model that has simply misunderstood the task can do it by writing a debug helper that POSTs state to a pastebin.
+
+**Escape.** The code breaks out of the isolation boundary and takes the host. This is the threat that gets the most attention and the most engineering.
+
+Most setups I've looked at spend their effort on escape and leave exfiltration wide open. That's backwards for almost everyone. Container escapes are rare, need a kernel bug, and are mostly a concern if you're running untrusted code from strangers. Exfiltration needs nothing but an outbound socket, and every default-configured container has one.
+
+## Egress is the control that matters
+
+If you do one thing, deny outbound network by default.
+
+The reasoning is simple: nearly every bad outcome that isn't a crash requires data to leave. Code that can't reach the network can still delete your worktree — but your worktree is disposable. It cannot send your source to an attacker, cannot phone home, cannot pull a second-stage payload, and cannot mine anything.
+
+This is also the control that costs you the most, which is why people skip it. Denying egress breaks the thing everyone's test command does: fetch dependencies. `npm test` on a cold `node_modules`, `go test` without a warm module cache, `pytest` in a fresh virtualenv — all of these want the internet, and when they fail people open the network back up and move on.
+
+The way out is to separate dependency resolution from test execution:
+
+- **Resolve dependencies before the boundary.** Populate `node_modules`, the Go module cache or the virtualenv in a preparation step that has network access but never runs model-generated code. Then run the test with egress denied against an already-warm tree.
+- **If you must fetch during the run, use an allowlist.** Route through a proxy that permits your registry and nothing else. This is meaningfully weaker — a compromised package on the registry is now inside your boundary — but it's still a world apart from unrestricted egress.
+
+The thing to avoid is the middle position where you tell yourself the sandbox is the control and then punch a hole through it because the test needed one.
+
+## Shrink what actually runs untrusted
+
+The second lever is scope, and it's the one that changes the shape of the problem rather than just hardening it.
+
+Ask what genuinely needs to execute untrusted code. In most agent architectures the answer is narrower than the implementation. The model call itself doesn't — that's an HTTPS request to a provider, made by your code, with your key. Reading the repository doesn't. Applying a patch to files doesn't. What actually runs code the model influenced is the **build and test command**, and that's it.
+
+If you draw the boundary there — untrusted execution on one side, everything else on the other — several properties fall out for free:
+
+- The provider API key never enters the sandbox, because the process that calls the provider lives outside it. Generated code cannot read a secret that was never in its address space.
+- Git credentials never enter the sandbox. The commit and the push happen outside, after the test has passed.
+- The sandbox needs no egress at all, because building and running a test against a warm dependency tree doesn't require the internet. The expensive control from the previous section becomes cheap.
+
+This is a design decision, not a configuration one, and it's much harder to retrofit than to start with. An architecture that runs the whole agent loop inside the sandbox has to put the API key in there too, and no amount of seccomp profile hardening fixes that.
+
+## Choosing an isolation technology
+
+Only after the above does the technology choice matter much. Roughly, in increasing order of isolation and cost:
+
+**Plain OS containers.** Namespaces and cgroups. Fine for accidental damage and resource limits. The kernel is shared, so a kernel bug is an escape. Adequate when the code is *your* code and you're mostly worried about mistakes.
+
+**Hardened containers.** The above plus a tight seccomp profile, dropped capabilities, read-only root, no privileged mounts. Notably: don't mount the Docker socket into anything that runs generated code — that's a full host compromise wearing a container costume, and it shows up constantly in agent tooling because it's the easy way to let an agent build images.
+
+**User-space kernels (gVisor).** A syscall interception layer so the container talks to a userspace kernel rather than the host's. Meaningfully raises the bar on escape for a modest startup and syscall-overhead cost. This is the sweet spot for multi-tenant workloads where the alternative is one VM per tenant.
+
+**MicroVMs (Firecracker, Cloud Hypervisor).** A real hypervisor boundary with a separate guest kernel. The strongest option, the most operational weight, and the one to reach for when tenants actively distrust each other.
+
+For a single team running agents against their own code, hardened containers with strict egress control get you most of the value. For anything multi-tenant, gVisor is the point where the effort-to-isolation curve is kindest.
+
+## The leaks that keep showing up
+
+A few specifics that undo an otherwise reasonable setup:
+
+**Inherited environment.** Container runtimes pass through more than people expect, and CI systems export secrets as environment variables. If your orchestrator process holds `GITHUB_TOKEN` and spawns the sandbox as a child, check what actually crossed. Enumerate what goes in rather than filtering what shouldn't.
+
+**Mounted credentials.** Bind-mounting `$HOME` for a config file brings `~/.aws`, `~/.ssh` and `~/.config/gh` along with it. Mount the single file.
+
+**Writable shared caches.** A dependency cache mounted read-write into the sandbox is a persistence mechanism: run one modifies a cached artifact, run two executes it. Mount caches read-only, or accept the cold start.
+
+**The test command itself.** It's specified by whoever submits the task, and it runs by design. If your users can supply an arbitrary test command, that string is an execution primitive — it deserves the same suspicion as the generated code, and it's a reason to keep the sandbox boundary meaningful even for code you think you trust.
+
+## The short version
+
+Deny egress by default and pay the cost of warming dependencies beforehand. Draw the boundary so that only the build and test command runs untrusted, which keeps every credential outside it. Pick isolation to match how much you distrust your tenants — hardened containers for your own code, a user-space kernel for multi-tenant. Then go audit what your environment and mounts are actually carrying across, because that's where the hole usually is.
+
+None of this makes model-generated code safe to run. It makes the blast radius something you chose deliberately instead of something you discovered afterwards.
+
+---
+
+*Kiwi runs coding agents with this boundary built in: only your test command executes in the sandbox, with egress denied by default, so the model's code never holds your provider key. You can read [how the isolation model works](https://docs.runkiwi.dev/sandbox) or [try it free](https://app.runkiwi.dev).*
