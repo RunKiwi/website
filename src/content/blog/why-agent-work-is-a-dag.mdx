@@ -1,0 +1,75 @@
+If you've watched agent tooling over the last couple of years, you'll have noticed everything drifting toward graphs. Orchestration frameworks that started as loops grew graph APIs. Durable execution engines got pulled into the agent conversation. "Graph" has become a thing people put on landing pages.
+
+It's worth understanding why, because the reason is not that graphs are fashionable. It's that the loop shape runs out of road in a specific, predictable way.
+
+## The loop, and where it stops working
+
+The natural first design for an agent is a loop. Give the model a goal and some tools; it thinks, acts, observes the result, and goes again until it decides it's finished. This is a good design. It's the right shape for a single coherent task, it's easy to reason about, and it's what most agents should be doing.
+
+The trouble starts when the task is large enough that you want it split up.
+
+**A loop is inherently serial.** If your task touches nine files and three of those changes are independent, a loop does them one after another. This isn't only a latency problem — it's a context problem. Everything the loop has done so far competes for the same window, so by file seven the model is reasoning about file one through a summary of a summary.
+
+**A loop has no partial failure semantics.** If step six fails, what's the state? Steps one through five happened. Step seven never ran. There's no structural answer to "what should be retried" because the loop never declared which steps depended on which.
+
+**A loop isn't resumable in a useful way.** Loops are typically stateful in memory. When the process dies at minute forty, the interesting question is what work survived, and a loop generally can't tell you.
+
+**A loop has no natural stopping condition.** It ends when the model says it's done. That's a judgment call by the same component whose work you're trying to check.
+
+Every one of these is a structural gap rather than a bug, and every one of them is what a graph fills.
+
+## What the graph actually buys
+
+Model the work as nodes with dependency edges — a directed acyclic graph — and each gap gets a concrete answer.
+
+**Parallelism where it's safe.** Two nodes with no path between them are independent by construction, so they can run at the same time. Not "probably fine to run concurrently" — the graph is a statement that they don't depend on each other, and if that statement is wrong the plan was wrong, which is a thing you can inspect.
+
+**Ordering where it's necessary.** An edge from A to B says B may not start until A has succeeded. When one change is a precondition for another — a shared type, a renamed function, a new interface — the edge makes that explicit and enforceable rather than implicit in the order somebody wrote the steps.
+
+**Correct partial failure.** If a node fails, the nodes downstream of it can never satisfy their preconditions, so they fail fast. Independent branches keep running. "What should be retried" has a precise answer: the failed node and its transitive dependents. Nothing else.
+
+**Bounded context per node.** Each node carries its own scoped task and its own definition of done. The model working node seven isn't dragging the transcript of nodes one through six behind it.
+
+**Resumability.** The graph plus per-node status *is* the state. If a worker dies, its node returns to pending and something else picks it up. Nothing about recovery depends on reconstructing what was in a process's memory.
+
+That last property is where the agent conversation and the durable-execution conversation met. Temporal, Restate and friends solved "long-running work that survives failure" years before agents; agent frameworks arrived at graphs and found the same people already there.
+
+## The scheduling detail that matters
+
+Building the graph is the easy half. The half that determines whether it works under failure is how nodes get handed out.
+
+The instinct is a queue: workers pop tasks off. The problem is that popping is destructive — the moment a worker takes a task and then dies, the task is gone. You've traded a lost worker for a lost unit of work.
+
+The alternative is to **lease** rather than pop. A worker takes a time-bounded claim on a node. It heartbeats while working. If it finishes, the node is marked done. If it dies, the lease expires and the node becomes available again. Nothing is lost by a crash; it's just delayed.
+
+Two details make this hold up:
+
+**Dependency gating happens at lease time, not plan time.** A node is only handed out when every node it depends on has already succeeded. This has to be checked at the moment of dispatch, because "A has succeeded" is a fact that changes. A blocked node shouldn't stall the queue either — the scheduler should look past it for other eligible work.
+
+**Leases need fencing.** A worker that stalls long enough for its lease to expire, then wakes up and reports a result, must not be able to overwrite the work of whoever took over. A monotonic token issued with the lease and checked on write handles this. It's the classic distributed-lock failure and it's easy to leave out.
+
+## The honest cost
+
+DAGs are not free, and the cost is specific: **you have to know the structure before you start.**
+
+Something has to decide, up front, that this task is nine nodes with these edges. That decision is made with less information than the workers will have — the planner hasn't read the code the way a worker will. Sometimes it's wrong. It splits something that should have been atomic, or serializes work that was actually independent, or misses a dependency entirely and two nodes collide on the same file.
+
+Loops don't have this problem. A loop discovers structure as it goes, which is exactly what makes it good at single coherent tasks.
+
+The honest position is that these are different tools. Inside a node, a loop is the right shape — propose a change, check it, iterate until the test passes. Across nodes, a graph is the right shape. Systems that work tend to be a graph of loops rather than a choice between them.
+
+The genuinely open problem is dynamic expansion: letting a node discover mid-execution that it needs to become three nodes, without losing the ordering guarantees that made the graph worth having. Most systems today either replan from scratch or don't handle it. Nobody has a clean answer yet.
+
+## What a node needs to be checkable
+
+One last thing, and it's the part that makes a graph more than a scheduling convenience.
+
+Because a DAG edge means "B may not start until A succeeded," you need a definition of *succeeded* that isn't the model's own opinion. If A completes because the model that did A decided it was finished, the edge guarantees nothing — you've built an ordering constraint on top of self-assessment.
+
+The most useful definition is an executable one. A test command, a build, a type check: something that runs and returns a verdict nobody in the loop can argue with. Research on multi-agent failures keeps finding the same shape — a large fraction of failures come from system design and inter-agent misalignment rather than from the models being individually bad at their jobs. Steps that hand off work on the strength of self-reported completion are exactly where that misalignment accumulates.
+
+So: nodes with executable gates, edges that mean something because the gates do, leases so crashes cost time rather than work, and a loop inside each node doing the part loops are good at. That's the shape most of the industry has converged on, and the convergence is earned.
+
+---
+
+*Kiwi plans a task into a DAG of scoped workers, gates each one on your own test command, and hands them out through a lease queue so a crashed worker's task returns to the queue. [How the DAG works](https://docs.runkiwi.dev/dags), or [try it free](https://app.runkiwi.dev).*
