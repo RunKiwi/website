@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { KIWI_MARK_PATH } from "@/components/Logo";
 
 import { getPost, posts } from "@/lib/posts";
 
@@ -49,12 +50,10 @@ export default async function PostOgImage({
               borderRadius: "18px",
             }}
           >
-            <svg width={52} height={52} viewBox="0 0 128 128" fill="#93C645">
-              <path d="M46,40 C58,28 82,26 96,42 C112,52 110,66 104,74 C98,90 80,100 60,98 C46,96 36,86 34,74 C31,64 34,50 46,40 Z" />
-              <path d="M36,60 C25,68 16,80 8,94 C19,85 30,79 40,72 Z" />
-              <path d="M60,96 L60,112" stroke="#93C645" strokeWidth={6} strokeLinecap="round" fill="none" />
-              <path d="M76,98 L76,112" stroke="#93C645" strokeWidth={6} strokeLinecap="round" fill="none" />
-              <circle cx={54} cy={52} r={4.2} fill="#0E1A24" />
+            {/* Shared mark; evenodd punches the eye, so no overpainted dot in
+                the tile colour is needed to fake the counter. */}
+            <svg width={56} height={56} viewBox="0 0 128 128" fill="#93C645" fillRule="evenodd">
+              <path d={KIWI_MARK_PATH} />
             </svg>
           </div>
           <div style={{ display: "flex", fontSize: "30px", color: "#9DB0BC", letterSpacing: "1px" }}>
