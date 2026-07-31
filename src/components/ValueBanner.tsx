@@ -18,6 +18,10 @@ export default function ValueBanner() {
           </li>
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
+            Your own Anthropic, OpenAI or Gemini key
+          </li>
+          <li className="trust-item">
+            <span className="trust-dot" aria-hidden="true"></span>
             Managed cloud, or your own VPC
           </li>
         </ul>

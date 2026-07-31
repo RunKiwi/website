@@ -10,7 +10,10 @@ const managedSnippet = `# Sign in with GitHub at app.runkiwi.dev — or use the 
 # 1. Install the CLI and log in
 npm i -g kiwi && kiwi login
 
-# 2. Submit a task — no cloud account, no VM
+# 2. Connect your own model key — anthropic, openai or gemini
+kiwi creds set openai "sk-..."
+
+# 3. Submit a task — no cloud account, no VM
 kiwi submit "Migrate auth to Postgres"
 
 # Kiwi plans it, runs the swarm, and opens

@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { GitBranch, Server, GitPullRequest, RefreshCw, ShieldCheck, FileCheck, Terminal, Sparkles } from 'lucide-react';
+import { GitBranch, Server, GitPullRequest, RefreshCw, ShieldCheck, FileCheck, Terminal, Sparkles, Cpu } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -37,6 +37,16 @@ const features: Feature[] = [
     icon: <Server className="w-6 h-6 text-primary" />,
     title: 'Your cloud, or ours',
     desc: 'The same daemon and protocol run either way. In BYOC it runs in your own AWS or GCP account, so source and credentials never cross your VPC edge — and the key that opens them is one we never hold.',
+  },
+  {
+    icon: <Cpu className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        Your models, your key
+        <span className="feature-tag">BYOK</span>
+      </>
+    ),
+    desc: 'Anthropic, OpenAI and Gemini are all first-class. Connect the key you already pay for, then pick the model per job — claude-opus-4-8, gpt-5 and gemini-flash-latest each route to your own account, sealed like every other credential. The model you choose is applied to every worker in the plan, not guessed at by the planner.',
   },
   {
     icon: <GitBranch className="w-6 h-6 text-primary" />,

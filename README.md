@@ -30,6 +30,10 @@ Keep site copy faithful to how the product actually works — the engineering li
   **default-deny networking** — so model-generated code never sees the key.
 - **"Zero-knowledge" is a BYOC-only property.** In managed mode Kiwi operates the machine that
   holds the private key and can decrypt — never present zero-knowledge as a blanket promise.
+- **Model providers:** **Anthropic, OpenAI and Gemini**, all first-class, all **BYOK** — the customer
+  connects their own key in every tier. The model id picks the provider (`gemini-*` → Gemini,
+  `gpt-*`/`o1`/`o3`/`o4` → OpenAI, everything else → Anthropic); see `pkg/provider/naming.go` in the
+  `kiwi` repo. There is no "Codex" provider — that placeholder was retired; write **OpenAI**.
 
 ## Structure
 
