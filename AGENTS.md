@@ -33,6 +33,11 @@ If you touch product-facing claims, keep them true to the current framing:
 - **Never claim regulatory compliance.** Not "EU AI Act compliant", not "SOC 2 compliant". We produce
   evidence; the customer's own compliance owner draws the conclusion. Phrase as what Kiwi *records*,
   never as what it certifies.
+- **Three model providers, always named together: Anthropic, OpenAI, Gemini.** They are equally
+  first-class, and Kiwi is **BYOK** in every tier — the key is the customer's own, never resold and
+  never ours. If copy names one or two, it is out of date. **"Codex" is not a provider**: it was a
+  dashboard placeholder that nothing implemented and it has been retired — write **OpenAI**. (Codex
+  Cloud, the competing product named above, is a different thing and fine to cite as a competitor.)
 - The `Marquee` lists only tools Kiwi actually uses/integrates. Don't add customer or partner logos
   we can't stand behind.
 

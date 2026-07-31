@@ -27,7 +27,7 @@ const features: FeatureRow[] = [
   { label: 'Linear', free: <No />, pro: <Yes />, enterprise: <Yes /> },
   { label: 'Slack', free: <No />, pro: <><Yes /> <SoonBadge /></>, enterprise: <><Yes /> <SoonBadge /></> },
   { label: 'gVisor sandbox + credential sealing', free: <Yes />, pro: <Yes />, enterprise: <Yes /> },
-  { label: 'Bring-your-own model key', free: <Yes />, pro: <Yes />, enterprise: <Yes /> },
+  { label: 'Bring-your-own model key (Anthropic, OpenAI, Gemini)', free: <Yes />, pro: <Yes />, enterprise: <Yes /> },
   { label: 'Shared context (cross-task memory)', free: <Yes />, pro: <Yes />, enterprise: <Yes /> },
   { label: 'Run in your own cloud (BYOC, zero-knowledge)', free: <No />, pro: <Yes />, enterprise: <Yes /> },
   { label: 'Firecracker microVM isolation', free: <No />, pro: <No />, enterprise: <><Yes /> <SoonBadge /></> },
