@@ -19,10 +19,10 @@ type Worker = {
 // One job → one branch → a DAG of workers. w1 (analyze) unblocks the three
 // parallel impl workers; w5 (verify) depends on all of them and opens the PR.
 const initialWorkers: Worker[] = [
-  { id: 'w1', name: 'analyze · locate the bug', stage: 'analyze', dependsOn: [], status: 'DONE',
-    logs: ['[actor] Reading call sites of Divide()…', '[finding] 3 call sites assume non-nil', '✓ summary handed to dependents'] },
+  { id: 'w1', name: 'analyze · map the session call sites', stage: 'analyze', dependsOn: [], status: 'DONE',
+    logs: ['[actor] Reading every caller of the session store…', '[finding] 3 call sites assume in-memory state', '✓ summary handed to dependents'] },
   { id: 'w2', name: 'impl · auth handler', stage: 'impl', dependsOn: ['w1'], status: 'RUNNING',
-    logs: ['[actor] Applying nil-guard patch…', '$ go test ./pkg/auth', '[critic] Reviewing diff…'] },
+    logs: ['[actor] Switching the handler to the Postgres store…', '$ go test ./pkg/auth', '[critic] Reviewing diff…'] },
   { id: 'w3', name: 'impl · session store', stage: 'impl', dependsOn: ['w1'], status: 'RUNNING',
     logs: ['[actor] Migrating store to Postgres…', '$ go test ./pkg/session', '[critic] minimal, scoped — approve'] },
   { id: 'w4', name: 'impl · migration script', stage: 'impl', dependsOn: ['w1'], status: 'RUNNING',
@@ -84,9 +84,9 @@ export default function GodView() {
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">How it works</span>
-          <h2 className="section-title">One issue in. One PR out.</h2>
+          <h2 className="section-title">One task in. One PR out.</h2>
           <p className="section-subtitle">
-            Kiwi plans your task into a graph of scoped workers, runs them in parallel on a single job branch, and lets the dependencies carry findings forward. Nothing merges until a terminal verify worker proves it green.
+            Kiwi plans your task into a graph of scoped workers, runs them in parallel on a single job branch, and lets the dependencies carry findings forward. What you asked for is the objective; a terminal verify worker runs the full suite to prove the change broke nothing before the PR opens.
           </p>
         </Reveal>
 
@@ -94,10 +94,10 @@ export default function GodView() {
         <Reveal as="ol" className="pipeline-rail" aria-label="Execution pipeline">
           {[
             { k: 'kiwi submit', v: 'a plain-English task' },
-            { k: 'Plan', v: 'issue → worker DAG' },
+            { k: 'Plan', v: 'task → worker DAG' },
             { k: 'Swarm', v: 'workers run in parallel' },
             { k: 'Compose', v: 'commits to one branch' },
-            { k: 'Verify', v: 'full suite must pass' },
+            { k: 'Verify', v: 'the suite still passes' },
             { k: 'Ship', v: 'one reviewable PR' },
           ].map((s, i, arr) => (
             <li key={s.k} className="pipeline-step">
@@ -156,7 +156,7 @@ export default function GodView() {
               <GitPullRequest className="pr-icon" aria-hidden="true" />
               <div className="pr-copy">
                 <span className="pr-title">{prOpen ? 'PR #42 opened → main' : 'Composing one PR…'}</span>
-                <span className="pr-sub">{prOpen ? '4 workers · 1 branch · verified green' : 'branch kiwi/job-42 · verify pending'}</span>
+                <span className="pr-sub">{prOpen ? '4 workers · 1 branch · suite still green' : 'branch kiwi/job-42 · verify pending'}</span>
               </div>
             </div>
           </div>

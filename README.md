@@ -25,9 +25,17 @@ Keep site copy faithful to how the product actually works — the engineering li
 
 - **What Kiwi does:** decomposes a task into a worker **DAG** and runs a swarm of agents that
   converge on **one branch / one verified PR** — on Kiwi's managed cloud, or BYOC in your own.
-- **Security model:** customer credentials are **X25519-sealed** to the daemon; the LLM Actor/Critic
-  run **in the daemon process**, and only the **test command** runs in the sandbox with
-  **default-deny networking** — so model-generated code never sees the key.
+- **It does what you ask.** The task description is the objective; the test command is a **guard**
+  proving the change broke nothing, *not* the definition of done. Additive work is ordinary work.
+  Never frame the product as fixing a failing test or chasing a green build.
+- **Security model:** customer credentials are **X25519-sealed** to the daemon and the LLM
+  Actor/Critic run **in the daemon process**, so model-generated code never sees the key. The sandbox
+  is **two-phase**: install with the network **on** and an empty environment, then verify with the
+  network **off**. State it precisely — *model-generated code never has network access, and the
+  phase that does never holds a secret.*
+- **Zero setup is real:** the runtime image, the test command and the target files are inferred from
+  the repo, and the daemon self-corrects when it guesses wrong. A prompt and a repo, nothing else.
+- **Pro is a contact flow.** Stripe checkout is not live — never imply a card purchase.
 - **"Zero-knowledge" is a BYOC-only property.** In managed mode Kiwi operates the machine that
   holds the private key and can decrypt — never present zero-knowledge as a blanket promise.
 - **Model providers:** **Anthropic, OpenAI and Gemini**, all first-class, all **BYOK** — the customer

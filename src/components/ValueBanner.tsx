@@ -10,7 +10,7 @@ export default function ValueBanner() {
         <ul className="banner-trust-strip">
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>
-            Model code runs sandboxed, default-deny, key-free
+            Model code runs with no network and no key
           </li>
           <li className="trust-item">
             <span className="trust-dot" aria-hidden="true"></span>

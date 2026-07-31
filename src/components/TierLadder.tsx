@@ -38,7 +38,7 @@ export default function TierLadder() {
               </div>
             </div>
             <p className="tier-pitch">Zero setup. We host the data plane, hold your keys like any SaaS, and you ship your first PR in one command.</p>
-            <code className="tier-cmd">$ npm i kiwi &amp;&amp; kiwi submit &quot;Fix issue #50&quot;</code>
+            <code className="tier-cmd">$ npm i kiwi &amp;&amp; kiwi submit &quot;Add pagination to the users API&quot;</code>
             <ul className="tier-points">
               <li><Check className="w-4 h-4" /> No AWS account, no Terraform, no VM</li>
               <li><Check className="w-4 h-4" /> Bounded free tier, then usage-based</li>

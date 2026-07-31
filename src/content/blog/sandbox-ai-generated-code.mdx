@@ -75,4 +75,4 @@ None of this makes model-generated code safe to run. It makes the blast radius s
 
 ---
 
-*Kiwi runs coding agents with this boundary built in: only your test command executes in the sandbox, with egress denied by default, so the model's code never holds your provider key. You can read [how the isolation model works](https://docs.runkiwi.dev/sandbox) or [try it free](https://app.runkiwi.dev).*
+*Kiwi runs coding agents with this boundary built in, using exactly the split described above: dependencies install in a networked phase that is handed an empty environment, and verification then runs your test command with egress denied. Model-generated code never has network access, and the phase that does never holds a secret. You can read [how the isolation model works](https://docs.runkiwi.dev/sandbox) or [try it free](https://app.runkiwi.dev).*
