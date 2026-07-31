@@ -9,7 +9,7 @@ import { Copy, Check, ChevronRight } from 'lucide-react';
 export default function Hero() {
   const [copied, setCopied] = useState(false);
 
-  const installCmd = 'npm i -g kiwi && kiwi submit "Fix issue #50"';
+  const installCmd = 'npm i -g kiwi && kiwi submit "Add pagination to the users API"';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(installCmd);
@@ -30,7 +30,7 @@ export default function Hero() {
             Coding agents your security review <em className="text-gradient">can actually approve.</em>
           </h1>
           <p className="hero-subtitle">
-            Describe a task in plain English. Kiwi plans it, runs it against <strong>your own test command</strong> on the <strong>Anthropic, OpenAI or Gemini key you already hold</strong>, and lands one reviewable PR. Model-generated code executes in a sandbox with default-deny networking and <strong>never holds that key</strong> — and every edit, review verdict and test run is recorded step by step. Run it on our cloud, or entirely inside your own VPC.
+            Describe a task in plain English — <strong>the description is the job</strong>, and your own test command is the guard that proves nothing broke. Kiwi plans it, runs it on the <strong>Anthropic, OpenAI or Gemini key you already hold</strong>, and lands one reviewable PR. <strong>Model-generated code gets no network at all</strong>, and the phase that does never holds a secret — and every edit, review verdict and test run is recorded step by step. Run it on our cloud, or entirely inside your own VPC.
           </p>
 
           <div className="hero-actions">

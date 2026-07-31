@@ -56,7 +56,7 @@ export default function OpengraphImage() {
             Coding agents that run where you say.
           </div>
           <div style={{ display: "flex", fontSize: "32px", color: "#9DB0BC", lineHeight: 1.35 }}>
-            Model-generated code runs sandboxed, with default-deny networking and no access to your keys.
+            You describe the task. Model-generated code runs with no network access and no access to your keys.
           </div>
         </div>
 

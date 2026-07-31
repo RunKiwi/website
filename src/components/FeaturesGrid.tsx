@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { GitBranch, Server, GitPullRequest, RefreshCw, ShieldCheck, FileCheck, Terminal, Sparkles, Cpu } from 'lucide-react';
+import { GitBranch, Server, GitPullRequest, RefreshCw, ShieldCheck, FileCheck, Terminal, Sparkles, Cpu, Target, PackageSearch, Activity } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -9,14 +9,24 @@ type Feature = {
 
 const features: Feature[] = [
   {
+    icon: <Target className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        Does what you asked
+        <span className="feature-tag">The whole point</span>
+      </>
+    ),
+    desc: 'Your description is the objective — not a failing check. “Add an example to the docs” is as ordinary a job here as a bug fix, because the test command is a guard proving the change broke nothing, never the definition of done. A run that changes nothing is reported as a failure rather than quietly called a success, and while the suite is red Kiwi will not edit the failing test — that is how a fix gets faked.',
+  },
+  {
     icon: <ShieldCheck className="w-6 h-6 text-primary" />,
     title: (
       <>
-        Sealed credentials, default-deny egress
+        Two-phase sandbox
         <span className="feature-tag">Containment</span>
       </>
     ),
-    desc: 'Credentials are sealed with X25519 and unsealed only in the daemon’s memory. The model runs in the daemon, not the sandbox — only your test command runs sandboxed, with default-deny networking — so model-generated code never sees a key.',
+    desc: 'Dependencies install in a networked phase handed an empty environment — no git token, no registry credential, nothing — so a hostile postinstall hook can reach the network with nothing to send. Then the network goes off and your test command runs the model’s code offline. Model-generated code never has network access, and the phase that does never holds a secret; your provider key is sealed to the daemon and withheld from both.',
   },
   {
     icon: <FileCheck className="w-6 h-6 text-primary" />,
@@ -26,7 +36,7 @@ const features: Feature[] = [
         <span className="feature-tag">Evidence</span>
       </>
     ),
-    desc: 'Each iteration writes a structured event: which model proposed the edit, whether the Critic approved or rejected it and why, whether the test passed, plus tokens, cost and duration. A run that took three attempts shows you the two that were turned down.',
+    desc: 'Each iteration writes a structured event: which model proposed the edit, whether the Critic approved or rejected it and why, whether the test passed, plus tokens, cost and duration. Those events are assembled into a per-job execution record, hash-chained to the one before it and shown with its hash and attestation state — so a run can be checked rather than taken on trust. A run that took three attempts shows you the two that were turned down.',
   },
   {
     icon: <RefreshCw className="w-6 h-6 text-primary" />,
@@ -49,9 +59,19 @@ const features: Feature[] = [
     desc: 'Anthropic, OpenAI and Gemini are all first-class. Connect the key you already pay for, then pick the model per job — claude-opus-4-8, gpt-5 and gemini-flash-latest each route to your own account, sealed like every other credential. The model you choose is applied to every worker in the plan, not guessed at by the planner.',
   },
   {
+    icon: <PackageSearch className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        A prompt and a repo. Nothing else.
+        <span className="feature-tag">Zero setup</span>
+      </>
+    ),
+    desc: 'No image to pick, no test command to configure, no file list to write. Kiwi reads what your repository already declares — a devcontainer, go.mod, .nvmrc, engines.node, .python-version — to choose the runtime, infers the test command, and resolves the planner’s file hints against the real tree. Guess wrong and it corrects itself and re-runs before the Actor ever sees the error; when a repo genuinely cannot build offline, it says so instead of spending your budget proving it.',
+  },
+  {
     icon: <GitBranch className="w-6 h-6 text-primary" />,
     title: 'A planner, not a prompt box',
-    desc: 'A frontier-model planner decomposes one issue into a dependency graph of scoped workers, each with its own files and passing test command. The scheduler releases each worker the moment its dependencies go green.',
+    desc: 'A frontier-model planner decomposes one task into a dependency graph of scoped workers, each with its own files and its own test command. The scheduler releases each worker the moment its dependencies go green.',
   },
   {
     icon: <Sparkles className="w-6 h-6 text-primary" />,
@@ -72,6 +92,11 @@ const features: Feature[] = [
       </>
     ),
     desc: 'Every worker commits to the same job branch, so a fan-out produces one reviewable PR — not a diff per agent. A terminal verify worker runs the full suite before the PR ever opens.',
+  },
+  {
+    icon: <Activity className="w-6 h-6 text-primary" />,
+    title: 'A live view, and a kill switch',
+    desc: 'The dashboard draws the worker DAG as it executes, and each job carries a timeline of every phase with the Critic’s reasons quoted in full. Cancel a run mid-flight, retry it, or delete it. A Spend page meters what each job actually cost, the planner’s own tokens included.',
   },
   {
     icon: <Terminal className="w-6 h-6 text-primary" />,

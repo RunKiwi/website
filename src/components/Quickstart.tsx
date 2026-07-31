@@ -16,8 +16,9 @@ kiwi creds set openai "sk-..."
 # 3. Submit a task — no cloud account, no VM
 kiwi submit "Migrate auth to Postgres"
 
-# Kiwi plans it, runs the swarm, and opens
-# one verified PR. That's it.`;
+# No image, no test command, no file list: Kiwi
+# reads them off the repo, plans it, runs the
+# swarm, and opens one verified PR. That's it.`;
 
 const byocSnippet = `# Graduate to your own cloud when you're ready.
 
@@ -38,8 +39,8 @@ const securityFeatures = [
   },
   {
     icon: <Network className="w-5 h-5 text-primary" />,
-    title: 'Default-deny egress',
-    desc: 'Only your test command runs in the sandbox, and it runs with default-deny networking — so a prompt-injected agent has no path to exfiltrate your repo.',
+    title: 'Two-phase sandbox',
+    desc: 'Dependencies install with the network on and no credentials at all; verification then runs your test command with the network off. Model-generated code never has network access, and the phase that does has nothing worth stealing.',
   },
   {
     icon: <Lock className="w-5 h-5 text-primary" />,
