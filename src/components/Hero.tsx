@@ -27,8 +27,11 @@ export default function Hero() {
             <span className="badge-text">Now live — sign in with GitHub at app.runkiwi.dev</span>
           </div>
           <h1 className="hero-title">
-            Coding agents your security review <em className="text-gradient">can actually approve.</em>
+            Agentic coding in <em className="text-gradient">infrastructure you control.</em>
           </h1>
+          <h2 className="hero-subheading" style={{ fontSize: '1.75rem', fontWeight: 500, marginBottom: '24px', letterSpacing: '-0.5px' }}>
+            Coding agents your security review <em className="text-gradient" style={{ fontStyle: 'normal' }}>can actually approve.</em>
+          </h2>
           <p className="hero-subtitle">
             Describe a task in plain English — <strong>the description is the job</strong>, and your own test command is the guard that proves nothing broke. Kiwi plans it, runs it on the <strong>Anthropic, OpenAI or Gemini key you already hold</strong>, and lands one reviewable PR. <strong>Model-generated code gets no network at all</strong>, and the phase that does never holds a secret — and every edit, review verdict and test run is recorded step by step. Run it on our cloud, or entirely inside your own VPC.
           </p>

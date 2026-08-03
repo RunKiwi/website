@@ -77,7 +77,7 @@ export default function PricingTiers({ theme }: { theme?: 'cream' }) {
                 <span className="price-period">/ user / mo</span>
               </div>
               <p className="pricing-subtext">+ $10 per 250 extra agent-min.</p>
-              <p className="pricing-note">Pro agent-minutes are per seat, pooled across your org. We set Pro up with you by email — there is no card checkout yet.</p>
+              <p className="pricing-note">Pro agent-minutes are per seat, pooled across your org. (Self-serve Stripe checkout coming soon!)</p>
             </div>
             <div className="pricing-cta-wrap">
               <a href="mailto:support@runkiwi.dev?subject=Kiwi%20Pro%20upgrade" className="btn btn-primary w-full">Talk to us about Pro</a>

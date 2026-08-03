@@ -32,6 +32,11 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <div className="w-full overflow-hidden flex justify-center items-center pointer-events-none mt-8 -mb-4 select-none">
+        <span style={{ fontSize: '26vw', lineHeight: 0.8, fontWeight: 900, letterSpacing: '-0.06em', opacity: 0.03 }} className="uppercase text-white whitespace-nowrap">
+          RUNKIWI
+        </span>
+      </div>
       <div className="container footer-bottom">
         <p>&copy; {new Date().getFullYear()} Kiwi. Managed cloud, or bring your own · contained execution, on the record.</p>
       </div>

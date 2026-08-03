@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { GitBranch, Server, GitPullRequest, RefreshCw, ShieldCheck, FileCheck, Terminal, Sparkles, Cpu, Target, PackageSearch, Activity } from 'lucide-react';
+import { GitBranch, Server, GitPullRequest, RefreshCw, ShieldCheck, FileCheck, Terminal, Sparkles, Cpu, Target, PackageSearch, Activity, Workflow } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -40,8 +40,23 @@ const features: Feature[] = [
   },
   {
     icon: <RefreshCw className="w-6 h-6 text-primary" />,
-    title: 'Actor–Critic, not autopilot',
-    desc: 'An Actor proposes a patch and a Critic reviews it before a single byte is written to disk. Rejected edits never reach your test command — they go back to the Actor with the reason attached. Bounded by per-task step and USD budget caps.',
+    title: (
+      <>
+        File Loop (Actor–Critic)
+        <span className="feature-tag">Default</span>
+      </>
+    ),
+    desc: 'For bounded edits, an Actor proposes a patch and a Critic reviews it before a single byte is written to disk. Rejected edits never reach your test command — they go back to the Actor with the reason attached. Bounded by per-task step and USD budget caps.',
+  },
+  {
+    icon: <Workflow className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        Agentic Session Mode
+        <span className="feature-tag">Tool-calling</span>
+      </>
+    ),
+    desc: 'For open-ended complex tasks, opt into Session Mode. A persistent Architect plans the objective and reviews progress, while an Implementer explores your repository using real tools (read, grep, write, run). Features prompt caching and a fresh context per round to prevent transcript bloat.',
   },
   {
     icon: <Server className="w-6 h-6 text-primary" />,
