@@ -1,0 +1,53 @@
+A planner decomposed a task into workers and handed one of them this: create `examples/advanced.rs`.
+
+The repository was Go. There was no Rust anywhere in it, and there never had been.
+
+The worker did what it was told. It wrote a Rust file into a Go project, ran the test command, and failed. Then it tried again, and failed. It had six attempts and a budget, and it spent all of them on a position that could not be won, because an agent can change a file's contents but it cannot change the filename it was assigned.
+
+## The planner is working blind
+
+Our Control Plane plans a task into a graph of workers. It runs on a server that has never cloned the repository and never will. It gets a URL and a task description. That is deliberate: the planner is a frontier-model call, and keeping customer source out of it is a containment property we would rather keep than trade.
+
+But it means every file path the planner emits is a guess drawn from the model's priors about what a project like this probably looks like. Sometimes the guess is `src/components/Footer.tsx` and the repo keeps it at `components/Footer.tsx`. Sometimes it is a `.rs` file in a Go repo.
+
+We were treating those guesses as instructions.
+
+## Hints, not instructions
+
+The fix is a distinction we should have drawn from the start. What the planner produces is a **hint**. What the daemon does with it is **resolution**, and resolution happens where the checkout actually exists.
+
+A hinted path is matched against the real `git ls-files` tree: exact path first, then filename, and ambiguity is left unresolved rather than guessed at. An unmatched hint falls through to model-driven discovery over that tree. Only then do we treat it as a file to create.
+
+The near-miss case is the one that taught us the most. `components/Footer.tsx` against a repo that keeps it at `src/components/Footer.tsx` used to produce a *new file*: a plausible-looking duplicate, in the wrong place, that the tests would not catch because nothing imported it. A wrong path that fails loudly is cheap. A wrong path that succeeds is expensive.
+
+For the `.rs`-in-a-Go-repo case, a new file whose extension unambiguously names another language gets corrected against the repository's own ecosystem before the loop starts. `.md`, `.yaml` and anything genuinely ambiguous are left alone, because being clever there costs more than it saves.
+
+Test commands went the same way. The planner used to emit one; now it does not, and the daemon reads the repository's own marker files instead. The component that cannot see the repo had been overriding the one that can.
+
+## The same principle, applied to the runtime
+
+Once you accept that the deciding component is blind, you start finding it everywhere.
+
+You never pass Kiwi a container image. There is no image flag, because the product promise is that you submit a prompt and a repo and nothing else. So the daemon has to work out the runtime, and it does it in a specific order:
+
+1. A `devcontainer.json`, if there is one. It is the answer the repository already wrote down.
+2. **The test command's own executable.** This is the strongest signal, and it is the one that settles a polyglot repo: a Go service with a frontend has both `go.mod` and `package.json`, and only the command tells you which one is being tested.
+3. Marker files, with versions read from `go.mod`, `.nvmrc`, `engines.node`, `.python-version`.
+
+It always returns something, because there is nobody to ask.
+
+And because a guess can be wrong, it self-corrects. The first failing run gets classified. `sh: npm: not found` and `go.mod requires go >= 1.25.0` are machine-readable statements about the environment, not the code, so the daemon swaps the image and re-runs **once, before the model is asked for anything**.
+
+Only the first failure is inspected. After that, a failure is a failure, because once model-generated code has run, the environment is no longer the only suspect. A genuinely failing test costs nothing extra.
+
+## Unwinnable positions are worth detecting
+
+The thread running through all of this is that some failures are not failures of effort.
+
+If you hand an agent a Rust filename in a Go repository, no amount of budget makes it work. If you ask it to verify a project whose build downloads a font from the network inside a sandbox with no network, it will fail every time, and it will fail with an error that looks like a code problem. If you point it at a file that does not exist where you said it does, it will create one and leave you a duplicate.
+
+Retrying is the wrong response to all three. So is failing with the raw error, which tells the user their code is broken when the truth is that the setup was impossible.
+
+**Detect the unwinnable position and say so.** In practice that means: check the hint against reality before spending anything, classify the first failure before any model output has entered the picture, and keep the classification narrow enough that you never blame the environment for an ordinary bug.
+
+The planner has never seen your repository. Everything it says about your repository is a hypothesis. The useful design question is not how to make the hypothesis better. It is which component is holding the evidence, and whether you asked it before you started spending money.

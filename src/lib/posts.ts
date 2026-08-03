@@ -45,6 +45,51 @@ export const posts: Post[] = [
     readingMinutes: 10,
     tags: ["architecture", "orchestration"],
   },
+  {
+    slug: "tests-are-a-guard-not-the-goal",
+    title: "Your tests are a guard, not the goal",
+    description:
+      "We shipped an agent that reported success in four seconds without calling the model once. What went wrong was the definition of done: a green suite is a constraint on the answer, not a description of it.",
+    date: "2026-08-04",
+    readingMinutes: 5,
+    tags: ["agents", "design"],
+  },
+  {
+    slug: "killed-our-own-agents",
+    title: "We killed our own agents with docker rm -f",
+    description:
+      "A two-minute task kept taking twelve. The container was named after the org and removed as though it belonged to the task, and the lease TTL that recovered it was also the only thing detecting the failure.",
+    date: "2026-08-04",
+    readingMinutes: 6,
+    tags: ["distributed-systems", "postmortem"],
+  },
+  {
+    slug: "when-failing-safe-fails-you",
+    title: "When failing safe fails you",
+    description:
+      "A reviewer returned a list where we expected a string. Every fallback did the safe thing, the rails counted them as real rejections, and the user got a Go type error instead of a code review.",
+    date: "2026-08-04",
+    readingMinutes: 5,
+    tags: ["reliability", "postmortem"],
+  },
+  {
+    slug: "best-effort-telemetry",
+    title: "Best-effort telemetry that was never any effort at all",
+    description:
+      "A stale foreign key meant every telemetry write failed, for as long as the feature had existed. The writes were best-effort by design, so nothing complained, and we signed records attesting to nothing.",
+    date: "2026-08-04",
+    readingMinutes: 5,
+    tags: ["observability", "postmortem"],
+  },
+  {
+    slug: "the-planner-has-never-seen-your-repo",
+    title: "The planner has never seen your repo",
+    description:
+      "Our planner assigned a Rust filename in a Go repository, and the worker spent its whole budget on a position it could not win. Treating a plan as hints rather than instructions, and detecting unwinnable runs before paying for them.",
+    date: "2026-08-04",
+    readingMinutes: 5,
+    tags: ["agents", "architecture"],
+  },
 ];
 
 /** Newest first. */
