@@ -20,7 +20,7 @@ const features: Feature[] = [
         <span className="feature-tag">The whole point</span>
       </>
     ),
-    desc: 'Your description is the objective. Your test command is a guard proving the change broke nothing. Keeping those apart is what makes \u201Cadd an example to the docs\u201D as ordinary a job here as a bug fix. A run that changes no code gets reported as a failure, and while your suite is red Kiwi will not touch the failing test. That is how a fix gets faked.',
+    desc: 'Your description is the objective. Your test command is a guard proving the change broke nothing. Keeping those apart is what makes \u201Cadd an example to the docs\u201D as ordinary a job here as a bug fix. A run that changes no code gets reported as a failure. And while your suite is red, Kiwi will not touch the failing test, because weakening an assertion is the easiest way to fake a fix.',
   },
   {
     icon: <ShieldCheck className="w-6 h-6 text-primary" />,
