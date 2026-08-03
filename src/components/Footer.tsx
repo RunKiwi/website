@@ -33,7 +33,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="w-full overflow-hidden flex justify-center items-center pointer-events-none mt-8 -mb-4 select-none">
-        <span style={{ fontSize: '15vw', lineHeight: 0.8, fontWeight: 900, letterSpacing: '-0.05em', opacity: 0.03 }} className="uppercase text-white whitespace-nowrap">
+        <span style={{ fontSize: '23vw', lineHeight: 0.8, fontWeight: 900, letterSpacing: '-0.08em', opacity: 0.03, width: '100%', textAlign: 'center' }} className="uppercase text-white whitespace-nowrap">
           RUNKIWI
         </span>
       </div>
