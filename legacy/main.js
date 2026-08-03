@@ -16,7 +16,6 @@ function initHeroCanvas() {
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
-  let animationFrameId;
 
   // Set sizing
   function resizeCanvas() {
@@ -189,7 +188,7 @@ function initHeroCanvas() {
 
     // C. Draw Credential Flow Streams (Tunnel mode)
     if (simMode === 'tunnel') {
-      streams.forEach((stream, idx) => {
+      streams.forEach((stream) => {
         stream.progress += stream.speed;
         if (stream.progress > 1) {
           stream.progress = 0;
@@ -341,7 +340,7 @@ function initHeroCanvas() {
     ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
     ctx.fill();
 
-    animationFrameId = requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
   }
 
   draw();
@@ -351,7 +350,6 @@ function initHeroCanvas() {
 // 2. Interactive Loop Simulator
 // ==========================================
 function initSimulator() {
-  const telemetrySandboxes = document.getElementById('telemetry-sandboxes');
   const telemetryTunnels = document.getElementById('telemetry-tunnels');
   const telemetryWarning = document.getElementById('telemetry-warning-indicator');
   const telemetryWarningText = document.getElementById('telemetry-warning-text');

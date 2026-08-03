@@ -1,16 +1,10 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ReactFlow,
   Controls,
   Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Connection,
-  Edge,
-  MarkerType,
   BackgroundVariant
 } from '@xyflow/react';
 import AgentNode from './AgentNode';
@@ -90,11 +84,11 @@ const generateMockData = () => {
 };
 
 export default function TopologyGraph() {
-  const [data, setData] = useState({ nodes: [], edges: [] });
+  const [data, setData] = useState(generateMockData);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setData(generateMockData());
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
