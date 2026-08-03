@@ -1,0 +1,58 @@
+Someone asked our agent to add an example to their docs folder. It reported success in about four seconds and changed nothing.
+
+The run was working exactly as designed, which is the part that took a while to accept.
+
+## The reasonable version of the mistake
+
+Give an agent a task and a test command, and there is an obvious optimization sitting right there: run the tests first. If they already pass, there is nothing to fix, so return.
+
+It saves a model call on every task submitted against a healthy repository. It reads as careful engineering. We shipped it.
+
+It is also a definition of done that says: **your task is complete when the test command exits zero.** And once you have written that down, "add an example to `examples/`" is complete before it starts, because adding an example was never going to make `go build` fail.
+
+So every additive request became a silent no-op. Worse than an error: a *success*, with a green check, having never called the model once.
+
+## Two different jobs wearing the same clothes
+
+The task description and the test command look like they are pointing at the same thing. They are not.
+
+**The task is the objective.** It is what the person wants to exist afterwards that does not exist now.
+
+**The test is a guard.** It proves the change did not break anything. It is a constraint on the solution, not a description of it.
+
+Conflating them works fine for the case everybody demos: a failing test, an agent, the test now passing. Red to green is a satisfying arc and it is genuinely most of what people submit. But it is a special case, and building the loop's success criterion around it quietly rules out every task where the suite was green to begin with, which is most documentation, most examples, most new tests, most refactors, and most features.
+
+## The rule that covers both directions
+
+The loop runs the tests first now, but it records a **baseline** rather than making a decision. Then it does the work regardless.
+
+Success requires two things:
+
+1. **The test state must not get worse.** Red to green means the fix worked. Green to green means the change landed without breaking anything. Green to red is a failure whatever else happened.
+2. **The run must have produced an actual diff.**
+
+That second condition is doing more work than it looks. Without it, "did not get worse" is trivially satisfied by doing nothing, and we would be right back where we started. A run that changes no code is reported as a failure now, even with a perfectly green suite, because the user asked for something and did not get it.
+
+## The rail this removes, and the one it does not
+
+There is a reason people reach for green-tests-means-done, and it is not laziness. It is that the alternative sounds like letting the agent decide when it is finished, which is exactly the thing you do not want.
+
+So the guard still guards. It just guards the right property: **whatever you did, the suite is no worse than you found it.** The agent cannot declare victory over a broken build.
+
+One anti-gaming rule survives, narrowed. While the suite is failing, the agent may not edit the failing test. That has to hold, because the shortest path from red to green is deleting the assertion, and an agent optimizing against the gate will find it.
+
+But that reasoning only holds *while the suite is red*. When the tests pass, the failing test is not defining the job, because there is no failing test. We used to refuse any task that touched a test file, full stop, which meant "add tests for the parser", an ordinary and useful request, was rejected outright on suspicion.
+
+The rule is conditional on the state of the suite, because the risk it defends against is conditional on the state of the suite.
+
+## What to check in your own agent
+
+If you are building anything that runs a model against a repository and verifies the result, three questions:
+
+**What is your definition of done, written literally?** If it is "the check passes", ask what happens when the check already passes. If the honest answer is "we return early", every additive task in your product is a no-op and your success metric is counting them as wins.
+
+**Can a run succeed having changed nothing?** If yes, you will eventually ship a green tick for work that never happened, and it will take you a long time to notice, because nothing about it looks like a failure.
+
+**Is your anti-gaming rule conditional?** Blanket rules ("never touch tests") are easy to reason about and reject a large class of legitimate work. The gaming risk usually exists in one specific state. Scope the rule to that state.
+
+None of this makes the agent more capable. It makes the difference between a system that does what you asked and a system that does what makes the check turn green. Those diverge precisely on the tasks where the check had nothing to say.

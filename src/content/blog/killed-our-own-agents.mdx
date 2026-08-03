@@ -1,0 +1,66 @@
+A task that should have taken two minutes was taking twelve. Not always. Maybe one run in four, with no pattern anyone could see in the task itself, and the logs from the daemon looked ordinary right up until they stopped.
+
+The tell turned out to be in the database, not the logs. Slow runs had `attempts = 2`. Fast runs had `attempts = 1`. Whatever was happening, the task was being handed out twice.
+
+## Naming things after the wrong noun
+
+Our free tier runs one agent daemon per organization, started on demand. Somebody submits a task, a provisioner starts them a container, the container registers and begins polling for work.
+
+The launcher opened like this:
+
+```
+docker rm -f kiwi-free-org-<orgid>
+docker run -d --name kiwi-free-org-<orgid> ...
+```
+
+Which is correct, and obviously so, if you believe the container belongs to the task. It does not. The container is named after the **org**, and an org can submit a second task while the first is still running. When they did, the launcher removed the container executing the first one. Mid-edit, mid-test, whenever.
+
+That is the whole bug. One line, written by someone who had the right instinct about idempotency and the wrong idea about what the container was for.
+
+## Ten minutes of nothing
+
+Killing the daemon was bad. What made it expensive was what happened next, which was nothing at all.
+
+Work is handed out by lease. A daemon does not pop a task off a queue; it takes a lease on one for a bounded window, renews the lease while it works, and the Control Plane hands the task to someone else if the lease expires. This is the standard shape, and it exists precisely so that a dead worker cannot strand a task forever.
+
+It worked. The lease expired, the task was requeued, a new daemon picked it up and finished it in two minutes. Total elapsed: twelve.
+
+The ten minutes in the middle were the lease TTL. During that window the task was `LEASED`, held by a process that no longer existed, and every part of the system was behaving correctly. The queue was right to wait: a leased task is being worked on. The lease was right to expire: that is what leases do. Nothing was broken except that nobody knew.
+
+**A lease TTL is not a health check.** It is an upper bound on how long you will wait to find out. If the only thing that detects a dead worker is the lease lapsing, then the TTL is also your minimum time-to-detection, and you have chosen it for a completely different reason: how long a slow-but-healthy worker should be allowed to go quiet.
+
+## The same mistake in the other direction
+
+Months later we shipped the mirror image of this bug.
+
+Our Control Plane marks a daemon offline after three minutes without contact, which is a reasonable thing to do. Our daemons renewed their leases every four minutes, which was also reasonable, chosen against a ten-minute lease TTL.
+
+Nobody put those two numbers next to each other.
+
+A daemon runs its task synchronously on the same goroutine that polls for work, so during a run it sends no heartbeat. Lease renewal was its only remaining contact with the Control Plane, and renewal came less often than the staleness threshold. So a daemon doing exactly what it was told went dark between renewals and got reported as offline.
+
+The user-visible symptom was worse than a stale badge. A second task, sitting in the queue behind the first, would be diagnosed as *"no runner is connected that can execute this task"*. A fleet-level failure, on an account whose runner was up and busy. The diagnosis code even had a comment explaining why the ordering was safe:
+
+> being at the concurrency cap implies sibling tasks are running, which implies a live runner
+
+Which is exactly backwards in a system where running a task is what makes a runner look dead.
+
+## What we changed
+
+**Reuse the container instead of replacing it.** A running daemon is a long-lived poller; it picks up the new task on its next heartbeat. Launching is only needed when nothing is there. A *stopped* container still gets removed, because it holds the name.
+
+There is one exception, and it is the interesting one. A daemon left running on a previous image is stale and should be retired, but retiring a busy daemon is the exact bug we just fixed. So staleness alone is not enough: we replace it only when the org has no queued or running work. And we compare resolved image IDs rather than tags, because the tag is what moves during a deploy, so both sides would read `latest` and always look equal.
+
+**Make renewal count as liveness, and put the two numbers in the same place.** Renewals and progress reports both touch the daemon's row now, and the renewal interval moved to two minutes so it fits inside the three-minute staleness window. That relationship is asserted in a test that restates the Control Plane's constant, with a comment saying why a test in the worker package is quoting a number from the server package.
+
+**Never report a fleet problem when the org has a leased task.** A running sibling is direct evidence a runner is alive, and it should outrank any inference drawn from a timestamp.
+
+## The general shape
+
+Both bugs are the same bug wearing different clothes: **a component drew a conclusion about a thing it could not observe.**
+
+The launcher concluded a container was disposable, because from where it stood a container looked like a task artifact. The diagnostic concluded a daemon was dead, because from where it stood silence looked like absence. Neither was unreasonable. Both were confidently wrong about something happening in a process they could not see.
+
+The fix in both cases was not better inference. It was finding a signal that already existed and had not been wired up: the org's own queue state in one case, the renewal request the daemon was already sending in the other.
+
+If you are building anything that hands work to a worker you cannot see, the question worth asking early is not "what is my timeout". It is: **when this worker dies, what tells me, and how long does it take?** If the honest answer is "the timeout", then the timeout is your detection latency, and you should choose it accordingly or find a second signal.

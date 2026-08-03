@@ -1,6 +1,6 @@
 Every coding agent needs credentials. It needs a model provider key to think, a git token to push, and often cloud credentials to run anything realistic. The default way to supply these is to put them in the environment where the agent runs, and that is the decision that quietly determines your whole security posture.
 
-Here's the uncomfortable property: **anything the agent process can read, the code the agent writes can also read.** Not because the model is adversarial, but because they're in the same address space, the same environment, the same filesystem. When a model writes a test helper that dumps `os.environ` for debugging — which they do, constantly — your provider key is in the log. When a dependency in the tree is compromised, it inherits everything the agent had.
+Here's the uncomfortable property: **anything the agent process can read, the code the agent writes can also read.** Not because the model is adversarial, but because they're in the same address space, the same environment, the same filesystem. When a model writes a test helper that dumps `os.environ` for debugging, which they do constantly, your provider key is in the log. When a dependency in the tree is compromised, it inherits everything the agent had.
 
 You cannot prompt your way out of this. It's structural.
 
@@ -12,7 +12,7 @@ The fix starts by noticing that these are two different questions that got answe
 
 *Where does untrusted code run?* The build and test command, which executes what the model just wrote.
 
-There's no reason those need to be the same process. Once you separate them, the provider key lives in the calling process and the sandbox never sees it. Generated code cannot read a secret that was never in its environment. This costs nothing — it's the same number of network calls — and it eliminates the largest exposure in the system.
+There's no reason those need to be the same process. Once you separate them, the provider key lives in the calling process and the sandbox never sees it. Generated code cannot read a secret that was never in its environment. This costs nothing, since it's the same number of network calls, and it eliminates the largest exposure in the system.
 
 The same reasoning applies to git. The agent needs its changes committed and pushed, but the *push* doesn't have to happen from inside the boundary. Run the test in the sandbox, get a pass/fail and a diff out, then commit and push from outside with a token the sandbox never touched.
 
@@ -20,7 +20,7 @@ The general form: **for each credential, find the narrowest process that genuine
 
 ## Scope and time-bound whatever must be exposed
 
-Some credentials genuinely have to be reachable from where code runs — an integration test that hits a real staging database, for instance. For those, the controls are the ordinary ones, and they matter more here than usual because the consumer is nondeterministic:
+Some credentials genuinely have to be reachable from where code runs, like an integration test that hits a real staging database, for instance. For those, the controls are the ordinary ones, and they matter more here than usual because the consumer is nondeterministic:
 
 - **Scope down.** A token that can read one repository, not an org-wide PAT. A database role with access to one schema. The blast radius of a leak is exactly what the credential can do.
 - **Time-bound.** Mint per-run credentials that expire in minutes. A leaked secret that expired before anyone read the log is a much smaller incident.
@@ -30,11 +30,11 @@ Some credentials genuinely have to be reachable from where code runs — an inte
 
 If you're running agents through someone else's control plane, there's a further question: can the vendor read your credentials?
 
-The mechanism for saying no is to encrypt each credential to the public key of the specific runtime that will use it. The runtime generates a keypair, publishes the public half, and the control plane stores only a blob it cannot open. When work is dispatched, the sealed blob travels with it and is unsealed in the memory of the process that needs it — never written to disk in plaintext, never readable by the coordinating service.
+The mechanism for saying no is to encrypt each credential to the public key of the specific runtime that will use it. The runtime generates a keypair, publishes the public half, and the control plane stores only a blob it cannot open. When work is dispatched, the sealed blob travels with it and is unsealed in the memory of the process that needs it, never written to disk in plaintext, never readable by the coordinating service.
 
 This is worth doing. It is also worth being precise about what it proves, because this is where vendor marketing tends to get loose.
 
-Sealing only means the control plane can't decrypt **if the control plane doesn't hold the private key.** When you run the runtime yourself — in your own cloud, on your own machines — that's a real guarantee: the vendor stores ciphertext and has no key. When the vendor operates the machine that holds the private key, they *can* decrypt, and no amount of X25519 in the architecture diagram changes that. It's the same cryptography with a different trust boundary.
+Sealing only means the control plane can't decrypt **if the control plane doesn't hold the private key.** When you run the runtime yourself, in your own cloud on your own machines, that's a real guarantee: the vendor stores ciphertext and has no key. When the vendor operates the machine that holds the private key, they *can* decrypt, and no amount of X25519 in the architecture diagram changes that. It's the same cryptography with a different trust boundary.
 
 We hold ourselves to this: Kiwi's zero-knowledge claim applies to bring-your-own-cloud deployments only. In managed mode we operate the machine holding the private key and could technically decrypt. Any vendor claiming zero-knowledge for a fully hosted product is describing something that isn't true, and it's a reasonable thing to press them on.
 
@@ -43,9 +43,9 @@ We hold ourselves to this: Kiwi's zero-knowledge claim applies to bring-your-own
 If you're evaluating a tool that runs agents against your code, these questions separate the architectures quickly:
 
 1. **Does the model provider key enter the environment where generated code executes?** If yes, every other control is downstream of a hole.
-2. **Where does the git push happen — inside or outside the execution boundary?** This tells you whether a repo-write token is exposed to generated code.
+2. **Where does the git push happen, inside or outside the execution boundary?** This tells you whether a repo-write token is exposed to generated code.
 3. **What network access does the test environment have?** Unrestricted egress means any leaked credential is an exfiltrated credential.
-4. **Who holds the private key that decrypts stored credentials?** Not "are they encrypted" — everything is encrypted at rest. Who can decrypt.
+4. **Who holds the private key that decrypts stored credentials?** Not "are they encrypted", because everything is encrypted at rest. Who can decrypt.
 5. **What's actually in the environment of the sandbox?** Ask for the list. Inherited environment variables are the most common accidental exposure, and the answer is often "we don't know offhand."
 
 None of these are exotic. They're the questions you'd ask about any system handling secrets. Agents just make them urgent, because you've introduced a component that writes new code every run and you cannot review all of it.
@@ -54,7 +54,7 @@ None of these are exotic. They're the questions you'd ask about any system handl
 
 A credential architecture that holds up under agents tends to look like this: secrets are plaintext only inside the single process that uses them; that process is never the one executing model-generated code; the execution boundary has no outbound network by default; anything that must be exposed is scoped, short-lived, or behind a proxy; and stored credentials are sealed to a key the coordinator doesn't have.
 
-Each piece is unremarkable. The value is in the composition — and in the fact that it's a boundary you chose, rather than one that emerged from whatever the environment happened to inherit.
+Each piece is unremarkable. The value is in the composition, and in the fact that it's a boundary you chose, rather than one that emerged from whatever the environment happened to inherit.
 
 ---
 

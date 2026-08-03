@@ -4,9 +4,9 @@ The word "sandbox" hides a lot. Before choosing a technology it helps to be prec
 
 ## Three threats that get conflated
 
-**Accidental damage.** The model writes something destructive without meaning to — a recursive delete rooted a directory too high, a migration against the wrong database, a test that spawns processes until the host falls over. This is by far the most frequent failure and the least interesting: it's solved by running in a disposable workspace with resource limits, and nobody needs a threat model to arrive at that.
+**Accidental damage.** The model writes something destructive without meaning to. A recursive delete rooted a directory too high, a migration against the wrong database, a test that spawns processes until the host falls over. This is by far the most frequent failure and the least interesting: it's solved by running in a disposable workspace with resource limits, and nobody needs a threat model to arrive at that.
 
-**Exfiltration.** The code that runs reads something it shouldn't — your source, your environment, a token on disk — and sends it somewhere. This does not require the model to be malicious. A dependency in your tree can do it, a prompt-injected instruction hidden in an issue comment can do it, and a model that has simply misunderstood the task can do it by writing a debug helper that POSTs state to a pastebin.
+**Exfiltration.** The code that runs reads something it shouldn't: your source, your environment, a token on disk. and sends it somewhere. This does not require the model to be malicious. A dependency in your tree can do it, a prompt-injected instruction hidden in an issue comment can do it, and a model that has simply misunderstood the task can do it by writing a debug helper that POSTs state to a pastebin.
 
 **Escape.** The code breaks out of the isolation boundary and takes the host. This is the threat that gets the most attention and the most engineering.
 
@@ -16,14 +16,14 @@ Most setups I've looked at spend their effort on escape and leave exfiltration w
 
 If you do one thing, deny outbound network by default.
 
-The reasoning is simple: nearly every bad outcome that isn't a crash requires data to leave. Code that can't reach the network can still delete your worktree — but your worktree is disposable. It cannot send your source to an attacker, cannot phone home, cannot pull a second-stage payload, and cannot mine anything.
+The reasoning is simple: nearly every bad outcome that isn't a crash requires data to leave. Code that can't reach the network can still delete your worktree, but your worktree is disposable. It cannot send your source to an attacker, cannot phone home, cannot pull a second-stage payload, and cannot mine anything.
 
-This is also the control that costs you the most, which is why people skip it. Denying egress breaks the thing everyone's test command does: fetch dependencies. `npm test` on a cold `node_modules`, `go test` without a warm module cache, `pytest` in a fresh virtualenv — all of these want the internet, and when they fail people open the network back up and move on.
+This is also the control that costs you the most, which is why people skip it. Denying egress breaks the thing everyone's test command does: fetch dependencies. `npm test` on a cold `node_modules`, `go test` without a warm module cache, `pytest` in a fresh virtualenv. All of these want the internet, and when they fail people open the network back up and move on.
 
 The way out is to separate dependency resolution from test execution:
 
 - **Resolve dependencies before the boundary.** Populate `node_modules`, the Go module cache or the virtualenv in a preparation step that has network access but never runs model-generated code. Then run the test with egress denied against an already-warm tree.
-- **If you must fetch during the run, use an allowlist.** Route through a proxy that permits your registry and nothing else. This is meaningfully weaker — a compromised package on the registry is now inside your boundary — but it's still a world apart from unrestricted egress.
+- **If you must fetch during the run, use an allowlist.** Route through a proxy that permits your registry and nothing else. This is meaningfully weaker, because a compromised package on the registry is now inside your boundary, but it's still a world apart from unrestricted egress.
 
 The thing to avoid is the middle position where you tell yourself the sandbox is the control and then punch a hole through it because the test needed one.
 
@@ -31,9 +31,9 @@ The thing to avoid is the middle position where you tell yourself the sandbox is
 
 The second lever is scope, and it's the one that changes the shape of the problem rather than just hardening it.
 
-Ask what genuinely needs to execute untrusted code. In most agent architectures the answer is narrower than the implementation. The model call itself doesn't — that's an HTTPS request to a provider, made by your code, with your key. Reading the repository doesn't. Applying a patch to files doesn't. What actually runs code the model influenced is the **build and test command**, and that's it.
+Ask what genuinely needs to execute untrusted code. In most agent architectures the answer is narrower than the implementation. The model call itself doesn't. That's an HTTPS request to a provider, made by your code, with your key. Reading the repository doesn't. Applying a patch to files doesn't. What actually runs code the model influenced is the **build and test command**, and that's it.
 
-If you draw the boundary there — untrusted execution on one side, everything else on the other — several properties fall out for free:
+Draw the boundary there, with untrusted execution on one side and everything else on the other, and several properties fall out for free:
 
 - The provider API key never enters the sandbox, because the process that calls the provider lives outside it. Generated code cannot read a secret that was never in its address space.
 - Git credentials never enter the sandbox. The commit and the push happen outside, after the test has passed.
@@ -47,7 +47,7 @@ Only after the above does the technology choice matter much. Roughly, in increas
 
 **Plain OS containers.** Namespaces and cgroups. Fine for accidental damage and resource limits. The kernel is shared, so a kernel bug is an escape. Adequate when the code is *your* code and you're mostly worried about mistakes.
 
-**Hardened containers.** The above plus a tight seccomp profile, dropped capabilities, read-only root, no privileged mounts. Notably: don't mount the Docker socket into anything that runs generated code — that's a full host compromise wearing a container costume, and it shows up constantly in agent tooling because it's the easy way to let an agent build images.
+**Hardened containers.** The above plus a tight seccomp profile, dropped capabilities, read-only root, no privileged mounts. Notably: don't mount the Docker socket into anything that runs generated code. That's a full host compromise wearing a container costume, and it shows up constantly in agent tooling because it's the easy way to let an agent build images.
 
 **User-space kernels (gVisor).** A syscall interception layer so the container talks to a userspace kernel rather than the host's. Meaningfully raises the bar on escape for a modest startup and syscall-overhead cost. This is the sweet spot for multi-tenant workloads where the alternative is one VM per tenant.
 
@@ -65,11 +65,11 @@ A few specifics that undo an otherwise reasonable setup:
 
 **Writable shared caches.** A dependency cache mounted read-write into the sandbox is a persistence mechanism: run one modifies a cached artifact, run two executes it. Mount caches read-only, or accept the cold start.
 
-**The test command itself.** It's specified by whoever submits the task, and it runs by design. If your users can supply an arbitrary test command, that string is an execution primitive — it deserves the same suspicion as the generated code, and it's a reason to keep the sandbox boundary meaningful even for code you think you trust.
+**The test command itself.** It's specified by whoever submits the task, and it runs by design. If your users can supply an arbitrary test command, that string is an execution primitive, and it deserves the same suspicion as the generated code, and it's a reason to keep the sandbox boundary meaningful even for code you think you trust.
 
 ## The short version
 
-Deny egress by default and pay the cost of warming dependencies beforehand. Draw the boundary so that only the build and test command runs untrusted, which keeps every credential outside it. Pick isolation to match how much you distrust your tenants — hardened containers for your own code, a user-space kernel for multi-tenant. Then go audit what your environment and mounts are actually carrying across, because that's where the hole usually is.
+Deny egress by default and pay the cost of warming dependencies beforehand. Draw the boundary so that only the build and test command runs untrusted, which keeps every credential outside it. Pick isolation to match how much you distrust your tenants: hardened containers for your own code, a user-space kernel for multi-tenant. Then go audit what your environment and mounts are actually carrying across, because that's where the hole usually is.
 
 None of this makes model-generated code safe to run. It makes the blast radius something you chose deliberately instead of something you discovered afterwards.
 

@@ -1,0 +1,63 @@
+Our agent platform produces a signed record of every run: which model proposed each edit, whether the reviewer approved it and why, whether the tests passed, what it cost. The record is a real feature. It is the thing we point at when someone asks how they are supposed to trust a diff a model wrote.
+
+For a while, those records were being assembled with no steps in them at all.
+
+## The write that could never work
+
+Telemetry rows are written per phase as a run happens. The table had a foreign key:
+
+```sql
+task_events.task_id REFERENCES task_states(id)
+```
+
+That was correct when it was written. Tasks lived in `task_states` then. Later we moved task handout to a lease queue and tasks started living in `queued_tasks` instead, which is a normal thing to happen to a schema over a year.
+
+Nobody updated the constraint. So every telemetry insert referenced a table the task was no longer in, and every telemetry insert failed the foreign key.
+
+Not some. Every one. For as long as the seam had existed.
+
+## Why nobody noticed
+
+Here is the part worth dwelling on, because the schema drift is ordinary and the silence is not.
+
+Telemetry writes are best-effort **by design**, and for a good reason: a run must never fail because its commentary could not be saved. If the database is briefly unavailable, we would much rather lose the observability than lose the customer's work. So the write path looked like this:
+
+```go
+if err := s.db.Create(&rows).Error; err != nil {
+    log.Printf("[ver] persist %d events for task %s: %v", len(rows), taskID, err)
+}
+```
+
+Log it, swallow it, carry on. Which is the right call for a transient failure and completely wrong for a permanent one, and the code cannot tell the difference.
+
+Downstream, the effect was invisible in a different way. When a job finishes, the Control Plane assembles a record from whatever events it has. Zero events is a legal input. It produces a well-formed record with an empty worker step list, signs it, and chains it. Every layer did its job. Nothing anywhere asked whether the number of events for a completed run was plausible.
+
+So we had a signed, verifiable, hash-chained attestation that nothing had happened.
+
+## Best-effort is a promise about failures, not about outcomes
+
+The reasoning behind best-effort telemetry is sound. Where it went wrong is that we treated "this write may fail" as the end of the design, when it is the beginning of one.
+
+"Best-effort" answers what to do about a *single* failure. It says nothing about what to do when every attempt fails forever, and those are completely different situations that produce identical code paths. A swallowed error is fine when the next one succeeds. A swallowed error is an outage when the next thousand also fail.
+
+The missing piece was not error handling. It was **any check on the aggregate**. One log line per failure, in a system that fails every time, is not a signal; it is background. Nobody greps for a line that appears constantly.
+
+## What we changed
+
+The immediate fix was a migration dropping the stale constraint, with a note in the file explaining why it is dropped rather than re-pointed: the queue owns task lifetime now, telemetry outlives the queue row it describes, and a foreign key would delete a run's history when the task row is cleaned up. The history is the thing we want to keep.
+
+The more useful change was learning to distrust a quiet system. Some months later we went looking for why a session run took as long as it did, and found the same shape again in a different place.
+
+Every phase of a run emitted a timed event, except one. The model's own turn, the call where it thinks and writes code and which is most of the wall clock, emitted nothing. Tokens were tracked. Cost was tracked. Duration was not.
+
+That meant the sum of a task's recorded durations came to less than the task's actual elapsed time, and the difference had no name. It was not attributed to a slow phase; it was attributed to nothing at all. You could look at the timeline, add it up, and be left with four unexplained minutes.
+
+Nothing was broken. Nothing logged an error. The observability was simply not there, and its absence produced the same shape as its presence: a timeline that rendered fine and answered the wrong question.
+
+## Two questions worth asking about your own telemetry
+
+**Does anything check the aggregate?** Not "does the write handle errors" but: if this path failed every single time for a month, what would tell you? If the answer is a log line, the answer is nothing. A count of runs with zero events is a two-line query and would have caught ours the first day.
+
+**Does the sum add up?** For anything that records durations or costs per step, compare the sum of the parts against the whole. A gap means an unmeasured phase, and unmeasured phases are exactly where the time goes. Nobody instruments the thing they assume is fast.
+
+Both of those are cheap. Neither is interesting to build. We wrote a lot of careful code to make our records tamper-evident, and shipped records attesting to nothing, because we never asked the boring question about whether they had anything in them.

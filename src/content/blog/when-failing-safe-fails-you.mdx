@@ -1,0 +1,69 @@
+A task failed after three attempts. The error we showed the user was:
+
+```
+json: cannot unmarshal array into Go struct field .reasons of type string
+```
+
+Which is not a code review. It is a type error, delivered to somebody who asked us to fix a bug in their repository.
+
+## The setup
+
+Our default loop has two roles. An Actor proposes an edit. A Critic reviews it before anything touches disk, and returns a verdict as JSON:
+
+```json
+{ "verdict": "reject", "reasons": "the null check belongs before the deref, not after" }
+```
+
+`reasons` is a string. The Critic, being a language model reading a field called `reasons`, sometimes returned what the plural asks for:
+
+```json
+{ "verdict": "reject", "reasons": ["the null check is in the wrong place",
+                                   "this drops the error from Open()"] }
+```
+
+That is a better answer than the one we specified. It is also an unmarshal error.
+
+## Failing safe, three times
+
+An unparseable verdict has to mean something. We chose rejection, on the grounds that approving an edit you could not read is the dangerous direction. If we cannot tell whether the reviewer approved this, do not write it to disk.
+
+That is the correct default. Every individual decision here was correct.
+
+The loop also stops after three consecutive rejections, which is also correct: a Critic rejecting three times in a row is not converging, and continuing burns budget to be told the same thing.
+
+Compose them and you get a task that fails permanently because a model formatted a field as a list. Three parses failed. Three parses became three rejections. Three rejections hit the stall rail. The run ended, and the reason surfaced to the user was the innermost error, because nothing along the way reframed it into something a person could act on.
+
+**Every step failed safe. The composition failed the user.**
+
+## The thing we got wrong
+
+We wrote a strict parser and a safe fallback, and treated that pair as complete. It is not, because the fallback silently converts *"the model said something we did not anticipate"* into *"the model rejected this work"*, and those are entirely different events. One is our problem. The other is the customer's.
+
+Once those two are indistinguishable, no amount of correct downstream logic can recover. The stall detector cannot know that the three rejections it counted were three parse failures. It sees three rejections.
+
+The generalization: **a fail-safe default is a claim about one event, and rails are usually written about counts of events.** If your fallback produces the same value as a real outcome, anything that counts outcomes is now counting your fallbacks too.
+
+## What we changed
+
+**Parse tolerantly, at the edges we can name.** A list of strings gets joined rather than rejected, and joined rather than truncated to the first element, because the Actor needs every objection to fix the edit in one pass. A list of objects gets flattened. An unrecognised shape keeps its raw JSON as the reason rather than being discarded, so a human reading the timeline sees what the model actually said.
+
+Genuinely malformed output still fails safe. The change is not that we stopped being careful; it is that we stopped treating a formatting difference as a review.
+
+**Keep classification narrow, and prefer the less damaging mistake.** We apply the same rule elsewhere. When a repository cannot build offline, say a Next.js app fetching `next/font/google` during the build, no agent can fix that by editing code, so we stop and say so rather than spending the budget proving it.
+
+But that classification only runs on the *first* verification, before anything model-generated has executed, and it only fires on a narrow set of signatures. Assertion failures, type errors and unused variables are never blamed on the environment.
+
+The asymmetry is deliberate. Telling somebody their repository is unbuildable when the agent simply gave up is far more damaging than spending a few extra steps on a task that was doomed. One wastes money. The other sends them to fix something that is not broken.
+
+## Where this shows up in your system
+
+Anywhere you have both a defensive default and a threshold, check whether the default can trip the threshold:
+
+- Retries that treat "unparseable response" as "server error" and count it against a circuit breaker.
+- Health checks that treat "timeout" as "unhealthy", where the timeout is short enough to fire during normal load.
+- Validation that rejects on unknown fields, feeding a rate limiter that bans on repeated rejections.
+- Anything that turns "I do not understand this" into a legitimate business outcome, then counts business outcomes.
+
+The test is not whether each piece is correct in isolation. It is whether the two failure modes stay **distinguishable** far enough downstream for the rail to make an informed decision, and whether the error a human eventually sees describes their problem or yours.
+
+Ours said `cannot unmarshal array into Go struct field`. It should have said the reviewer kept rejecting the edit, and here is what it said.
