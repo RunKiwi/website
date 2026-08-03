@@ -33,7 +33,7 @@ export default function Hero() {
             Coding agents your security review <em className="text-gradient" style={{ fontStyle: 'normal' }}>can actually approve.</em>
           </h2>
           <p className="hero-subtitle">
-            Describe a task in plain English — <strong>the description is the job</strong>, and your own test command is the guard that proves nothing broke. Kiwi plans it, runs it on the <strong>Anthropic, OpenAI or Gemini key you already hold</strong>, and lands one reviewable PR. <strong>Model-generated code gets no network at all</strong>, and the phase that does never holds a secret — and every edit, review verdict and test run is recorded step by step. Run it on our cloud, or entirely inside your own VPC.
+            You define the task and the test—Kiwi does the rest. It plans the work, writes the code, and verifies it in a completely isolated sandbox before landing a single, clean PR. Keep your API keys secure and deploy on our cloud or yours.
           </p>
 
           <div className="hero-actions">
