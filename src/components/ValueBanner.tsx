@@ -5,7 +5,7 @@ export default function ValueBanner() {
     <section className="banner-section" aria-label="What Kiwi is">
       <Reveal as="div" className="container banner-content" stagger>
         <p className="banner-positioning">
-          Copilots hand you suggestions. Sandbox vendors hand you a box. <span className="text-gradient">Kiwi runs the work end to end—inside a boundary you set, with a record of what happened.</span>
+          A copilot suggests code you then have to write. A sandbox vendor rents you a box you then have to fill. <span className="text-gradient">Kiwi takes the task through to a pull request, inside a boundary you set, and hands you the record of what it did.</span>
         </p>
         <ul className="banner-trust-strip">
           <li className="trust-item">

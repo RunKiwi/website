@@ -27,9 +27,9 @@ const firaCode = Fira_Code({
   subsets: ["latin"],
 });
 
-const TITLE = "Kiwi — Coding agents that run where you say.";
+const TITLE = "Kiwi: coding agents that run where you say.";
 const DESCRIPTION =
-  "Kiwi runs coding agents inside infrastructure you control, on your own Anthropic, OpenAI or Gemini key. You describe the task and it does that — your own test command is the guard proving the change broke nothing. Model-generated code runs with no network access at all, every edit and review verdict is recorded step by step, and the work lands as one reviewable PR. Run it on our managed cloud, or entirely inside your own VPC.";
+  "Kiwi runs coding agents inside infrastructure you control, on your own Anthropic, OpenAI or Gemini key. You describe the task and it does that, with your own test command as the guard proving the change broke nothing. Model-generated code runs with no network access at all, every edit and review verdict is recorded step by step, and the work lands as one reviewable PR. Run it on our managed cloud, or entirely inside your own VPC.";
 
 export const metadata: Metadata = {
   // metadataBase is what makes every relative URL below resolve to an absolute

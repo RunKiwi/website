@@ -5,22 +5,22 @@ import { useState } from 'react';
 import { Reveal } from './Reveal';
 import { Copy, ShieldCheck, Check, Lock, Network, Key, Gauge, ArrowRight } from 'lucide-react';
 
-const managedSnippet = `# Sign in with GitHub at app.runkiwi.dev — or use the CLI:
+const managedSnippet = `# Sign in with GitHub at app.runkiwi.dev, or use the CLI:
 
 # 1. Install the CLI and log in
 npm i -g kiwi && kiwi login
 
-# 2. Connect your own model key — anthropic, openai or gemini
+# 2. Connect your own model key (anthropic, openai, gemini)
 kiwi creds set openai "sk-..."
 
-# 3. Submit a task — no cloud account, no VM
+# 3. Submit a task. No cloud account, no VM.
 kiwi submit "Migrate auth to Postgres"
 
-# No image, no test command, no file list: Kiwi
-# reads them off the repo, plans it, runs the
-# swarm, and opens one verified PR. That's it.`;
+# No image, no test command, no file list. Kiwi
+# reads them off the repo, plans the work, runs
+# the swarm, and opens one verified PR.`;
 
-const byocSnippet = `# Graduate to your own cloud when you're ready.
+const byocSnippet = `# Move to your own cloud when you need to.
 
 # 1. Provision the daemon in your VPC
 terraform apply   # VPC + VM + kiwidaemon
@@ -28,14 +28,14 @@ terraform apply   # VPC + VM + kiwidaemon
 # 2. Register it with a single-use join token
 kiwidaemon --join-token "$KIWI_JOIN_TOKEN"
 
-# 3. Same command — now it runs in YOUR account
+# 3. Same command, now running in YOUR account
 kiwi submit "Migrate auth to Postgres"`;
 
 const securityFeatures = [
   {
     icon: <Key className="w-5 h-5 text-primary" />,
     title: 'Sealed credentials',
-    desc: 'Keys are sealed to the daemon with X25519 and only ever opened in memory. In BYOC that key lives only on your machine — the Control Plane cannot decrypt them.',
+    desc: 'Keys are sealed to the daemon with X25519 and opened in memory alone. In BYOC that key lives on your machine, so the Control Plane cannot decrypt them.',
   },
   {
     icon: <Network className="w-5 h-5 text-primary" />,
@@ -50,7 +50,7 @@ const securityFeatures = [
   {
     icon: <Gauge className="w-5 h-5 text-primary" />,
     title: 'Per-org budgets & isolation',
-    desc: 'Every org gets enforced concurrency, per-task step and USD caps, and a hard spend ceiling — so “50 agents overnight” can never become a runaway bill.',
+    desc: 'Every org runs under enforced concurrency, per-task step and dollar caps, and a hard monthly ceiling. Fifty agents overnight cannot turn into a runaway bill.',
   },
 ];
 
@@ -77,7 +77,7 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
           <span className="section-eyebrow">Quickstart</span>
           <h2 className="section-title">Your first PR in one command</h2>
           <p className="section-subtitle">
-            Start on our managed cloud with nothing to provision. Graduate to your own VPC later — the command you type never changes.
+            Start on our managed cloud with nothing to provision. Move to your own VPC later. The command you type never changes.
           </p>
           <div className="quickstart-cta">
             <Link href="https://app.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="btn btn-primary" id="quickstart-app-btn">
@@ -107,7 +107,7 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
             {/* Managed Code Panel */}
             <div className={`code-panel ${activeTab === 'managed' ? 'active' : ''}`}>
               <div className="panel-header">
-                <span>Managed — no setup (app.runkiwi.dev)</span>
+                <span>Managed, no setup (app.runkiwi.dev)</span>
                 <button
                   className="code-copy-btn"
                   aria-label="Copy managed commands"
@@ -123,7 +123,7 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
             {/* BYOC Code Panel */}
             <div className={`code-panel ${activeTab === 'byoc' ? 'active' : ''}`}>
               <div className="panel-header">
-                <span>BYOC — your AWS/GCP account</span>
+                <span>BYOC, your AWS or GCP account</span>
                 <button
                   className="code-copy-btn"
                   aria-label="Copy BYOC commands"

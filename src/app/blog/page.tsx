@@ -7,14 +7,14 @@ import { formatDate, sortedPosts } from "@/lib/posts";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Blog — running coding agents safely | Kiwi",
+  title: "Blog: running coding agents safely | Kiwi",
   description:
     "Notes on sandboxing model-generated code, keeping credentials out of reach of agents, and scheduling agent work so it can be verified.",
   alternates: { canonical: "/blog" },
   openGraph: {
     type: "website",
     url: `${SITE_URL}/blog`,
-    title: "Blog — running coding agents safely | Kiwi",
+    title: "Blog: running coding agents safely | Kiwi",
     description:
       "Notes on sandboxing model-generated code, keeping credentials out of reach of agents, and scheduling agent work so it can be verified.",
   },
@@ -33,7 +33,7 @@ export default function BlogIndex() {
             <h1 className="section-title">Running coding agents safely</h1>
             <p className="section-subtitle">
               Generating a diff is the easy part now. These are notes on the
-              harder part — containing what the model runs, keeping secrets out
+              harder part: containing what the model runs, keeping secrets out
               of its reach, and structuring the work so a result can be checked.
             </p>
 

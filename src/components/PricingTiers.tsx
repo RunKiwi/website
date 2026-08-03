@@ -19,7 +19,7 @@ const Yes = () => <Check className="w-5 h-5 text-primary" aria-label="Yes" />;
 const No = () => <span className="text-muted">—</span>;
 
 const features: FeatureRow[] = [
-  { label: 'Agent-minutes/mo', free: '200', pro: '2000 per seat (pooled) + buy more', enterprise: 'Custom' },
+  { label: 'Agent-minutes/mo', free: '500', pro: '2000 per seat (pooled) + buy more', enterprise: 'Custom' },
   { label: 'Concurrent jobs', free: '1', pro: '20', enterprise: 'Custom' },
   { label: 'Fleet', free: 'Shared managed', pro: <><span className="whitespace-nowrap">Dedicated managed</span> <SoonBadge /></>, enterprise: 'BYOC or dedicated' },
   { label: 'Swarm width', free: 'Up to 4', pro: 'Higher', enterprise: 'Custom' },
@@ -46,9 +46,9 @@ export default function PricingTiers({ theme }: { theme?: 'cream' }) {
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">Pricing</span>
-          <h2 className="section-title">Scale as you ship</h2>
+          <h2 className="section-title">Start free, move when you need to</h2>
           <p className="section-subtitle">
-            Start for free, upgrade when you need higher throughput, and graduate to your own VPC when you outgrow trusting us.
+            Free covers evaluating Kiwi on your own projects. Pro adds seats, throughput, and the daemon running inside your cloud.
           </p>
         </Reveal>
 
@@ -77,7 +77,7 @@ export default function PricingTiers({ theme }: { theme?: 'cream' }) {
                 <span className="price-period">/ user / mo</span>
               </div>
               <p className="pricing-subtext">+ $10 per 250 extra agent-min.</p>
-              <p className="pricing-note">Pro agent-minutes are per seat, pooled across your org. (Self-serve Stripe checkout coming soon!)</p>
+              <p className="pricing-note">Agent-minutes are per seat, pooled across your org. Pro runs the daemon in your own cloud today; the dedicated managed fleet is still in build. We set you up by email, so there is no card checkout yet.</p>
             </div>
             <div className="pricing-cta-wrap">
               <a href="mailto:support@runkiwi.dev?subject=Kiwi%20Pro%20upgrade" className="btn btn-primary w-full">Talk to us about Pro</a>
@@ -91,7 +91,7 @@ export default function PricingTiers({ theme }: { theme?: 'cream' }) {
               <div className="pricing-price">
                 <span className="price-value-custom">Custom</span>
               </div>
-              <p className="pricing-subtext">For organizations requiring isolated compliance or massive parallelization.</p>
+              <p className="pricing-subtext">For teams with compliance boundaries or heavy parallel workloads.</p>
             </div>
             <div className="pricing-cta-wrap">
               <a href="mailto:support@runkiwi.dev?subject=Kiwi%20Enterprise" className="btn btn-secondary w-full">Contact sales</a>

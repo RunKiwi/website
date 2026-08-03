@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 // Social card for link unfurls (Slack, X, LinkedIn, HN previews). Next wires
 // this to og:image and twitter:image automatically, so every share of
 // runkiwi.dev renders branded instead of as a bare URL.
-export const alt = "Kiwi — coding agents that run where you say.";
+export const alt = "Kiwi: coding agents that run where you say.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
