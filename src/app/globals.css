@@ -3652,3 +3652,33 @@ pre {
   .post-card-title { font-size: 1.35rem; }
   .prose h2 { font-size: 1.5rem; }
 }
+
+/* Footer Huge Text */
+.footer-huge-text-container {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  margin-top: 2rem;
+  margin-bottom: -1rem;
+}
+
+.footer-huge-text {
+  font-family: var(--font-display);
+  font-size: 18vw;
+  line-height: 0.8;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--text-main);
+  opacity: 0.02;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.theme-cream .footer-huge-text {
+  color: var(--text-main);
+  opacity: 0.03;
+}
