@@ -1433,6 +1433,14 @@ section {
   gap: 30px;
 }
 
+/* Five cards into a three-column grid leaves a hole in the second row, which
+   reads as a broken layout rather than a choice. The lead card takes two
+   columns instead, so the section lands as 2 + 3 and the card carrying the
+   product's central claim is also the largest one. */
+.feature-card-lead {
+  grid-column: span 2;
+}
+
 .feature-card {
   background-color: var(--bg-card);
   backdrop-filter: blur(16px) saturate(180%);
@@ -2416,7 +2424,12 @@ pre {
   .features-grid {
     grid-template-columns: 1fr;
   }
-  
+
+  /* One column: nothing left to span. */
+  .feature-card-lead {
+    grid-column: auto;
+  }
+
   /* Prevent mockup clipping on mobile stacked columns */
   .mockup-content, .kanban-board {
     overflow: visible;
