@@ -24,21 +24,21 @@ export default function Hero() {
         <Reveal as="div" className="hero-content" stagger>
           <div className="badge" id="hero-announcement-badge">
             <span className="badge-dot"></span>
-            <span className="badge-text">Now live — sign in with GitHub at app.runkiwi.dev</span>
+            <span className="badge-text">Live now. Sign in with GitHub at app.runkiwi.dev</span>
           </div>
           <h1 className="hero-title">
             Agentic coding in <em className="text-gradient">infrastructure you control.</em>
           </h1>
           <h2 className="hero-subheading" style={{ fontSize: '1.75rem', fontWeight: 500, marginBottom: '24px', letterSpacing: '-0.5px' }}>
-            Coding agents your security review <em className="text-gradient" style={{ fontStyle: 'normal' }}>can actually approve.</em>
+            Coding agents your security review <em className="text-gradient" style={{ fontStyle: 'normal' }}>can approve.</em>
           </h2>
           <p className="hero-subtitle">
-            You define the task and the test—Kiwi does the rest. It plans the work, writes the code, and verifies it in a completely isolated sandbox before landing a single, clean PR. Keep your API keys secure and deploy on our cloud or yours.
+            Describe a task and name your test command. Kiwi plans the work, edits your repository, and verifies the change in a sandbox with no network and no credentials. You get a pull request. Your model key never enters that sandbox, and in BYOC it never leaves your cloud.
           </p>
 
           <div className="hero-actions">
             <Link href="https://app.runkiwi.dev" target="_blank" rel="noopener noreferrer" className="btn btn-primary" id="hero-primary-btn">
-              Start free — sign in with GitHub
+              Start free with GitHub
               <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
             <Link href="#how-it-works" className="btn btn-outline" id="hero-secondary-btn">See how it runs</Link>

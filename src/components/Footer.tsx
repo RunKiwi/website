@@ -10,7 +10,7 @@ export default function Footer() {
             <span className="logo-chip"><Logo className="logo-bird" /></span>
             <span className="logo-text">Kiwi</span>
           </div>
-          <p className="footer-tagline">Coding agents that run where you say. One task in, one verified PR out — contained, recorded, and on our cloud or in yours.</p>
+          <p className="footer-tagline">Coding agents that run where you say. One task in, one verified PR out, contained and recorded, on our cloud or in yours.</p>
         </div>
 
         <div className="footer-links-group">
