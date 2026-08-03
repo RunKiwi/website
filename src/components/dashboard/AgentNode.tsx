@@ -1,7 +1,9 @@
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { Cpu, Terminal } from 'lucide-react';
 
-export default function AgentNode({ data }: { data: any }) {
+type AgentData = { label: string; status: string; cpu: number };
+
+export default function AgentNode({ data }: NodeProps<Node<AgentData>>) {
   const isActive = data.status === 'active';
   
   return (

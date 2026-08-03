@@ -1,16 +1,10 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ReactFlow,
   Controls,
   Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Connection,
-  Edge,
-  MarkerType,
   BackgroundVariant
 } from '@xyflow/react';
 import AgentNode from './AgentNode';
@@ -90,17 +84,10 @@ const generateMockData = () => {
 };
 
 export default function TopologyGraph() {
-  const [data, setData] = useState({ nodes: [], edges: [] });
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setData(generateMockData());
-    setMounted(true);
-  }, []);
+  const [data, setData] = useState(() => generateMockData());
 
   // Simulate live data updates
   useEffect(() => {
-    if (!mounted) return;
     const interval = setInterval(() => {
       setData((prev) => ({
         ...prev,
@@ -119,7 +106,7 @@ export default function TopologyGraph() {
       }));
     }, 2000);
     return () => clearInterval(interval);
-  }, [mounted]);
+  }, []);
 
   return (
     <div className="w-full h-full bg-[#0B0C0A]">

@@ -6,7 +6,10 @@ import { type CSSProperties, type ReactNode, useEffect as useReactEffect, useSta
 function useMountedReducedMotion() {
   const preferReduce = useReducedMotion();
   const [mounted, setMounted] = useState(false);
-  useReactEffect(() => setMounted(true), []);
+  useReactEffect(() => {
+    const raf = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
   return mounted ? preferReduce : false;
 }
 
