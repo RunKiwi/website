@@ -3627,10 +3627,18 @@ pre {
 .prose li + li { margin-top: 0.55em; }
 .prose li::marker { color: var(--text-dim); }
 
+/* The bare `code` rule further up this file hardcodes color: #eceff4 for the
+   dark marketing panels it was written for, and it applies site-wide. A post
+   renders on the cream theme, so the colour has to be set back explicitly
+   here: inheritance from `.prose pre` cannot win, because a rule matching
+   `code` directly always beats a colour inherited from an ancestor, whatever
+   the specificity. Without these two declarations every code element in a
+   post is near-white on light grey. */
 .prose code {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.9em;
-  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-main);
+  background: rgba(23, 27, 26, 0.07);
   padding: 0.15em 0.4em;
   border-radius: 5px;
 }
@@ -3638,11 +3646,20 @@ pre {
 .prose pre {
   background: var(--bg-inset);
   color: var(--text-main);
+  border: 1px solid var(--border);
   padding: 20px 22px;
   border-radius: 12px;
   overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
-.prose pre code { background: none; padding: 0; font-size: 0.88rem; }
+.prose pre code {
+  color: inherit;
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
 
 .prose blockquote {
   border-left: 3px solid var(--primary-dark);
