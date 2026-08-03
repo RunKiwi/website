@@ -32,10 +32,10 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="w-full overflow-hidden flex justify-center items-center pointer-events-none mt-8 -mb-4 select-none">
-        <span style={{ fontSize: '23vw', lineHeight: 0.8, fontWeight: 900, letterSpacing: '-0.08em', opacity: 0.03, width: '100%', textAlign: 'center' }} className="uppercase text-white whitespace-nowrap">
-          RUNKIWI
-        </span>
+      <div className="w-full overflow-hidden flex justify-between items-center pointer-events-none mt-8 -mb-4 select-none" style={{ fontSize: '20vw', lineHeight: 0.8, fontWeight: 900, opacity: 0.03, padding: '0 2vw' }}>
+        {'RUNKIWI'.split('').map((char, i) => (
+          <span key={i} className="uppercase text-white leading-none">{char}</span>
+        ))}
       </div>
       <div className="container footer-bottom">
         <p>&copy; {new Date().getFullYear()} Kiwi. Managed cloud, or bring your own · contained execution, on the record.</p>
