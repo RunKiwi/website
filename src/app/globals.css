@@ -1872,9 +1872,13 @@ section {
   box-shadow: 0 0 8px var(--primary);
 }
 
+/* This panel is dark whatever theme the section around it uses, so it carries
+   its own text colour rather than following --text-main. It was the only thing
+   on the site relying on the global `code` colour that used to live above. */
 .code-panel {
   display: none;
   background-color: #0A0B08;
+  color: #eceff4;
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
@@ -1923,10 +1927,19 @@ pre {
   overflow-x: auto;
 }
 
+/* No colour here on purpose. This rule matches every `code` on the site, and a
+   rule matching the element directly beats any colour inherited from an
+   ancestor, whatever the specificity of that ancestor's selector. So a colour
+   set here is not a default that a section can override by setting its own
+   text colour: it wins everywhere, including on light backgrounds, where it
+   was rendering near-white on cream at 1.13:1.
+
+   Code that needs a light colour is on a deliberately dark panel and says so
+   itself (see .code-panel below). Everything else inherits from its section,
+   which is what makes a code element work on either theme. */
 code {
   font-family: var(--custom-font-mono);
   font-size: 0.85rem;
-  color: #eceff4;
   line-height: 1.6;
 }
 
@@ -3627,13 +3640,10 @@ pre {
 .prose li + li { margin-top: 0.55em; }
 .prose li::marker { color: var(--text-dim); }
 
-/* The bare `code` rule further up this file hardcodes color: #eceff4 for the
-   dark marketing panels it was written for, and it applies site-wide. A post
-   renders on the cream theme, so the colour has to be set back explicitly
-   here: inheritance from `.prose pre` cannot win, because a rule matching
-   `code` directly always beats a colour inherited from an ancestor, whatever
-   the specificity. Without these two declarations every code element in a
-   post is near-white on light grey. */
+/* Stated rather than inherited, deliberately. The bare `code` rule further up
+   used to hardcode a near-white here and made every code element in a post
+   invisible on the cream theme; it no longer sets a colour, but saying what
+   prose code should look like keeps that from silently recurring. */
 .prose code {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.9em;
