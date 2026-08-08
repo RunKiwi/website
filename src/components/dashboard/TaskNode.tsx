@@ -1,7 +1,13 @@
 import { Handle, Position } from '@xyflow/react';
 import { Layers } from 'lucide-react';
 
-export default function TaskNode({ data }: { data: any }) {
+interface TaskNodeData {
+  label: string;
+  status: string;
+  progress: number;
+}
+
+export default function TaskNode({ data }: { data: TaskNodeData }) {
   return (
     <div className="px-5 py-4 shadow-xl rounded-2xl border border-[#E8823B]/50 bg-[#160d05] shadow-[0_0_30px_rgba(232,130,59,0.15)] w-[220px]">
       <Handle type="target" position={Position.Top} />
