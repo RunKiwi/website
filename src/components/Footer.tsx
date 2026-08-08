@@ -39,6 +39,12 @@ export default function Footer() {
       </div>
       <div className="container footer-bottom">
         <p>&copy; {new Date().getFullYear()} Kiwi. Managed cloud, or bring your own · contained execution, on the record.</p>
+        <p className="mt-1 text-sm opacity-70">
+          Open core · the daemon and execution engine are{' '}
+          <Link href="https://github.com/RunKiwi/kiwi/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">Apache-2.0</Link>;
+          the multi-tenant control plane is{' '}
+          <Link href="https://github.com/RunKiwi/kiwi/blob/main/ee/LICENSE" target="_blank" rel="noopener noreferrer">source-available</Link>.
+        </p>
       </div>
     </footer>
   );
