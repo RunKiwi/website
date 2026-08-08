@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { ShieldCheck, FileCheck, Target, PackageSearch, Workflow } from 'lucide-react';
+import { ShieldCheck, FileCheck, Target, PackageSearch, Workflow, Boxes } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -23,6 +23,16 @@ const features: Feature[] = [
     desc: 'Your description is the objective. Your test command is a guard proving the change broke nothing. Keeping those apart is what makes \u201Cadd an example to the docs\u201D as ordinary a job here as a bug fix. A run that changes no code gets reported as a failure. And while your suite is red, Kiwi will not touch the failing test, because weakening an assertion is the easiest way to fake a fix.',
   },
   {
+    icon: <Boxes className="w-6 h-6 text-primary" />,
+    title: (
+      <>
+        Models included
+        <span className="feature-tag">No key required</span>
+      </>
+    ),
+    desc: 'Every account gets a monthly token allowance on models Kiwi pays for, so the first task you run costs you nothing and configures nothing. Over a hundred models are available, grouped by what they cost to run \u2014 no-cost, economy, and frontier \u2014 each with its own allowance, because a token on a frontier model is worth two hundred of one on a cheap one. The catalogue refreshes itself from the providers daily, so new models show up without waiting for us. Connect your own Anthropic, OpenAI or Gemini key whenever you want and that work is unmetered.',
+  },
+  {
     icon: <ShieldCheck className="w-6 h-6 text-primary" />,
     title: (
       <>
@@ -30,7 +40,7 @@ const features: Feature[] = [
         <span className="feature-tag">Containment</span>
       </>
     ),
-    desc: 'Dependencies install in a networked phase we hand an empty environment. No git token, no registry credential. A hostile postinstall hook gets the network and nothing worth sending. Then we cut the network and run your test command over the model\u2019s code offline. Model-generated code never reaches the network, and the phase that does never holds a secret.',
+    desc: 'Dependencies install in a networked phase we hand an empty environment. No git token, no registry credential. A hostile postinstall hook gets the network and nothing worth sending. Then we cut the network and run your test command over the model\u2019s code offline. Model-generated code never reaches the network, and the phase that does never holds a secret. The daemon that does all of this is Apache-2.0, so a security review can read the thing that touches the code rather than take our word for it \u2014 and it depends on none of the commercial half, which a test in the repo enforces.',
   },
   {
     icon: <FileCheck className="w-6 h-6 text-primary" />,
