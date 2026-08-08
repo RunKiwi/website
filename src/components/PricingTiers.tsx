@@ -52,7 +52,7 @@ export default function PricingTiers({ theme }: { theme?: 'cream' }) {
           <span className="section-eyebrow">Pricing</span>
           <h2 className="section-title">Start free, move when you need to</h2>
           <p className="section-subtitle">
-            Free covers evaluating Kiwi on your own projects, on models we pay for \u2014 no API key, no card. Pro adds seats, throughput, and the daemon running inside your cloud.
+            Free covers evaluating Kiwi on your own projects, on models we pay for — no API key, no card. Pro adds seats, throughput, and the daemon running inside your cloud.
           </p>
         </Reveal>
 
