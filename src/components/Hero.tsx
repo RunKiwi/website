@@ -24,7 +24,7 @@ export default function Hero() {
         <Reveal as="div" className="hero-content" stagger>
           <div className="badge" id="hero-announcement-badge">
             <span className="badge-dot"></span>
-            <span className="badge-text">New \u00b7 Run tasks on Kiwi\u2019s models. No API key needed.</span>
+            <span className="badge-text">New · Run tasks on Kiwi’s models. No API key needed.</span>
           </div>
           <h1 className="hero-title">
             Agentic coding in <em className="text-gradient">infrastructure you control.</em>
@@ -36,7 +36,7 @@ export default function Hero() {
             Describe a task and name your test command. Kiwi plans the work, edits your repository, and verifies the change in a sandbox with no network and no credentials. You get a pull request.
           </p>
           <p className="hero-subtitle" style={{ marginTop: '-8px' }}>
-            <strong>Start with nothing to configure.</strong> Every account gets a monthly allowance on models Kiwi pays for, so you can run a real task before deciding whether Kiwi is worth an API key. Bring your own when you want to \u2014 then the key never enters the sandbox, and in BYOC it never leaves your cloud.
+            <strong>Start with nothing to configure.</strong> Every account gets a monthly allowance on models Kiwi pays for, so you can run a real task before deciding whether Kiwi is worth an API key. Bring your own when you want to — then the key never enters the sandbox, and in BYOC it never leaves your cloud.
           </p>
 
           <div className="hero-actions">
@@ -48,7 +48,7 @@ export default function Hero() {
           </div>
 
           <p className="hero-microcopy">
-            No API key to start \u00b7 Managed cloud or your own VPC \u00b7 Actor\u2013Critic verdicts recorded per step \u00b7 One job \u2192 one branch \u2192 one PR
+            No API key to start · Managed cloud or your own VPC · Actor–Critic verdicts recorded per step · One job → one branch → one PR
           </p>
 
           <div className="hero-cli-install">
