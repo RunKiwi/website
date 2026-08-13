@@ -1,22 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
 import HeroDemo from './HeroDemo';
 import { Reveal } from './Reveal';
-import { Copy, Check, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 export default function Hero() {
-  const [copied, setCopied] = useState(false);
-
-  const installCmd = 'npm i -g kiwi && kiwi submit "Add pagination to the users API"';
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(installCmd);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <section className="hero-section">
       <div className="glow-bg-primary" aria-hidden="true"></div>
@@ -29,14 +18,8 @@ export default function Hero() {
           <h1 className="hero-title">
             Every coding agent hands you a diff and disappears. <em className="text-gradient">This one doesn&rsquo;t.</em>
           </h1>
-          <h2 className="hero-subheading" style={{ fontSize: '1.75rem', fontWeight: 500, marginBottom: '24px', letterSpacing: '-0.5px' }}>
-            Leave a review comment and Kiwi&rsquo;s session picks it back up <em className="text-gradient" style={{ fontStyle: 'normal' }}>with everything it knew when it wrote the code.</em>
-          </h2>
           <p className="hero-subtitle">
-            Describe a task and name your test command. Kiwi plans the work, edits your repository, and verifies the change in a sandbox with no network and no credentials. You get a pull request — and if you comment on it, the next round starts with the reason you rejected the last one, not a re-run from zero.
-          </p>
-          <p className="hero-subtitle" style={{ marginTop: '-8px' }}>
-            <strong>Start with nothing to configure.</strong> Every account gets a monthly allowance on models Kiwi pays for, so you can run a real task before deciding whether Kiwi is worth an API key. Bring your own when you want to — then the key never enters the sandbox, and in BYOC it never leaves your cloud.
+            Kiwi plans the task, edits your repo, and verifies the change in an isolated sandbox. Comment on the pull request and it picks up exactly where it left off — not a re-run from zero.
           </p>
 
           <div className="hero-actions">
@@ -48,25 +31,8 @@ export default function Hero() {
           </div>
 
           <p className="hero-microcopy">
-            No API key to start · Managed cloud or your own VPC · Architect verdicts recorded per round · One job → one branch → one PR
+            No API key to start · Managed cloud or your own VPC · One job → one branch → one PR
           </p>
-
-          <div className="hero-cli-install">
-            <div className="cli-container">
-              <span className="cli-prompt" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>$</span>
-              <code className="cli-command" id="install-command-text" style={{ fontFamily: 'var(--font-fira-code), Consolas, Monaco, monospace' }}>{installCmd}</code>
-              <button
-                className="cli-copy-btn"
-                id="copy-install-btn"
-                title="Copy to clipboard"
-                aria-label="Copy install command"
-                onClick={handleCopy}
-              >
-                {copied ? <Check className="copy-icon text-green-500 w-4 h-4" /> : <Copy className="copy-icon w-4 h-4" />}
-                <span className="copy-tooltip" id="copy-tooltip-text">{copied ? 'Copied!' : 'Copy'}</span>
-              </button>
-            </div>
-          </div>
         </Reveal>
 
         <Reveal as="div" className="hero-visual" delay={0.15}>

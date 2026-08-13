@@ -2809,8 +2809,11 @@ pre {
 /* console body */
 .hero-demo-console {
   background: #0A0B08;
+  /* Sized to the 10-line script (~270px of actual content) plus a little
+     breathing room — the old 380px reserved ~110px of dead black space
+     below the last line even once the loop had fully played out. */
   padding: 16px 18px;
-  height: 380px;
+  height: 280px;
   overflow-y: hidden;
   font-family: var(--custom-font-mono);
   font-size: 0.78rem;
@@ -2974,7 +2977,7 @@ pre {
 }
 
 @media (max-width: 768px) {
-  .hero-demo-console { font-size: 0.72rem; height: 340px; overflow-y: hidden; }
+  .hero-demo-console { font-size: 0.72rem; height: 240px; overflow-y: hidden; }
   .hero-demo-meters { gap: 14px; font-size: 0.7rem; }
   .hiw-step-index { font-size: 2rem; top: 16px; right: 18px; }
 }
@@ -2983,7 +2986,7 @@ pre {
   .hero-title { font-size: 2rem; }
   .section-title { font-size: 1.95rem; }
   .cta-title { font-size: 2rem; }
-  .hero-demo-console { font-size: 0.66rem; padding: 12px 14px; height: 320px; overflow-y: hidden; }
+  .hero-demo-console { font-size: 0.66rem; padding: 12px 14px; height: 220px; overflow-y: hidden; }
   .hero-demo-meters { padding: 10px 14px; }
 }
 
