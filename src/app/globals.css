@@ -292,7 +292,11 @@ section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
-  align-items: center;
+  /* The demo card has a fixed height; pin it level with the badge/headline
+     instead of vertically centering against a text column of variable
+     length — centering reads as the card floating in empty space whenever
+     the copy runs long. */
+  align-items: start;
 }
 
 .hero-content {
@@ -459,6 +463,7 @@ section {
   align-items: center;
   position: relative;
   width: 100%;
+  padding-top: 6px;
 }
 
 .canvas-wrapper {
