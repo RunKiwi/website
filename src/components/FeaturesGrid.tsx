@@ -1,5 +1,5 @@
 import { Reveal, RevealItem } from './Reveal';
-import { ShieldCheck, FileCheck, Target, PackageSearch, Workflow, Boxes } from 'lucide-react';
+import { ShieldCheck, FileCheck, Target, PackageSearch, Reply, Boxes } from 'lucide-react';
 
 type Feature = {
   icon: React.ReactNode;
@@ -50,17 +50,17 @@ const features: Feature[] = [
         <span className="feature-tag">Evidence</span>
       </>
     ),
-    desc: 'Every iteration writes an event: which model proposed the edit, whether the Critic approved it and why, whether your tests passed, plus tokens, cost and duration. Kiwi hash-chains those into a per-job execution record, so you can check a run instead of trusting it. When a job took three attempts, you see the two that got turned down.',
+    desc: 'Every round writes an event: which model proposed the edit, whether the Architect approved it and why, whether your tests passed, plus tokens, cost and duration. Kiwi hash-chains those into a per-job execution record, so you can check a run instead of trusting it. When a job took three attempts, you see the two that got turned down. Today that record lives in the dashboard \u2014 it\u2019s moving onto the pull request itself next.',
   },
   {
-    icon: <Workflow className="w-6 h-6 text-primary" />,
+    icon: <Reply className="w-6 h-6 text-primary" />,
     title: (
       <>
-        Two loops, one boundary
-        <span className="feature-tag">Pick per task</span>
+        Stays in the review
+        <span className="feature-tag">No re-run from zero</span>
       </>
     ),
-    desc: 'File Loop handles bounded edits: an Actor proposes a patch, a Critic reviews it before anything touches disk. Session Mode handles open-ended work, where nobody knows up front which files need touching. There an Architect sets each round\u2019s objective and reviews the diff, while an Implementer works the repository with real tools.',
+    desc: 'Most agents finish, discard their context, and have no idea the conversation continued \u2014 leave a comment on their pull request and nothing happens. Kiwi keeps the session: a review comment starts the next round with everything the Architect and Implementer knew when they wrote the code, plus the reason you rejected it.',
   },
   {
     icon: <PackageSearch className="w-6 h-6 text-primary" />,

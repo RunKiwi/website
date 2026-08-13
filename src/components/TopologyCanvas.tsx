@@ -13,7 +13,7 @@ export default function TopologyCanvas() {
           <span className="section-eyebrow">The architecture</span>
           <h2 className="section-title">Control plane plans. Data plane pulls.</h2>
           <p className="section-subtitle">
-            The Control Plane never reaches into your network. Your daemon polls it over outbound HTTPS, leases a worker only once its dependencies are green, and executes in a sandbox next door. Watch the DAG light up as the swarm works it.
+            The Control Plane never reaches into your network. Your daemon polls it over outbound HTTPS, leases a task, and executes it in a sandbox next door. Watch daemons pick up work as it lands.
           </p>
         </Reveal>
 

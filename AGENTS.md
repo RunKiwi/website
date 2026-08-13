@@ -20,12 +20,29 @@ If you touch product-facing claims, keep them true to the current framing:
   hero/demo/feature copy framed as fixing a failing test, chasing a green build, or "one issue in" —
   that positioning shrinks a general coding agent into a niche CI-fixer. Corollaries that are also
   true: a run that changes nothing is a **failure**, and while the suite is red the loop refuses to
-  edit the failing test.
-- **Lead with containment and evidence**, not throughput. The two claims that carry the page are
-  (1) model-generated code runs with **no network access at all**, and (2) every Actor edit, Critic
-  verdict and test run is recorded per step. Planner + swarm is a **capability**, not the headline —
-  that layer is table stakes now (Codex Cloud, Cursor Background Agents, Devin, Claude Code Remote
-  Tasks all ship it).
+  edit the failing test. **This rule is about Kiwi's own definition of done, not about naming the
+  industry's review-cost problem** — leading with "two of three agent PRs never merge" or "agents
+  ghost review comments" is fine and encouraged, those are sourced numbers about the category, not a
+  claim that Kiwi's job is turning checks green.
+- **Lead with review cost, not containment.** Containment (BYOC, sealed credentials, the two-phase
+  sandbox) is now free from at least three competitors — Coder Agents, OpenHands, and Anthropic's own
+  self-hosted Gateway — so it answers a security review once, it doesn't win one anymore. The claim
+  that carries the page: most agents finish, discard their context, and have no idea the conversation
+  continued after the PR opens. Kiwi keeps the session — a review comment resumes the next round with
+  everything the Architect and Implementer knew when they wrote the code, not a re-run from zero
+  (shipped, kiwi#343). Containment stays on the page as the qualifier that answers the CISO, not the
+  reason anyone adopts first.
+- **Don't market the Merge Dossier until it renders on the PR.** Kiwi already persists per-round
+  Architect verdicts and hash-chains them (`pkg/ver`) — real, and safe to describe, but it lives in
+  the dashboard today. Not real yet: that record rendered onto the pull request itself, per-hunk
+  confidence (verdicts are per round, not per hunk), and an explicit statement of what the test didn't
+  cover. Don't write copy implying a reviewer sees any of those three in GitHub today — say where the
+  record lives now, and that it's moving onto the PR next.
+- **"Actor" and "Critic" are retired terms.** They named `pkg/loop`'s File Loop, deleted 2026-08-12 —
+  session (`pkg/session`: an Architect sets each round's objective and reviews the diff, an
+  Implementer edits with real tools) is the only execution loop now. There's no more "pick a loop per
+  task," and no more planner-level decomposition of a task into a worker DAG — don't describe or draw
+  a swarm/DAG of parallel workers fanned out on a single task; there isn't one.
 - **The sandbox is two-phase, and the precise claim is the strong one.** Phase A installs
   dependencies with the network **on** and an **empty environment** — no git token, no registry
   credential. Phase B verifies with the network **off**, running model-generated code. State it as:

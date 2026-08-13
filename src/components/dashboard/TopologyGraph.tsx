@@ -9,6 +9,7 @@ import {
   useEdgesState,
   addEdge,
   Connection,
+  Node,
   Edge,
   MarkerType,
   BackgroundVariant
@@ -22,11 +23,17 @@ const nodeTypes = {
   task: TaskNode,
 };
 
-// Initial nodes/edges mock generator
+// Initial nodes/edges mock generator.
+//
+// One org's daemon leases and executes one task at a time (pkg/session is the only
+// execution loop; there is no per-task fan-out of many agents). So this shows several
+// orgs' daemons each running their own single task in parallel, not one task split
+// across a swarm of agents — that used to be 48 agents orbiting 4 tasks and it was
+// never a real shape of the system.
 const generateMockData = () => {
-  const nodes = [];
-  const edges = [];
-  
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
   const tasks = [
     { id: 't1', label: 'Migrate to NextAuth', x: 400, y: 300, progress: 85 },
     { id: 't2', label: 'Refactor Billing Service', x: 1200, y: 300, progress: 40 },
@@ -34,57 +41,34 @@ const generateMockData = () => {
     { id: 't4', label: 'Sync Stripe Webhooks', x: 1200, y: 900, progress: 92 },
   ];
 
-  tasks.forEach(t => {
+  tasks.forEach((t, i) => {
     nodes.push({
       id: t.id,
       type: 'task',
       position: { x: t.x, y: t.y },
       data: { label: t.label, status: 'running', progress: t.progress },
     });
-  });
 
-  const agentsPerTask: Record<string, number> = {};
-  
-  // Create 48 agents and assign them evenly to tasks
-  for (let i = 0; i < 48; i++) {
-    const parentTask = tasks[i % tasks.length];
-    agentsPerTask[parentTask.id] = (agentsPerTask[parentTask.id] || 0) + 1;
-    
-    // Position agents in a clean orbit around the task
-    const index = agentsPerTask[parentTask.id];
-    const total = 12; // 48 / 4 tasks = 12 agents per task
-    const angle = (index / total) * Math.PI * 2;
-    const radius = 280; // wide radius for no overlap
-    
-    // Center of the task node is roughly x+110, y+50 (since task node is 220x100ish)
-    const taskCenterX = parentTask.x + 110;
-    const taskCenterY = parentTask.y + 50;
-    
-    // Agent node is roughly 180x80
-    const x = taskCenterX + Math.cos(angle) * radius - 90;
-    const y = taskCenterY + Math.sin(angle) * radius - 40;
-    
+    // Exactly one daemon per task — the real cardinality.
     const agentId = `agent-${i}`;
-    const isActive = Math.random() > 0.3; // 70% active
-    
     nodes.push({
       id: agentId,
       type: 'agent',
-      position: { x, y },
-      data: { 
-        label: `Agent-${i.toString().padStart(3, '0')}`, 
-        status: isActive ? 'active' : 'idle',
-        cpu: isActive ? Math.floor(Math.random() * 80) + 10 : 0
+      position: { x: t.x + 20, y: t.y + 220 },
+      data: {
+        label: `daemon-${(i + 1).toString().padStart(3, '0')}`,
+        status: 'active',
+        cpu: Math.floor(Math.random() * 60) + 20,
       },
     });
 
     edges.push({
-      id: `e-${parentTask.id}-${agentId}`,
-      source: parentTask.id,
+      id: `e-${t.id}-${agentId}`,
+      source: t.id,
       target: agentId,
       type: 'default',
     });
-  }
+  });
 
   return { nodes, edges };
 };

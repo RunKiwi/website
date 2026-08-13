@@ -27,13 +27,13 @@ export default function Hero() {
             <span className="badge-text">New · Run tasks on Kiwi’s models. No API key needed.</span>
           </div>
           <h1 className="hero-title">
-            Agentic coding in <em className="text-gradient">infrastructure you control.</em>
+            Every coding agent hands you a diff and disappears. <em className="text-gradient">This one doesn&rsquo;t.</em>
           </h1>
           <h2 className="hero-subheading" style={{ fontSize: '1.75rem', fontWeight: 500, marginBottom: '24px', letterSpacing: '-0.5px' }}>
-            Coding agents your security review <em className="text-gradient" style={{ fontStyle: 'normal' }}>can approve.</em>
+            Leave a review comment and Kiwi&rsquo;s session picks it back up <em className="text-gradient" style={{ fontStyle: 'normal' }}>with everything it knew when it wrote the code.</em>
           </h2>
           <p className="hero-subtitle">
-            Describe a task and name your test command. Kiwi plans the work, edits your repository, and verifies the change in a sandbox with no network and no credentials. You get a pull request.
+            Describe a task and name your test command. Kiwi plans the work, edits your repository, and verifies the change in a sandbox with no network and no credentials. You get a pull request — and if you comment on it, the next round starts with the reason you rejected the last one, not a re-run from zero.
           </p>
           <p className="hero-subtitle" style={{ marginTop: '-8px' }}>
             <strong>Start with nothing to configure.</strong> Every account gets a monthly allowance on models Kiwi pays for, so you can run a real task before deciding whether Kiwi is worth an API key. Bring your own when you want to — then the key never enters the sandbox, and in BYOC it never leaves your cloud.
@@ -48,7 +48,7 @@ export default function Hero() {
           </div>
 
           <p className="hero-microcopy">
-            No API key to start · Managed cloud or your own VPC · Actor–Critic verdicts recorded per step · One job → one branch → one PR
+            No API key to start · Managed cloud or your own VPC · Architect verdicts recorded per round · One job → one branch → one PR
           </p>
 
           <div className="hero-cli-install">

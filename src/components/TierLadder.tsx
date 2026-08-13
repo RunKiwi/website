@@ -11,7 +11,7 @@ const rows: Row[] = [
   { label: 'Operator', managed: 'Kiwi runs the daemon', byoc: 'You run the daemon' },
   { label: 'Your code', managed: 'On Kiwi infrastructure', byoc: 'Never leaves your VPC' },
   { label: 'Credentials', managed: 'Sealed in transit & at rest', byoc: 'Zero-knowledge; we cannot decrypt' },
-  { label: 'Planner', managed: 'Control Plane, or daemon-side in session mode', byoc: 'Daemon-side' },
+  { label: 'Planner', managed: 'Daemon-side, always', byoc: 'Daemon-side' },
   { label: 'You pay for', managed: 'Compute + orchestration', byoc: 'Orchestration only' },
 ];
 

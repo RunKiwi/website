@@ -4,80 +4,104 @@ import { useState, useEffect } from 'react';
 import { Reveal } from './Reveal';
 import { GitPullRequest, ArrowRight } from 'lucide-react';
 
+// CSS class suffixes are inherited from an earlier worker-DAG demo (analyze/impl/verify)
+// and reused here for styling only — displayed labels are Architect/Implementer/Verify.
 type Stage = 'analyze' | 'impl' | 'verify';
 type Status = 'QUEUED' | 'RUNNING' | 'DONE';
 
-type Worker = {
+type RoundCard = {
   id: string;
+  round: number | null; // null = not tied to a specific round (verify)
   name: string;
   stage: Stage;
-  dependsOn: string[];
   status: Status;
   logs: string[];
 };
 
-// One job → one branch → a DAG of workers. w1 (analyze) unblocks the three
-// parallel impl workers; w5 (verify) depends on all of them and opens the PR.
-const initialWorkers: Worker[] = [
-  { id: 'w1', name: 'analyze · map the session call sites', stage: 'analyze', dependsOn: [], status: 'DONE',
-    logs: ['[actor] Reading every caller of the session store…', '[finding] 3 call sites assume in-memory state', '✓ summary handed to dependents'] },
-  { id: 'w2', name: 'impl · auth handler', stage: 'impl', dependsOn: ['w1'], status: 'RUNNING',
-    logs: ['[actor] Switching the handler to the Postgres store…', '$ go test ./pkg/auth', '[critic] Reviewing diff…'] },
-  { id: 'w3', name: 'impl · session store', stage: 'impl', dependsOn: ['w1'], status: 'RUNNING',
-    logs: ['[actor] Migrating store to Postgres…', '$ go test ./pkg/session', '[critic] minimal, scoped — approve'] },
-  { id: 'w4', name: 'impl · migration script', stage: 'impl', dependsOn: ['w1'], status: 'RUNNING',
-    logs: ['[actor] Writing 0002_sessions.sql…', 'commit → kiwi/job-42', '✓ committed to job branch'] },
-  { id: 'w5', name: 'verify · full suite + open PR', stage: 'verify', dependsOn: ['w2', 'w3', 'w4'], status: 'QUEUED',
-    logs: ['waiting on w2, w3, w4 to go green…'] },
+// Kiwi has one execution loop: an Architect sets each round's objective and reviews
+// the diff, an Implementer edits the repo with real tools. Sequential rounds, not a
+// parallel worker DAG — pkg/loop (the DAG-based loop this demo used to show) was
+// retired 2026-08-12. This sim: round 1 gets revised, round 2 fixes it, then verify.
+const initialCards: RoundCard[] = [
+  { id: 'r1-plan', round: 1, stage: 'analyze', status: 'DONE',
+    name: 'round 1 · architect sets the objective',
+    logs: ['[architect] Reading every caller of the session store…', '[architect] 3 call sites assume in-memory state', '✓ objective handed to implementer'] },
+  { id: 'r1-impl', round: 1, stage: 'impl', status: 'RUNNING',
+    name: 'round 1 · implementer edits the repo',
+    logs: ['[implementer] Editing pkg/session/store.go…', '$ go test ./pkg/session', 'writing migration 0002_sessions.sql…'] },
+  { id: 'r1-review', round: 1, stage: 'analyze', status: 'QUEUED',
+    name: 'round 1 · architect reviews the diff',
+    logs: ['waiting on the implementer to finish…'] },
+  { id: 'r2-impl', round: 2, stage: 'impl', status: 'QUEUED',
+    name: 'round 2 · implementer edits the repo',
+    logs: ['waiting on round 1’s review…'] },
+  { id: 'verify', round: null, stage: 'verify', status: 'QUEUED',
+    name: 'verify · full suite + open PR',
+    logs: ['waiting on round 2 to go green…'] },
 ];
 
-const implSnippets = [
-  '[actor] Reading AGENT.md for repo conventions…',
-  '[critic] Diff rejected: add a rollback path.',
-  '$ go test ./... -run TestAuth',
-  '[actor] Re-running against test_cmd…',
+const roundSnippets = [
+  '[implementer] Reading AGENT.md for repo conventions…',
+  '$ go test ./... -run TestSession',
+  '[implementer] Re-running against test_cmd…',
   'commit → kiwi/job-42',
-  '[critic] Scoped and minimal — approve.',
-  'Tests green. Handing summary to verify.',
+  'Tests green. Handing summary to the next round.',
 ];
 
-const stageLabel: Record<Stage, string> = { analyze: 'ANALYZE', impl: 'IMPL', verify: 'VERIFY' };
+const stageLabel: Record<Stage, string> = { analyze: 'ARCHITECT', impl: 'IMPLEMENTER', verify: 'VERIFY' };
 
 export default function GodView() {
-  const [workers, setWorkers] = useState<Worker[]>(initialWorkers);
+  const [cards, setCards] = useState<RoundCard[]>(initialCards);
+  const [round, setRound] = useState(1);
   const [prOpen, setPrOpen] = useState(false);
 
   useEffect(() => {
     let ticks = 0;
     const interval = setInterval(() => {
       ticks++;
-      setWorkers(prev => {
-        const next = prev.map(w => {
-          if (w.status === 'RUNNING' && Math.random() > 0.6) {
-            const line = implSnippets[Math.floor(Math.random() * implSnippets.length)];
-            const logs = [...w.logs, line];
+      setCards(prev => {
+        const next = prev.map(c => {
+          if (c.status === 'RUNNING' && Math.random() > 0.55) {
+            const line = roundSnippets[Math.floor(Math.random() * roundSnippets.length)];
+            const logs = [...c.logs, line];
             if (logs.length > 4) logs.shift();
-            return { ...w, logs };
+            return { ...c, logs };
           }
-          return w;
+          return c;
         });
-        // After a beat, the impl workers finish and verify runs → PR opens.
-        if (ticks === 6) return next.map(w => (w.stage === 'impl' ? { ...w, status: 'DONE' as Status } : w));
-        if (ticks === 8) return next.map(w => (w.id === 'w5'
-          ? { ...w, status: 'RUNNING' as Status, logs: ['$ go test ./… (full suite)', '✓ 128 passed, 0 failed'] }
-          : w));
-        if (ticks === 11) return next.map(w => (w.id === 'w5'
-          ? { ...w, status: 'DONE' as Status, logs: ['✓ 128 passed, 0 failed', '● Opened PR #42 → main'] }
-          : w));
+
+        // Round 1 implementer finishes; architect starts reviewing.
+        if (ticks === 4) {
+          return next.map(c => c.id === 'r1-impl' ? { ...c, status: 'DONE' as Status }
+            : c.id === 'r1-review' ? { ...c, status: 'RUNNING' as Status, logs: ['[architect] Reviewing the diff…'] }
+            : c);
+        }
+        // Review lands: revise, not approve. The rejected attempt is kept, not discarded.
+        if (ticks === 6) {
+          return next.map(c => c.id === 'r1-review'
+            ? { ...c, status: 'DONE' as Status, logs: ['[architect] Missing a rollback path — revise.', '↺ rejected attempt kept, not discarded'] }
+            : c.id === 'r2-impl'
+            ? { ...c, status: 'RUNNING' as Status, logs: ['[implementer] Reading the architect’s review…', '[implementer] Adding rollback on migration failure…'] }
+            : c);
+        }
+        // Round 2 finishes; verify starts.
+        if (ticks === 9) {
+          setRound(2);
+          return next.map(c => c.id === 'r2-impl' ? { ...c, status: 'DONE' as Status }
+            : c.id === 'verify' ? { ...c, status: 'RUNNING' as Status, logs: ['$ go test ./… (full suite)', '✓ 128 passed, 0 failed'] }
+            : c);
+        }
+        if (ticks === 12) {
+          return next.map(c => c.id === 'verify'
+            ? { ...c, status: 'DONE' as Status, logs: ['✓ 128 passed, 0 failed', '● Opened PR #42 → main'] }
+            : c);
+        }
         return next;
       });
-      if (ticks === 11) setPrOpen(true);
+      if (ticks === 12) setPrOpen(true);
     }, 1100);
     return () => clearInterval(interval);
   }, []);
-
-  const runningCount = workers.filter(w => w.status === 'RUNNING').length;
-  const doneCount = workers.filter(w => w.status === 'DONE').length;
 
   return (
     <section id="how-it-works" className="simulator-section">
@@ -86,7 +110,7 @@ export default function GodView() {
           <span className="section-eyebrow">How it works</span>
           <h2 className="section-title">One task in. One PR out.</h2>
           <p className="section-subtitle">
-            Kiwi plans your task into a graph of scoped workers, runs them in parallel on a single job branch, and lets the dependencies carry findings forward. What you asked for is the objective; a terminal verify worker runs the full suite to prove the change broke nothing before the PR opens.
+            An Architect sets each round&rsquo;s objective and reviews the diff; an Implementer does the editing with real tools. When the Architect asks for a revision, the rejected attempt is kept, not discarded, and the next round picks up with the feedback attached. What you asked for is the objective; a final verify step runs the full suite to prove the change broke nothing before the PR opens.
           </p>
         </Reveal>
 
@@ -94,9 +118,9 @@ export default function GodView() {
         <Reveal as="ol" className="pipeline-rail" aria-label="Execution pipeline">
           {[
             { k: 'kiwi submit', v: 'a plain-English task' },
-            { k: 'Plan', v: 'task → worker DAG' },
-            { k: 'Swarm', v: 'workers run in parallel' },
-            { k: 'Compose', v: 'commits to one branch' },
+            { k: 'Plan', v: 'Architect sets the round objective' },
+            { k: 'Implement', v: 'Implementer edits with real tools' },
+            { k: 'Review', v: 'Architect checks the diff' },
             { k: 'Verify', v: 'the suite still passes' },
             { k: 'Ship', v: 'one reviewable PR' },
           ].map((s, i, arr) => (
@@ -122,31 +146,29 @@ export default function GodView() {
               <span className="t-value" style={{ fontFamily: 'var(--custom-font-mono)' }}>kiwi/job-42</span>
             </div>
             <div className="telemetry-item">
-              <span className="t-label">Workers</span>
-              <span className="t-value">{runningCount} RUNNING · {doneCount} DONE</span>
+              <span className="t-label">Round</span>
+              <span className="t-value">{round} of 2</span>
             </div>
           </div>
 
           <div className="swarm-grid">
-            {workers.map(w => (
-              <div key={w.id} className={`worker-card stage-${w.stage} status-${w.status.toLowerCase()}`}>
+            {cards.map(c => (
+              <div key={c.id} className={`worker-card stage-${c.stage} status-${c.status.toLowerCase()}`}>
                 <div className="worker-head">
                   <div className="worker-meta">
-                    <span className={`worker-stage stage-${w.stage}`}>{stageLabel[w.stage]}</span>
-                    <span className="worker-name">{w.name}</span>
+                    <span className={`worker-stage stage-${c.stage}`}>{stageLabel[c.stage]}</span>
+                    <span className="worker-name">{c.name}</span>
                   </div>
-                  <span className={`worker-status ${w.status.toLowerCase()}`}>{w.status}</span>
+                  <span className={`worker-status ${c.status.toLowerCase()}`}>{c.status}</span>
                 </div>
                 <div className="worker-dep">
-                  {w.dependsOn.length === 0
-                    ? <span className="dep-root">root node</span>
-                    : <>depends_on <code>{w.dependsOn.join(', ')}</code></>}
+                  {c.round === null ? <span className="dep-root">final step</span> : <>sequential · <code>round {c.round}</code></>}
                 </div>
                 <div className="worker-logs">
-                  {w.logs.map((log, idx) => (
-                    <div key={idx} className={`worker-log ${idx === w.logs.length - 1 && w.status === 'RUNNING' ? 'live' : ''}`}>{log}</div>
+                  {c.logs.map((log, idx) => (
+                    <div key={idx} className={`worker-log ${idx === c.logs.length - 1 && c.status === 'RUNNING' ? 'live' : ''}`}>{log}</div>
                   ))}
-                  {w.status === 'RUNNING' && <span className="worker-caret">█</span>}
+                  {c.status === 'RUNNING' && <span className="worker-caret">█</span>}
                 </div>
               </div>
             ))}
@@ -156,7 +178,7 @@ export default function GodView() {
               <GitPullRequest className="pr-icon" aria-hidden="true" />
               <div className="pr-copy">
                 <span className="pr-title">{prOpen ? 'PR #42 opened → main' : 'Composing one PR…'}</span>
-                <span className="pr-sub">{prOpen ? '4 workers · 1 branch · suite still green' : 'branch kiwi/job-42 · verify pending'}</span>
+                <span className="pr-sub">{prOpen ? '2 rounds · 1 branch · suite still green' : 'branch kiwi/job-42 · verify pending'}</span>
               </div>
             </div>
           </div>
