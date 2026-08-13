@@ -4,15 +4,17 @@
 import { useEffect as useReactEffect, useRef as useReactRef, useState } from 'react';
 
 /**
- * HeroDemo — a diegetic, self-playing "live run" of a Kiwi swarm.
+ * HeroDemo — a diegetic, self-playing "live run" of a Kiwi session.
  *
  * It mirrors the "How it works" section beat for beat, so the hero and the
  * page below tell one coherent story (same task, same job branch, same PR):
  *   kiwi submit "Migrate auth to Postgres"
- *   [planner] decomposes it into a worker DAG on branch kiwi/job-42
- *   w1 analyze hands findings to the parallel impl workers (w2–w4)
- *   each impl worker commits to the one job branch
- *   [w5 verify] runs the full suite → opens ONE PR (#42)
+ *   [architect] sets round 1's objective, [implementer] edits the repo
+ *   [architect] reviews the diff, asks for a revision — round 2 fixes it
+ *   [verify] runs the full suite → opens ONE PR (#42)
+ * Sequential rounds, not a parallel worker DAG — pkg/session (Architect
+ * sets each round's objective and reviews the diff; Implementer edits with
+ * real tools) is the only execution loop.
  * ...with a live-incrementing token + USD counter, then loops.
  *
  * Under prefers-reduced-motion it renders the full, legible end-state
@@ -31,14 +33,15 @@ type Step = {
 // Timeline (ms offsets). Total loop ~ 8.6s then restart.
 const STEPS: Step[] = [
   { kind: 'cmd',     lead: '$', text: 'kiwi submit "Migrate auth to Postgres"', atMs: 400 },
-  { kind: 'actor',   lead: '[planner]', text: 'Decomposing into a worker DAG… 5 workers.', atMs: 1400 },
-  { kind: 'chip',    text: '🌿 branch kiwi/job-42 · workers fan out in parallel', atMs: 2500 },
-  { kind: 'info',    lead: '[w1·analyze]', text: '3 call sites assume non-nil → findings passed on', atMs: 3300 },
-  { kind: 'info',    lead: '[w2·impl]', text: 'auth handler → commit to job branch', atMs: 4000 },
-  { kind: 'info',    lead: '[w3·impl]', text: 'session store → commit to job branch', atMs: 4500 },
-  { kind: 'pass',    lead: '✓', text: 'w4·impl migration script → committed', atMs: 5300 },
-  { kind: 'critic',  lead: '[w5·verify]', text: 'Full suite green — 128 passed, 0 failed.', atMs: 6300 },
-  { kind: 'success', lead: '●', text: 'Opened PR #42 → main · 4 workers, 1 branch', atMs: 7200 },
+  { kind: 'actor',   lead: '[architect]', text: 'round 1 · reading every caller of the session store…', atMs: 1200 },
+  { kind: 'chip',    text: '🌿 branch kiwi/job-42 · round 1', atMs: 2000 },
+  { kind: 'info',    lead: '[implementer]', text: 'editing pkg/session/store.go…', atMs: 2700 },
+  { kind: 'info',    lead: '[implementer]', text: 'writing migration 0002_sessions.sql…', atMs: 3400 },
+  { kind: 'critic',  lead: '[architect]', text: 'Missing a rollback path — revise.', atMs: 4200 },
+  { kind: 'info',    lead: '[implementer]', text: 'round 2 · adding rollback on migration failure…', atMs: 5000 },
+  { kind: 'pass',    lead: '✓', text: 'round 2 · tests green, committed to job branch', atMs: 5800 },
+  { kind: 'critic',  lead: '[verify]', text: 'Full suite green — 128 passed, 0 failed.', atMs: 6700 },
+  { kind: 'success', lead: '●', text: 'Opened PR #42 → main · 2 rounds, 1 branch', atMs: 7500 },
 ];
 
 const LOOP_MS = 8600;
@@ -117,7 +120,7 @@ export default function HeroDemo() {
     : { cls: 'running', label: 'RUNNING' };
 
   return (
-    <div className="hero-demo" role="img" aria-label="A live Kiwi run: the planner decomposes 'Migrate auth to Postgres' into a DAG of workers on branch kiwi/job-42, they run in parallel and commit to one branch, a verify worker runs the full suite, and it all lands as a single PR — with live token and cost counters.">
+    <div className="hero-demo" role="img" aria-label="A live Kiwi run: the Architect sets round 1's objective for 'Migrate auth to Postgres', the Implementer edits the repo on branch kiwi/job-42, the Architect asks for a revision and round 2 fixes it, a final verify step runs the full suite, and it all lands as a single PR — with live token and cost counters.">
       <div className="hero-demo-titlebar">
         <div className="hero-demo-dots" aria-hidden="true"><span /><span /><span /></div>
         <span className="hero-demo-file">kiwi/job-42 · migrate-auth</span>
