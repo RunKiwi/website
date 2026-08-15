@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import ValueBanner from '@/components/ValueBanner';
 import Marquee from '@/components/Marquee';
+import Companies from '@/components/Companies';
 import GodView from '@/components/GodView';
 import FeaturesGrid from '@/components/FeaturesGrid';
 import TierLadder from '@/components/TierLadder';
@@ -18,6 +19,7 @@ export default function Home() {
         <Hero />
         <ValueBanner />
         <Marquee />
+        <Companies />
         {/* Story order: what it does (how-it-works) → why (features) →
             the tier ladder → the architecture → start.
             Alternating dark/cream rhythm for editorial contrast. */}

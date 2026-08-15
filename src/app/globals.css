@@ -3652,3 +3652,27 @@ pre {
   .post-card-title { font-size: 1.35rem; }
   .prose h2 { font-size: 1.5rem; }
 }
+
+/* Companies Section */
+.companies-section {
+  border-top: 1px solid var(--border);
+  background-color: rgba(13, 17, 28, 0.2);
+}
+
+.companies-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 48px 72px;
+  align-items: center;
+}
+
+.company-name {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: 1.75rem;
+  font-weight: 540;
+  color: var(--text-main);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
