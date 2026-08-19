@@ -164,8 +164,8 @@ section {
 }
 
 .btn-sm {
-  padding: 8px 16px;
-  font-size: 0.9rem;
+  padding: 6px 14px;
+  font-size: 0.85rem;
 }
 
 .btn-primary {
@@ -218,15 +218,13 @@ section {
 
 /* Header */
 .header {
-  height: 80px;
+  height: 60px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  background-color: rgba(11, 12, 10, 0.72);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: var(--bg-dark);
   z-index: 100;
 }
 
@@ -268,7 +266,7 @@ section {
 .nav-link {
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 500;
   transition: color 0.2s;
 }
@@ -3517,16 +3515,15 @@ pre {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
   background: var(--bg-panel);
-  box-shadow: 0 0 14px rgba(147, 198, 69, 0.28);
+  box-shadow: 0 0 10px rgba(147, 198, 69, 0.22);
   flex-shrink: 0;
 }
-.logo-bird { width: 20px; height: 20px; color: var(--primary); }
-.footer .logo-chip { width: 28px; height: 28px; border-radius: 7px; box-shadow: 0 0 10px rgba(147, 198, 69, 0.22); }
-.footer .logo-bird { width: 17px; height: 17px; }
+.logo-bird { width: 17px; height: 17px; color: var(--primary); }
+.footer .logo-chip { box-shadow: none; }
 
 
 /* ==================== BLOG ==================== */
