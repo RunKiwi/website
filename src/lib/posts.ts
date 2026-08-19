@@ -36,15 +36,7 @@ export const posts: Post[] = [
     readingMinutes: 8,
     tags: ["security", "credentials"],
   },
-  {
-    slug: "why-agent-work-is-a-dag",
-    title: "Why agent work belongs in a DAG, not a loop",
-    description:
-      "Agent frameworks converged on graphs for a reason. What a DAG buys you over a linear script — parallelism, ordering guarantees, and correct partial failure — and what it costs.",
-    date: "2026-07-29",
-    readingMinutes: 10,
-    tags: ["architecture", "orchestration"],
-  },
+
   {
     slug: "tests-are-a-guard-not-the-goal",
     title: "Your tests are a guard, not the goal",
