@@ -1,0 +1,35 @@
+Most coding agents have a natural endpoint: the PR opens, the run reports success, the process exits. Whatever happens to that code next — whether it reverts, whether CI turns red an hour later, whether a metric moves in production — happens after the agent has already stopped looking.
+
+We built the opposite of an endpoint. When a Kiwi-authored PR merges, Kiwi keeps a monitor open on the merged commit for 24 hours and asks, repeatedly, whether anything looks wrong.
+
+## Three ways the answer can be "yes"
+
+Two of the three checks need nothing from you.
+
+**Someone reverts it.** If a revert of the merged PR itself gets merged — not opened, merged — during the window, that's a regression, full stop. Nobody debates a revert after the fact; the team decided already.
+
+**A check turns bad.** If any check run against the merge commit concludes failed, timed out, or requires action during the window, that's a regression too. This isn't "a check that used to pass now fails" — it's simpler than that: a bad conclusion on the commit that's now sitting on your default branch is reason enough to stop trusting it.
+
+**A metric moves, if you've wired one up.** This one's opt-in. From the dashboard, you name a Datadog or Prometheus query against a repo, pick whether higher or lower is better, and the UI runs that query live against your real credentials before Save will even unlock — no metric gets saved unverified. Once it exists, every monitor on that repo polls baseline-vs-current windows against it roughly every 15 minutes.
+
+## Bad news travels faster than good news
+
+Here's the part we think is worth explaining rather than just shipping: the telemetry check can only end the window early with bad news.
+
+A poll comparing baseline and current can return three things: a confident regression, or "not confident yet." It can never return a confident *improvement*, and it never returns "confirmed clean" on its own. The reason is arithmetic, not opinion — with a 20% relative-change bar (fixed for now, not yet tuned against real traffic) and a floor of 30 samples per side, an early poll usually doesn't have enough data to say anything, and even a stable metric doesn't earn a "verified" stamp from one good read. It just doesn't earn a bad one either, and the window keeps running.
+
+That means the only way to get to VERIFIED is the boring way: the entire 24 hours passes with no revert, no bad check run, and no confident regression at any point along the way. There's no premature all-clear the moment one good poll comes back. A clean read has to hold for the whole window, because one clean poll proves nothing that a second bad one couldn't immediately contradict.
+
+It's the same principle behind treating a test suite as a guard instead of a goal: the check that's allowed to declare victory early is exactly the check an adversarial signal would find a way to satisfy without earning it. So only bad news gets to move fast.
+
+## What you get out of it
+
+When the window closes — clean or not — Kiwi posts the verdict as a comment on the PR thread, and (if you've got a webhook set up) to Slack. It also chains a verdict record onto the job's existing execution record: same hash-chain pkg/ver already builds per run, extended with what happened after merge. That record is signed when a signing key is configured for your org, same conditional-signing behavior as every other record Kiwi produces — it isn't a blanket promise every verdict arrives cryptographically signed, it's evidence you can check when a key is configured.
+
+If the verdict is REGRESSION and you've turned on auto-remediation for your org, Kiwi doesn't just tell you — it submits a fix task through the same continuation path a review comment uses, in the same session, with the Architect and Implementer's original context still attached. Not a fresh run starting from a cold prompt. The instruction it hands itself is blunt: production regression detected after this change merged, here's the evidence, investigate and fix.
+
+## The honest limits
+
+This only watches PRs Kiwi itself opened and merged — not your team's other PRs, not a general-purpose "watch this repo" mode. The telemetry check is opt-in per repo and needs a query you've tested. And the 20% regression bar is a first cut, not a calibrated threshold — expect it to move as we see more real traffic through it.
+
+None of that makes the story smaller. It makes it something we can stand behind: Kiwi doesn't consider a PR the finish line, and it doesn't call anything verified without waiting to be proven wrong first.

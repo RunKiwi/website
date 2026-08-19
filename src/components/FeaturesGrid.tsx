@@ -56,11 +56,11 @@ const features: Feature[] = [
     icon: <Reply className="w-6 h-6 text-primary" />,
     title: (
       <>
-        Stays in the review
-        <span className="feature-tag">No re-run from zero</span>
+        Stays on the job
+        <span className="feature-tag">Past the merge</span>
       </>
     ),
-    desc: 'Most agents finish, discard their context, and have no idea the conversation continued \u2014 leave a comment on their pull request and nothing happens. Kiwi keeps the session: a review comment starts the next round with everything the Architect and Implementer knew when they wrote the code, plus the reason you rejected it.',
+    desc: 'Most agents finish, discard their context, and have no idea the conversation continued \u2014 leave a comment on their pull request and nothing happens. Kiwi keeps the session: a review comment starts the next round with everything the Architect and Implementer knew when they wrote the code, plus the reason you rejected it. That doesn\u2019t stop at merge either \u2014 once a Kiwi-authored PR lands, Kiwi watches the merged commit for a 24-hour window, on GitHub\u2019s own signals plus a production metric you\u2019ve connected, and only calls it verified once the window holds clean.',
   },
   {
     icon: <PackageSearch className="w-6 h-6 text-primary" />,

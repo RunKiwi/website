@@ -90,6 +90,15 @@ export const posts: Post[] = [
     readingMinutes: 5,
     tags: ["agents", "architecture"],
   },
+  {
+    slug: "watching-after-merge",
+    title: "Bad news travels faster than good news",
+    description:
+      "Kiwi keeps watching a merged PR for 24 hours — a revert, a failed check, or a production metric regression can end the window early. A clean read never can. Why only one direction gets to move fast.",
+    date: "2026-08-19",
+    readingMinutes: 6,
+    tags: ["agents", "reliability"],
+  },
 ];
 
 /** Newest first. */
