@@ -13,7 +13,7 @@ export default function Hero() {
         <Reveal as="div" className="hero-content" stagger>
           <div className="badge" id="hero-announcement-badge">
             <span className="badge-dot"></span>
-            <span className="badge-text">New · Post-merge verification tracks regressions after your PR lands.</span>
+            <span className="badge-text">Post-merge · Tracks regressions after your PR lands.</span>
           </div>
           <h1 className="hero-title">
             Most coding agents disappear the moment a PR opens. <em className="text-gradient">Kiwi doesn&rsquo;t.</em>
