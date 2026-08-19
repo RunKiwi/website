@@ -4,9 +4,10 @@ import ValueBanner from '@/components/ValueBanner';
 import Marquee from '@/components/Marquee';
 import GodView from '@/components/GodView';
 import FeaturesGrid from '@/components/FeaturesGrid';
+import Activity from '@/components/Activity';
+import ComingSoon from '@/components/ComingSoon';
 import TierLadder from '@/components/TierLadder';
 import PricingTiers from '@/components/PricingTiers';
-import TopologyCanvas from '@/components/TopologyCanvas';
 import Quickstart from '@/components/Quickstart';
 import Footer from '@/components/Footer';
 
@@ -19,14 +20,15 @@ export default function Home() {
         <ValueBanner />
         <Marquee />
         {/* Story order: what it does (how-it-works) → why (features) →
-            the tier ladder → the architecture → start.
+            what's next → the tier ladder → start.
             Alternating dark/cream rhythm for editorial contrast. */}
         <GodView />
         <FeaturesGrid theme="cream" />
+        <Activity />
+        <ComingSoon theme="cream" />
         <TierLadder />
         <PricingTiers theme="cream" />
-        <TopologyCanvas />
-        <Quickstart theme="cream" />
+        <Quickstart />
       </main>
       <Footer />
     </>

@@ -56,11 +56,11 @@ const features: Feature[] = [
     icon: <Reply className="w-6 h-6 text-primary" />,
     title: (
       <>
-        Stays in the review
+        Stays on the job
         <span className="feature-tag">No re-run from zero</span>
       </>
     ),
-    desc: 'Most agents finish, discard their context, and have no idea the conversation continued \u2014 leave a comment on their pull request and nothing happens. Kiwi keeps the session: a review comment starts the next round with everything the Architect and Implementer knew when they wrote the code, plus the reason you rejected it.',
+    desc: 'Most agents finish, discard their context, and have no idea the conversation continued. Kiwi keeps the session: a review comment starts the next round with everything the Architect and Implementer knew when they wrote the code, plus the reason you rejected it. After merge, it watches for 24 hours to prove the commit caused no regressions.',
   },
   {
     icon: <PackageSearch className="w-6 h-6 text-primary" />,
@@ -88,7 +88,7 @@ export default function FeaturesGrid({ theme }: { theme?: 'cream' }) {
 
         <Reveal as="div" className="features-grid" stagger>
           {features.map((f, i) => (
-            <RevealItem key={i} className={`feature-card backdrop-blur-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300 ${f.lead ? 'feature-card-lead' : ''}`}>
+            <RevealItem key={i} className={`feature-card ${f.lead ? 'feature-card-lead' : ''}`}>
               <div className="card-glow"></div>
               <span className="feature-index">{String(i + 1).padStart(2, '0')}</span>
               <div className="feature-icon">{f.icon}</div>

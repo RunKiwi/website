@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import { Inter, Outfit, Fraunces, Fira_Code } from "next/font/google";
+import { Inter, Outfit, Fraunces, Fira_Code, JetBrains_Mono } from "next/font/google";
 import { REPO_URL, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -24,6 +24,11 @@ const fraunces = Fraunces({
 
 const firaCode = Fira_Code({
   variable: "--font-fira-code",
+  subsets: ["latin"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -109,7 +114,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${outfit.variable} ${fraunces.variable} ${firaCode.variable} antialiased`}>
+      <body className={`${inter.variable} ${outfit.variable} ${fraunces.variable} ${firaCode.variable} ${jetbrainsMono.variable} antialiased`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

@@ -6,6 +6,7 @@ import { type CSSProperties, type ReactNode, useEffect as useReactEffect, useSta
 function useMountedReducedMotion() {
   const preferReduce = useReducedMotion();
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useReactEffect(() => setMounted(true), []);
   return mounted ? preferReduce : false;
 }
@@ -93,21 +94,23 @@ export function RevealItem({
   children,
   as = 'div',
   className,
+  style,
 }: {
   children: ReactNode;
   as?: 'div' | 'li';
   className?: string;
+  style?: CSSProperties;
 }) {
   const reduce = useMountedReducedMotion();
   const MotionTag = motion[as] as typeof motion.div;
 
   if (reduce) {
     const StaticTag = as as 'div';
-    return <StaticTag className={className}>{children}</StaticTag>;
+    return <StaticTag className={className} style={style}>{children}</StaticTag>;
   }
 
   return (
-    <MotionTag className={className} variants={itemVariants}>
+    <MotionTag className={className} style={style} variants={itemVariants}>
       {children}
     </MotionTag>
   );

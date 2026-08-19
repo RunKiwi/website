@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Reveal } from './Reveal';
 import { Copy, ShieldCheck, Check, Lock, Network, Key, Gauge, ArrowRight } from 'lucide-react';
+import PixelKiwi from './PixelKiwi';
 
 const managedSnippet = `# Sign in with GitHub at app.runkiwi.dev, or use the CLI:
 
@@ -103,7 +104,8 @@ export default function Quickstart({ theme }: { theme?: 'cream' }) {
             </button>
           </div>
 
-          <div className="tab-content-wrapper">
+          <div className="tab-content-wrapper relative">
+            <PixelKiwi action="shipping" position="perched" />
             {/* Managed Code Panel */}
             <div className={`code-panel ${activeTab === 'managed' ? 'active' : ''}`}>
               <div className="panel-header">
