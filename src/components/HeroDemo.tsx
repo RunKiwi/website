@@ -67,45 +67,52 @@ function Line({ step }: { step: Step }) {
   );
 }
 
+import PixelKiwi from './PixelKiwi';
+
 export default function HeroDemo() {
-  const [visibleCount, setVisibleCount] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(1);
   const [tokens, setTokens] = useState(0);
   const [cost, setCost] = useState(0);
-
   const consoleRef = useReactRef<HTMLDivElement>(null);
-  const startRef = useReactRef<number>(0);
-  const rafRef = useReactRef<number>(0);
 
-  // Timeline driver.
   useReactEffect(() => {
+    // Check prefers-reduced-motion: if user prefers reduced motion, show full state
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mediaQuery.matches) {
+      const timer = setTimeout(() => {
+        setVisibleCount(STEPS.length);
+        setTokens(TOKENS_MAX);
+        setCost(COST_MAX);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+
+    const start = performance.now();
+    let frameId: number;
+
     const tick = (now: number) => {
-      if (!startRef.current) startRef.current = now;
-      const elapsed = (now - startRef.current) % LOOP_MS;
+      const elapsed = (now - start) % LOOP_MS;
 
-      // reset at loop boundary
-      if (elapsed < 40) {
-        setVisibleCount(0);
-        setTokens(0);
-        setCost(0);
+      // Count visible lines
+      let count = 0;
+      for (let i = 0; i < STEPS.length; i++) {
+        if (elapsed >= STEPS[i].atMs) count = i + 1;
       }
-
-      const count = STEPS.filter((s) => elapsed >= s.atMs).length;
       setVisibleCount(count);
 
-      // Ramp token + cost counters up to the point of "success".
-      const successAt = STEPS[STEPS.length - 1].atMs;
-      const p = Math.min(1, elapsed / successAt);
-      setTokens(Math.round(TOKENS_MAX * p));
-      setCost(Number((COST_MAX * p).toFixed(3)));
+      // Meter progress
+      const progress = Math.min(1, elapsed / (LOOP_MS - 1000));
+      setTokens(Math.round(progress * TOKENS_MAX));
+      setCost(progress * COST_MAX);
 
-      rafRef.current = requestAnimationFrame(tick);
+      frameId = requestAnimationFrame(tick);
     };
 
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
-  // Keep newest line in view.
+  // Auto-scroll console as lines appear
   useReactEffect(() => {
     if (consoleRef.current) {
       consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
@@ -120,12 +127,14 @@ export default function HeroDemo() {
     : { cls: 'running', label: 'RUNNING' };
 
   return (
-    <div className="hero-demo" role="img" aria-label="A live Kiwi run: the Architect sets round 1's objective for 'Migrate auth to Postgres', the Implementer edits the repo on branch kiwi/job-42, the Architect asks for a revision and round 2 fixes it, a final verify step runs the full suite, and it all lands as a single PR — with live token and cost counters.">
-      <div className="hero-demo-titlebar">
-        <div className="hero-demo-dots" aria-hidden="true"><span /><span /><span /></div>
-        <span className="hero-demo-file">kiwi/job-42 · migrate-auth</span>
-        <span className="hero-demo-live"><span className="live-dot" aria-hidden="true" />Live run</span>
-      </div>
+    <div className="hero-demo-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '560px' }}>
+      <PixelKiwi action="vibing" position="perched" />
+      <div className="hero-demo" role="img" aria-label="A live Kiwi run: the Architect sets round 1's objective for 'Migrate auth to Postgres', the Implementer edits the repo on branch kiwi/job-42, the Architect asks for a revision and round 2 fixes it, a final verify step runs the full suite, and it all lands as a single PR — with live token and cost counters.">
+        <div className="hero-demo-titlebar">
+          <div className="hero-demo-dots" aria-hidden="true"><span /><span /><span /></div>
+          <span className="hero-demo-file">kiwi/job-42 · migrate-auth</span>
+          <span className="hero-demo-live"><span className="live-dot" aria-hidden="true" />Live run</span>
+        </div>
 
       <div className="hero-demo-console" ref={consoleRef} aria-hidden="true">
         {shown.map((step, i) => (
@@ -148,5 +157,6 @@ export default function HeroDemo() {
         </span>
       </div>
     </div>
+  </div>
   );
 }

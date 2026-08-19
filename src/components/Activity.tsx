@@ -1,188 +1,319 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { GitMerge, Eye, Activity as ActivityIcon, Shield, ShieldAlert, GitCommit, CheckCircle2 } from 'lucide-react';
+import { 
+  GitMerge, 
+  Eye, 
+  Activity as ActivityIcon, 
+  ShieldCheck, 
+  ShieldAlert,
+  GitCommit, 
+  CheckCircle2, 
+  AlertTriangle,
+  XCircle,
+  Lock,
+  Clock,
+  RotateCcw
+} from 'lucide-react';
 import { Reveal } from './Reveal';
+import PixelKiwi from './PixelKiwi';
 
-type SequenceState = 'MERGED' | 'WATCHING' | 'CHECKING' | 'VERDICT';
+type Scenario = 'clean' | 'regression';
 
 export default function Activity() {
-  const [phase, setPhase] = useState<SequenceState>('MERGED');
-  const [checkingIdx, setCheckingIdx] = useState(0);
-  const [verdict, setVerdict] = useState<'VERIFIED' | 'REGRESSION'>('VERIFIED');
-  const [key, setKey] = useState(0);
+  const [scenario, setScenario] = useState<Scenario>('clean');
+  const [elapsedHours, setElapsedHours] = useState(14.4);
 
+  // Live timer tick for clean scenario
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    
-    if (phase === 'MERGED') {
-      timeout = setTimeout(() => {
-        setPhase('WATCHING');
-      }, 2000);
-    } else if (phase === 'WATCHING') {
-      timeout = setTimeout(() => {
-        setPhase('CHECKING');
-        setCheckingIdx(0);
-      }, 2500);
-    } else if (phase === 'CHECKING') {
-      if (checkingIdx < 3) {
-        timeout = setTimeout(() => {
-          setCheckingIdx(prev => prev + 1);
-        }, 1200);
-      } else {
-        timeout = setTimeout(() => {
-          setPhase('VERDICT');
-          setVerdict(Math.random() > 0.3 ? 'VERIFIED' : 'REGRESSION');
-        }, 1000);
-      }
-    } else if (phase === 'VERDICT') {
-      timeout = setTimeout(() => {
-        setPhase('MERGED');
-        setKey(k => k + 1);
-      }, 4000);
-    }
+    if (scenario === 'regression') return;
+    const timer = setInterval(() => {
+      setElapsedHours((prev) => {
+        const next = prev + 0.1;
+        return next > 24 ? 0 : next;
+      });
+    }, 1500);
 
-    return () => clearTimeout(timeout);
-  }, [phase, checkingIdx]);
+    return () => clearInterval(timer);
+  }, [scenario]);
+
+  const progressPercent = scenario === 'clean' 
+    ? Math.min(100, Math.round((elapsedHours / 24) * 100))
+    : 14; // 3.4h out of 24h before regression detected
 
   return (
     <section id="activity" className="activity-section">
       <div className="container">
         <Reveal as="div" className="section-header">
-          <span className="section-eyebrow" style={{ color: 'var(--primary)' }}>Post-merge</span>
-          <h2 className="section-title text-gradient">The 24-hour guard.</h2>
+          <span className="section-eyebrow" style={{ color: 'var(--primary)' }}>Post-merge guard</span>
+          <h2 className="section-title">Telemetry that watches the merge.</h2>
           <p className="section-subtitle">
-            Merging is just the beginning. Kiwi watches the landed commit for 24 hours, checking for reverts, CI regressions, and telemetry drops. It doesn&rsquo;t assume the job is done until the commit holds in production.
+            Most agents disappear the moment a PR opens. Kiwi watches the landed commit for 24 hours in production, checking for reverts, CI regressions, and telemetry drops before writing the final signed verdict.
           </p>
         </Reveal>
 
-        <Reveal as="div" className="activity-visual">
-          <div className="activity-card backdrop-blur-xl border border-white/10 bg-[#070C12]/80 rounded-2xl p-8 max-w-3xl mx-auto shadow-2xl relative overflow-hidden" style={{ minHeight: '380px' }}>
-            <div className="glow-bg-primary opacity-10 absolute top-0 right-0"></div>
+        {/* Spacious, Fully Padded Dashboard Window */}
+        <Reveal as="div" className="activity-console-wrapper relative">
+          <PixelKiwi action={scenario === 'clean' ? 'guarding' : 'sleeping'} position="perched" />
+          <div className="activity-window">
             
-            <AnimatePresence mode="wait">
-              {phase === 'MERGED' && (
-                <motion.div 
-                  key={`merged-${key}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                  className="flex flex-col items-center justify-center h-64 gap-6"
-                >
-                  <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
-                    <GitMerge className="w-8 h-8 text-purple-400" />
-                  </div>
-                  <div className="text-center">
-                    <h3 className="text-xl font-bold font-heading text-white">Pull Request Merged</h3>
-                    <p className="text-[var(--text-muted)] font-mono text-sm mt-2">commit 8f9a2c3 landed in main</p>
-                  </div>
-                </motion.div>
-              )}
+            {/* Titlebar with macOS Window Dots & Embedded Segmented Switcher */}
+            <div className="activity-titlebar">
+              <div className="flex items-center gap-4">
+                {/* Red, Yellow, Green Window Dots */}
+                <div className="activity-dots" aria-hidden="true">
+                  <span className="activity-dot red"></span>
+                  <span className="activity-dot yellow"></span>
+                  <span className="activity-dot green"></span>
+                </div>
+                
+                <span className="text-xs font-mono text-[var(--text-muted)] pl-2 border-l border-white/10 hidden sm:inline-block">
+                  Kiwi Telemetry Engine · <strong className="text-white font-normal">{scenario === 'clean' ? 'PR #42 (auth-postgres)' : 'PR #48 (pool-tuning)'}</strong>
+                </span>
+              </div>
 
-              {phase === 'WATCHING' && (
-                <motion.div 
-                  key={`watching-${key}`}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.1 }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                  className="flex flex-col items-center justify-center h-64 gap-6"
+              {/* Embedded Segmented Control */}
+              <div className="activity-segmented-control">
+                <button 
+                  onClick={() => setScenario('clean')}
+                  className={`activity-segment-btn ${scenario === 'clean' ? 'active-clean' : ''}`}
+                  type="button"
+                  aria-label="View 24h Clean Merge Scenario"
                 >
-                  <motion.div 
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="w-16 h-16 rounded-full bg-[var(--primary-glow)] flex items-center justify-center border border-[var(--border-glow)]"
-                  >
-                    <Eye className="w-8 h-8 text-[var(--primary)]" />
-                  </motion.div>
-                  <div className="text-center">
-                    <h3 className="text-xl font-bold font-heading text-white">Observation Window Open</h3>
-                    <p className="text-[var(--text-muted)] font-mono text-sm mt-2">watching for 24 hours</p>
-                  </div>
-                </motion.div>
-              )}
-
-              {phase === 'CHECKING' && (
-                <motion.div 
-                  key={`checking-${key}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col h-64 justify-center px-4 md:px-12"
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>24h Clean Merge</span>
+                </button>
+                <button 
+                  onClick={() => setScenario('regression')}
+                  className={`activity-segment-btn ${scenario === 'regression' ? 'active-regression' : ''}`}
+                  type="button"
+                  aria-label="View Regression Reverted Scenario"
                 >
-                  <h3 className="text-lg font-bold font-heading text-white mb-6 text-center">Checking Signals</h3>
-                  
-                  <div className="flex flex-col gap-4">
-                    <SignalCheck label="Merged revert?" active={checkingIdx >= 1} icon={<GitCommit className="w-5 h-5" />} />
-                    <SignalCheck label="Check run status?" active={checkingIdx >= 2} icon={<CheckCircle2 className="w-5 h-5" />} />
-                    <SignalCheck label="Telemetry regression? (opt-in)" active={checkingIdx >= 3} icon={<ActivityIcon className="w-5 h-5" />} />
-                  </div>
-                </motion.div>
-              )}
-
-              {phase === 'VERDICT' && (
-                <motion.div 
-                  key={`verdict-${key}`}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  className="flex flex-col items-center justify-center h-64 gap-6"
-                >
-                  <div className={`w-20 h-20 rounded-full flex items-center justify-center border ${verdict === 'VERIFIED' ? 'bg-[#4FB477]/20 border-[#4FB477]/40 text-[#4FB477]' : 'bg-[var(--error)]/20 border-[var(--error)]/40 text-[var(--error)]'}`}>
-                    {verdict === 'VERIFIED' ? <Shield className="w-10 h-10" /> : <ShieldAlert className="w-10 h-10" />}
-                  </div>
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold font-heading text-white">
-                      {verdict === 'VERIFIED' ? 'Verified' : 'Regression Detected'}
-                    </h3>
-                    <p className="text-[var(--text-muted)] font-mono text-sm mt-3">
-                      {verdict === 'VERIFIED' ? 'All signals clear for 24h window' : 'Revert or test failure detected'}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            
-            <div className="absolute bottom-4 left-0 w-full flex justify-center">
-              <div className="flex gap-2">
-                {(['MERGED', 'WATCHING', 'CHECKING', 'VERDICT'] as const).map((p) => (
-                  <div key={p} className={`h-1.5 rounded-full transition-all duration-500 ${phase === p ? 'w-8 bg-[var(--primary)]' : 'w-2 bg-white/20'}`}></div>
-                ))}
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Regression Reverted</span>
+                </button>
               </div>
             </div>
+
+            {/* 4-KPI Metric Strip */}
+            <div className="activity-kpi-grid">
+              <div className="activity-kpi-item">
+                <span className="activity-kpi-label">Target Commit</span>
+                <span className="activity-kpi-value">
+                  <GitMerge className={`w-4 h-4 shrink-0 ${scenario === 'clean' ? 'text-purple-400' : 'text-amber-400'}`} />
+                  {scenario === 'clean' ? 'PR #42 (8f9a2c3)' : 'PR #48 (4c2a10e)'}
+                </span>
+              </div>
+
+              <div className="activity-kpi-item">
+                <span className="activity-kpi-label">Observation Window</span>
+                <span className="activity-kpi-value" style={{ color: scenario === 'clean' ? 'var(--primary)' : '#E8A13B' }}>
+                  <Clock className="w-4 h-4 shrink-0" />
+                  {scenario === 'clean' ? `${elapsedHours.toFixed(1)}h / 24.0h` : 'Halted at 3.4h'}
+                </span>
+              </div>
+
+              <div className="activity-kpi-item">
+                <span className="activity-kpi-label">Signal Health</span>
+                <span className="activity-kpi-value" style={{ color: scenario === 'clean' ? 'var(--success)' : '#E06A4E' }}>
+                  {scenario === 'clean' ? (
+                    <>
+                      <ShieldCheck className="w-4 h-4 shrink-0" />
+                      3 / 3 Cleared
+                    </>
+                  ) : (
+                    <>
+                      <ShieldAlert className="w-4 h-4 shrink-0" />
+                      Regression Flagged
+                    </>
+                  )}
+                </span>
+              </div>
+
+              <div className="activity-kpi-item">
+                <span className="activity-kpi-label">Attestation</span>
+                <span className="activity-kpi-value">
+                  <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+                  {scenario === 'clean' ? 'SHA-256 Signed' : 'Incident Sealed'}
+                </span>
+              </div>
+            </div>
+
+            {/* Main Content Body */}
+            <div className="activity-body">
+              
+              {/* Left Column: 3 Signal Check Cards */}
+              <div className="activity-signals-col">
+                <div className="activity-col-header">
+                  <span className="flex items-center gap-2">
+                    <ActivityIcon className="w-4 h-4 text-[var(--primary)]" />
+                    Continuous Signals
+                  </span>
+                  <span>{scenario === 'clean' ? 'Polling: 60s' : 'Halted at incident'}</span>
+                </div>
+
+                {/* Signal 1: Revert Scan */}
+                <div className="activity-signal-card">
+                  <div className="activity-signal-left">
+                    <div className={`activity-signal-icon ${scenario === 'clean' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-red-500/10 text-[#E06A4E] border border-red-500/20'}`}>
+                      {scenario === 'clean' ? <GitCommit className="w-5 h-5" /> : <RotateCcw className="w-5 h-5" />}
+                    </div>
+                    <div>
+                      <h4 className="activity-signal-title">Revert Scan</h4>
+                      <p className="activity-signal-desc">
+                        {scenario === 'clean' 
+                          ? '0 revert commits detected on target branch'
+                          : 'Revert commit 9d81fe2 merged on main by on-call'}
+                      </p>
+                    </div>
+                  </div>
+                  {scenario === 'clean' ? (
+                    <span className="activity-pill-cleared">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      CLEARED
+                    </span>
+                  ) : (
+                    <span className="activity-pill-failed">
+                      <XCircle className="w-3.5 h-3.5" />
+                      REVERT DETECTED
+                    </span>
+                  )}
+                </div>
+
+                {/* Signal 2: CI Runs */}
+                <div className="activity-signal-card">
+                  <div className="activity-signal-left">
+                    <div className={`activity-signal-icon ${scenario === 'clean' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-[#E06A4E] border border-red-500/20'}`}>
+                      {scenario === 'clean' ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
+                    </div>
+                    <div>
+                      <h4 className="activity-signal-title">Post-Merge CI Runs</h4>
+                      <p className="activity-signal-desc">
+                        {scenario === 'clean'
+                          ? 'Main branch test suites (128/128 green)'
+                          : 'Connection timeout in pool_stress_test (Exit 1)'}
+                      </p>
+                    </div>
+                  </div>
+                  {scenario === 'clean' ? (
+                    <span className="activity-pill-cleared">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      CLEARED
+                    </span>
+                  ) : (
+                    <span className="activity-pill-failed">
+                      <XCircle className="w-3.5 h-3.5" />
+                      SUITE FAILED
+                    </span>
+                  )}
+                </div>
+
+                {/* Signal 3: Telemetry Delta */}
+                <div className="activity-signal-card">
+                  <div className="activity-signal-left">
+                    <div className={`activity-signal-icon ${scenario === 'clean' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>
+                      <ActivityIcon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="activity-signal-title">Production Telemetry</h4>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-[var(--text-dim)] border border-white/10">opt-in</span>
+                      </div>
+                      <p className="activity-signal-desc">
+                        {scenario === 'clean'
+                          ? 'P99 latency & error rates nominal (±0.00%)'
+                          : '+18.4% error rate spike on pool exhaustion'}
+                      </p>
+                    </div>
+                  </div>
+                  {scenario === 'clean' ? (
+                    <span className="activity-pill-cleared">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      HEALTHY
+                    </span>
+                  ) : (
+                    <span className="activity-pill-anomaly">
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                      ANOMALY
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column: Progress Gauge & Cryptographic Verdict */}
+              <div className="activity-verdict-col">
+                <div>
+                  <div className="activity-col-header pb-2 border-b border-white/10 mb-4">
+                    <span>Observation Timeline</span>
+                    <span className="flex items-center gap-1.5" style={{ color: scenario === 'clean' ? 'var(--primary)' : '#E06A4E' }}>
+                      <Eye className="w-3.5 h-3.5" /> {scenario === 'clean' ? 'Live Watching' : 'Interrupted'}
+                    </span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="activity-progress-wrap mb-5">
+                    <div className="flex justify-between text-xs font-mono text-[var(--text-muted)]">
+                      <span>{scenario === 'clean' ? '24h observation window' : 'Window halted at 3.4h'}</span>
+                      <span className="text-white font-semibold">{progressPercent}%</span>
+                    </div>
+                    <div className="activity-progress-bar">
+                      <div 
+                        className={`activity-progress-fill ${scenario === 'regression' ? 'regression' : ''}`} 
+                        style={{ width: `${progressPercent}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Cryptographic Execution Record */}
+                  <div className="activity-record-box">
+                    <div className="text-[var(--text-dim)] flex justify-between">
+                      <span>VERDICT RECORD</span>
+                      <span className={scenario === 'clean' ? 'text-emerald-400 font-semibold' : 'text-[#E06A4E] font-semibold'}>
+                        {scenario === 'clean' ? 'STATUS: SEALED' : 'INCIDENT SEALED'}
+                      </span>
+                    </div>
+                    <div className="text-[var(--text-muted)] truncate">
+                      hash: <span className="text-[var(--text-main)]">{scenario === 'clean' ? '7f8a92b3c4d5e6f1a0b2...' : '3d9e4a1b8c0f5e7a9c2...'}</span>
+                    </div>
+                    <div className="text-[var(--text-dim)] mt-0.5 truncate text-[11px]">
+                      verdict: <span className={scenario === 'clean' ? 'text-emerald-400' : 'text-[#E06A4E]'}>
+                        {scenario === 'clean' ? 'NO_REGRESSIONS_DETECTED' : 'REGRESSION_CONFIRMED'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Final Verdict Callout */}
+                <div className={`activity-verdict-badge ${scenario === 'regression' ? 'regression' : ''}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${scenario === 'clean' ? 'bg-[#4FB477]/20 text-[#4FB477]' : 'bg-[#E06A4E]/20 text-[#E06A4E]'}`}>
+                    {scenario === 'clean' ? <ShieldCheck className="w-6 h-6" /> : <ShieldAlert className="w-6 h-6" />}
+                  </div>
+                  <div>
+                    <div className="text-xs font-heading font-bold text-white uppercase tracking-wider">
+                      {scenario === 'clean' ? 'Commit Verified' : 'Regression Logged & Reverted'}
+                    </div>
+                    <p className={`text-xs font-mono mt-0.5 ${scenario === 'clean' ? 'text-[#4FB477]/90' : 'text-[#E06A4E]/90'}`}>
+                      {scenario === 'clean' 
+                        ? '24h guard concluded with 0 regressions'
+                        : 'Revert commit indexed into verification record'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Statusline */}
+            <div className="activity-statusline">
+              <span>pkg/ver · sha256 hash-chaining</span>
+              <span className="flex items-center gap-1.5 font-medium" style={{ color: scenario === 'clean' ? 'var(--primary)' : '#E06A4E' }}>
+                Attestation: {scenario === 'clean' ? 'Verified & Signed' : 'Incident Attested & Signed'}
+              </span>
+            </div>
+
           </div>
         </Reveal>
       </div>
     </section>
-  );
-}
-
-function SignalCheck({ label, active, icon }: { label: string; active: boolean; icon: React.ReactNode }) {
-  return (
-    <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-500 ${active ? 'bg-white/10 border-white/20 text-white' : 'bg-white/5 border-white/5 text-[var(--text-dim)]'}`}>
-      <div className="flex items-center gap-3">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${active ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5'}`}>
-          {icon}
-        </div>
-        <span className="font-medium font-heading">{label}</span>
-      </div>
-      <div className="font-mono text-xs">
-        {active ? (
-          <motion.span 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            className="text-[var(--success)] flex items-center gap-1"
-          >
-            <span className="w-2 h-2 rounded-full bg-[var(--success)]"></span>
-            CLEARED
-          </motion.span>
-        ) : (
-          <span className="text-[var(--text-dim)]">WAITING</span>
-        )}
-      </div>
-    </div>
   );
 }

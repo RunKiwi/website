@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Reveal } from './Reveal';
 import { GitPullRequest, ArrowRight } from 'lucide-react';
+import PixelKiwi from './PixelKiwi';
 
 // CSS class suffixes are inherited from an earlier worker-DAG demo (analyze/impl/verify)
 // and reused here for styling only — displayed labels are Architect/Implementer/Verify.
@@ -128,7 +129,8 @@ export default function GodView() {
           ))}
         </Reveal>
 
-        <Reveal as="div" className="control-console" id="how-it-works-console">
+        <Reveal as="div" className="control-console relative" id="how-it-works-console">
+          <PixelKiwi action="reviewing" position="perched" />
           <div className="console-glow"></div>
 
           <div className="console-telemetry-bar">

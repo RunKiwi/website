@@ -88,7 +88,7 @@ export default function FeaturesGrid({ theme }: { theme?: 'cream' }) {
 
         <Reveal as="div" className="features-grid" stagger>
           {features.map((f, i) => (
-            <RevealItem key={i} className={`feature-card backdrop-blur-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300 ${f.lead ? 'feature-card-lead' : ''}`}>
+            <RevealItem key={i} className={`feature-card ${f.lead ? 'feature-card-lead' : ''}`}>
               <div className="card-glow"></div>
               <span className="feature-index">{String(i + 1).padStart(2, '0')}</span>
               <div className="feature-icon">{f.icon}</div>

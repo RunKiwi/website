@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="footer-left">
           <div className="logo">
             <span className="logo-chip"><Logo className="logo-bird" /></span>
-            <span className="logo-text">Kiwi</span>
+            <span className="logo-text">kiwi</span>
           </div>
           <p className="footer-tagline">Coding agents that run where you say. One task in, one verified PR out, contained and recorded, on our cloud or in yours.</p>
         </div>

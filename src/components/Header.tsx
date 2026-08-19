@@ -1,13 +1,28 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Logo } from './Logo';
 
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="header">
-      <div className="container header-container">
+    <header className={`header ${scrolled ? 'header-scrolled' : ''}`}>
+      <div className="header-container">
         <Link href="/" className="logo" id="header-logo-link">
           <span className="logo-chip"><Logo className="logo-bird" /></span>
-          <span className="logo-text">Kiwi</span>
+          <span className="logo-text">kiwi</span>
         </Link>
 
         <nav className="nav-links">
