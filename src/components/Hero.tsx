@@ -13,13 +13,13 @@ export default function Hero() {
         <Reveal as="div" className="hero-content" stagger>
           <div className="badge" id="hero-announcement-badge">
             <span className="badge-dot"></span>
-            <span className="badge-text">New · Run tasks on Kiwi’s models. No API key needed.</span>
+            <span className="badge-text">New · Post-merge verification tracks regressions after your PR lands.</span>
           </div>
           <h1 className="hero-title">
-            Every coding agent hands you a diff and disappears. <em className="text-gradient">This one doesn&rsquo;t.</em>
+            Most coding agents disappear the moment a PR opens. <em className="text-gradient">Kiwi doesn&rsquo;t.</em>
           </h1>
           <p className="hero-subtitle">
-            Kiwi plans the task, edits your repo, and verifies the change in an isolated sandbox. Comment on the pull request and it picks up exactly where it left off — not a re-run from zero.
+            Not during review, and not after merge either. It resumes a review comment with full context, and it keeps watching the merged commit for regressions.
           </p>
 
           <div className="hero-actions">
