@@ -19,12 +19,15 @@ export default function Home() {
         <Hero />
         <ValueBanner />
         <Marquee />
+        {/* Story order: what it does (how-it-works) → why (features) →
+            what's next → the tier ladder → start.
+            Alternating dark/cream rhythm for editorial contrast. */}
         <GodView />
-        <FeaturesGrid />
+        <FeaturesGrid theme="cream" />
         <Activity />
-        <ComingSoon />
+        <ComingSoon theme="cream" />
         <TierLadder />
-        <PricingTiers />
+        <PricingTiers theme="cream" />
         <Quickstart />
       </main>
       <Footer />

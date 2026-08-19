@@ -98,7 +98,7 @@ export default function GodView() {
   }, []);
 
   return (
-    <section id="how-it-works" className="simulator-section theme-cream">
+    <section id="how-it-works" className="simulator-section">
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">How it works</span>

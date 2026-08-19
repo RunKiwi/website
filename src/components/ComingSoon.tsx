@@ -24,9 +24,9 @@ const roadmapItems = [
   },
 ];
 
-export default function ComingSoon() {
+export default function ComingSoon({ theme }: { theme?: 'cream' }) {
   return (
-    <section id="coming-soon" className="features-section" style={{ backgroundColor: 'var(--bg-inset)' }}>
+    <section id="coming-soon" className={`features-section ${theme === 'cream' ? 'theme-cream' : ''}`} style={{ backgroundColor: 'var(--bg-inset)' }}>
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">Roadmap</span>
@@ -38,7 +38,8 @@ export default function ComingSoon() {
 
         <Reveal as="div" className="features-grid" stagger>
           {roadmapItems.map((item, i) => (
-            <RevealItem key={i} className="feature-card border transition-all duration-300" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-card)', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+            <RevealItem key={i} className="feature-card transition-all duration-300">
+              <div className="card-glow"></div>
               <div className="flex justify-between items-start mb-4">
                 <div className="feature-icon !mb-0">{item.icon}</div>
                 <span className="text-xs font-mono px-2 py-1 rounded-full" style={{ backgroundColor: 'rgba(147, 198, 69, 0.1)', color: 'var(--primary)', border: '1px solid rgba(147, 198, 69, 0.2)' }}>

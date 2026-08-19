@@ -4,19 +4,21 @@
 /* CSS Design System for runkiwi.dev */
 
 :root {
-  /* ---- Light palette (default) ----
-     Warm off-white, "dawn paper" with kiwi-green as the one accent */
-  --bg-dark: #EFF1EA;
-  --bg-card: rgba(255, 255, 255, 0.66);
-  --bg-card-hover: rgba(255, 255, 255, 0.92);
-  --bg-panel: #E6E9DF;
-  --bg-inset: #DFE3D6;
+  /* ---- Nocturnal palette (dark theme = default) ----
+     The kiwi is a night forager, so the ground is a deep night-navy
+     (#0E1A24 is the brand mark's chip). The kiwi-bird green is the one
+     living accent; a warm feather-amber is the only secondary. */
+  --bg-dark: #0A1017;          /* night navy — near-black blue */
+  --bg-card: rgba(16, 26, 36, 0.62);
+  --bg-card-hover: rgba(22, 34, 46, 0.86);
+  --bg-panel: #0E1A24;         /* brand navy — the logo chip */
+  --bg-inset: #070C12;         /* deepest wells (canvas/log floors) */
 
-  --primary: #93C645;
+  --primary: #93C645;          /* kiwi-bird green — the one living accent */
   --primary-glow: rgba(147, 198, 69, 0.18);
-  --primary-dark: #4E8F1E;
+  --primary-dark: #6FA232;     /* deeper companion green */
 
-  /* Secondary is a warm amber/terracotta (used with restraint, warning/error) */
+  /* Secondary is a warm amber/terracotta (used with restraint) */
   --secondary: #E8823B;
   --secondary-glow: rgba(232, 130, 59, 0.16);
 
@@ -24,13 +26,13 @@
   --accent: #E8823B;
   --accent-glow: rgba(232, 130, 59, 0.14);
 
-  /* Text: dark, high-contrast on light background */
-  --text-main: #171B1A;
-  --text-muted: #52564E;
-  --text-dim: #6A6E64;
+  /* Moonlit neutrals (cool, on navy) */
+  --text-main: #EAF0F2;
+  --text-muted: #9DB0BC;
+  --text-dim: #6E8290;
 
-  --border: rgba(23, 27, 26, 0.12);
-  --border-glow: rgba(147, 198, 69, 0.35);
+  --border: rgba(234, 240, 242, 0.09);
+  --border-glow: rgba(147, 198, 69, 0.25);
 
   --success: #4FB477;
   --warning: #E8A13B;
@@ -49,23 +51,24 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ---- Dark section theme (rare accent rhythm) ----
-   Applied via .theme-dark on a <section>. Retunes the tokens to dark navy. */
-.theme-dark {
-  --bg-dark: #0A1017;
-  --bg-card: rgba(16, 26, 36, 0.62);
-  --bg-card-hover: rgba(22, 34, 46, 0.86);
-  --bg-panel: #0E1A24;
-  --bg-inset: #070C12;
+/* ---- Cream section theme (alternating rhythm) ----
+   Applied via .theme-cream on a <section>. Retunes the tokens so all
+   child components inherit AA-contrast colors on the light background. */
+.theme-cream {
+  --bg-dark: #EFF1EA;
+  --bg-card: rgba(255, 255, 255, 0.66);
+  --bg-card-hover: rgba(255, 255, 255, 0.92);
+  --bg-panel: #E6E9DF;
+  --bg-inset: #DFE3D6;
 
-  --primary-dark: #6FA232;
+  --primary-dark: #4E8F1E;
 
-  --text-main: #EAF0F2;
-  --text-muted: #9DB0BC;
-  --text-dim: #6E8290;
+  --text-main: #171B1A;
+  --text-muted: #52564E;   /* AA on dawn paper */
+  --text-dim: #6A6E64;
 
-  --border: rgba(234, 240, 242, 0.09);
-  --border-glow: rgba(147, 198, 69, 0.25);
+  --border: rgba(23, 27, 26, 0.12);
+  --border-glow: rgba(147, 198, 69, 0.35);
 
   background-color: var(--bg-dark);
   color: var(--text-main);

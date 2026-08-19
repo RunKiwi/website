@@ -74,9 +74,9 @@ const features: Feature[] = [
   },
 ];
 
-export default function FeaturesGrid() {
+export default function FeaturesGrid({ theme }: { theme?: 'cream' }) {
   return (
-    <section id="features" className="features-section">
+    <section id="features" className={`features-section ${theme === 'cream' ? 'theme-cream' : ''}`}>
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">What you get</span>
@@ -88,7 +88,8 @@ export default function FeaturesGrid() {
 
         <Reveal as="div" className="features-grid" stagger>
           {features.map((f, i) => (
-            <RevealItem key={i} className={`feature-card border transition-all duration-300 ${f.lead ? 'feature-card-lead' : ''}`} style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-card)', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+            <RevealItem key={i} className={`feature-card backdrop-blur-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300 ${f.lead ? 'feature-card-lead' : ''}`}>
+              <div className="card-glow"></div>
               <span className="feature-index">{String(i + 1).padStart(2, '0')}</span>
               <div className="feature-icon">{f.icon}</div>
               <h3 className="feature-title">{f.title}</h3>

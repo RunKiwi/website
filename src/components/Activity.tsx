@@ -47,7 +47,7 @@ export default function Activity() {
   }, [phase, checkingIdx]);
 
   return (
-    <section id="activity" className="activity-section theme-dark">
+    <section id="activity" className="activity-section">
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow" style={{ color: 'var(--primary)' }}>Post-merge</span>
