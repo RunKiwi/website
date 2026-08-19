@@ -3684,18 +3684,31 @@ pre {
 .tier-cta svg { flex-shrink: 0; }
 
 /* ---- Kiwi-bird mark (header + footer) ---- */
+/* ---- Kiwi-bird mark (header + footer) ---- */
 .logo-chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: var(--bg-panel);
+  border: 1px solid rgba(147, 198, 69, 0.25);
   box-shadow: 0 0 10px rgba(147, 198, 69, 0.22);
   flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
 }
-.logo-bird { width: 17px; height: 17px; color: var(--primary); }
+.logo:hover .logo-chip {
+  transform: scale(1.08);
+  border-color: var(--primary);
+}
+.logo-bird {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
 .footer .logo-chip { box-shadow: none; }
 
 
