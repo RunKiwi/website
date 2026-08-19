@@ -19,31 +19,33 @@ type RoundCard = {
 };
 
 // Kiwi has one execution loop: an Architect sets each round's objective and reviews
-// the diff, an Implementer edits the repo with real tools. Sequential rounds, not a
-// parallel worker DAG — pkg/loop (the DAG-based loop this demo used to show) was
-// retired 2026-08-12. This sim: round 1 gets revised, round 2 fixes it, then verify.
+// the diff, an Implementer edits the repo with real tools. Sequential rounds.
+// This sim: round 1 finishes, PR opens, reviewer comments, it resumes, merges, watches.
 const initialCards: RoundCard[] = [
   { id: 'r1-plan', round: 1, stage: 'analyze', status: 'DONE',
     name: 'round 1 · architect sets the objective',
     logs: ['[architect] Reading every caller of the session store…', '[architect] 3 call sites assume in-memory state', '✓ objective handed to implementer'] },
-  { id: 'r1-impl', round: 1, stage: 'impl', status: 'RUNNING',
+  { id: 'r1-impl', round: 1, stage: 'impl', status: 'DONE',
     name: 'round 1 · implementer edits the repo',
     logs: ['[implementer] Editing pkg/session/store.go…', '$ go test ./pkg/session', 'writing migration 0002_sessions.sql…'] },
-  { id: 'r1-review', round: 1, stage: 'analyze', status: 'QUEUED',
-    name: 'round 1 · architect reviews the diff',
-    logs: ['waiting on the implementer to finish…'] },
+  { id: 'r1-verify', round: 1, stage: 'verify', status: 'DONE',
+    name: 'round 1 · verify full suite',
+    logs: ['$ go test ./… (full suite)', '✓ 128 passed, 0 failed'] },
+  { id: 'r1-pr', round: null, stage: 'analyze', status: 'DONE',
+    name: 'PR open · human review',
+    logs: ['● Opened PR #42 → main', '@reviewer: "Can we add a rollback path?"'] },
   { id: 'r2-impl', round: 2, stage: 'impl', status: 'QUEUED',
-    name: 'round 2 · implementer edits the repo',
-    logs: ['waiting on round 1’s review…'] },
-  { id: 'verify', round: null, stage: 'verify', status: 'QUEUED',
-    name: 'verify · full suite + open PR',
-    logs: ['waiting on round 2 to go green…'] },
+    name: 'round 2 · resume from comment',
+    logs: ['waiting for resume trigger…'] },
+  { id: 'post-merge', round: null, stage: 'verify', status: 'QUEUED',
+    name: 'post-merge · watch for regressions',
+    logs: ['waiting for merge…'] },
 ];
 
 const roundSnippets = [
-  '[implementer] Reading AGENT.md for repo conventions…',
+  '[implementer] Reading the reviewer’s comment…',
+  '[implementer] Adding rollback on migration failure…',
   '$ go test ./... -run TestSession',
-  '[implementer] Re-running against test_cmd…',
   'commit → kiwi/job-42',
   'Tests green. Handing summary to the next round.',
 ];
@@ -52,7 +54,7 @@ const stageLabel: Record<Stage, string> = { analyze: 'ARCHITECT', impl: 'IMPLEME
 
 export default function GodView() {
   const [cards, setCards] = useState<RoundCard[]>(initialCards);
-  const [round, setRound] = useState(1);
+  const [round] = useState(2);
   const [prOpen, setPrOpen] = useState(false);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export default function GodView() {
       ticks++;
       setCards(prev => {
         const next = prev.map(c => {
-          if (c.status === 'RUNNING' && Math.random() > 0.55) {
+          if (c.status === 'RUNNING' && Math.random() > 0.55 && c.id === 'r2-impl') {
             const line = roundSnippets[Math.floor(Math.random() * roundSnippets.length)];
             const logs = [...c.logs, line];
             if (logs.length > 4) logs.shift();
@@ -70,59 +72,53 @@ export default function GodView() {
           return c;
         });
 
-        // Round 1 implementer finishes; architect starts reviewing.
-        if (ticks === 4) {
-          return next.map(c => c.id === 'r1-impl' ? { ...c, status: 'DONE' as Status }
-            : c.id === 'r1-review' ? { ...c, status: 'RUNNING' as Status, logs: ['[architect] Reviewing the diff…'] }
+        // Resume round 2 from comment
+        if (ticks === 2) {
+          return next.map(c => c.id === 'r2-impl'
+            ? { ...c, status: 'RUNNING' as Status, logs: ['[architect] Resume triggered by PR comment.', '[implementer] Adding rollback on migration failure…'] }
             : c);
         }
-        // Review lands: revise, not approve. The rejected attempt is kept, not discarded.
+        // Round 2 finishes;
         if (ticks === 6) {
-          return next.map(c => c.id === 'r1-review'
-            ? { ...c, status: 'DONE' as Status, logs: ['[architect] Missing a rollback path — revise.', '↺ rejected attempt kept, not discarded'] }
-            : c.id === 'r2-impl'
-            ? { ...c, status: 'RUNNING' as Status, logs: ['[implementer] Reading the architect’s review…', '[implementer] Adding rollback on migration failure…'] }
+          return next.map(c => c.id === 'r2-impl' ? { ...c, status: 'DONE' as Status, logs: ['✓ tests pass, pushed to branch'] }
+            : c.id === 'post-merge' ? { ...c, status: 'RUNNING' as Status, logs: ['● PR #42 merged', 'watching for 24 hours…'] }
             : c);
         }
-        // Round 2 finishes; verify starts.
-        if (ticks === 9) {
-          setRound(2);
-          return next.map(c => c.id === 'r2-impl' ? { ...c, status: 'DONE' as Status }
-            : c.id === 'verify' ? { ...c, status: 'RUNNING' as Status, logs: ['$ go test ./… (full suite)', '✓ 128 passed, 0 failed'] }
-            : c);
-        }
-        if (ticks === 12) {
-          return next.map(c => c.id === 'verify'
-            ? { ...c, status: 'DONE' as Status, logs: ['✓ 128 passed, 0 failed', '● Opened PR #42 → main'] }
+        // Verdict lands
+        if (ticks === 10) {
+          return next.map(c => c.id === 'post-merge'
+            ? { ...c, status: 'DONE' as Status, logs: ['● PR #42 merged', 'watching for 24 hours…', '✓ window elapsed, no regression signal'] }
             : c);
         }
         return next;
       });
-      if (ticks === 12) setPrOpen(true);
+      if (ticks === 10) setPrOpen(true);
     }, 1100);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section id="how-it-works" className="simulator-section">
+    <section id="how-it-works" className="simulator-section theme-cream">
       <div className="container">
         <Reveal as="div" className="section-header">
           <span className="section-eyebrow">How it works</span>
-          <h2 className="section-title">One task in. One PR out.</h2>
+          <h2 className="section-title">Beyond the merge.</h2>
           <p className="section-subtitle">
-            An Architect sets each round&rsquo;s objective and reviews the diff; an Implementer does the editing with real tools. When the Architect asks for a revision, the rejected attempt is kept, not discarded, and the next round picks up with the feedback attached. What you asked for is the objective; a final verify step runs the full suite to prove the change broke nothing before the PR opens.
+            Most agents disappear the moment a PR opens. Kiwi plans, edits, and sandbox-verifies your change — but then it stays. Comment on the PR and it resumes with full context. Merge the PR and it keeps watching for 24 hours, returning a final verdict on whether the commit caused a regression.
           </p>
         </Reveal>
 
         {/* Pipeline rail */}
         <Reveal as="ol" className="pipeline-rail" aria-label="Execution pipeline">
           {[
-            { k: 'kiwi submit', v: 'a plain-English task' },
-            { k: 'Plan', v: 'Architect sets the round objective' },
-            { k: 'Implement', v: 'Implementer edits with real tools' },
-            { k: 'Review', v: 'Architect checks the diff' },
-            { k: 'Verify', v: 'the suite still passes' },
-            { k: 'Ship', v: 'one reviewable PR' },
+            { k: 'Plan', v: 'task objective' },
+            { k: 'Edit', v: 'sandbox tools' },
+            { k: 'Verify', v: 'test command' },
+            { k: 'PR', v: 'human review' },
+            { k: 'Resume', v: 'from comment' },
+            { k: 'Merge', v: 'code lands' },
+            { k: 'Watch', v: 'post-merge window' },
+            { k: 'Verdict', v: 'regression free' },
           ].map((s, i, arr) => (
             <li key={s.k} className="pipeline-step">
               <span className="pipeline-k">{s.k}</span>
@@ -139,7 +135,7 @@ export default function GodView() {
             <div className="telemetry-item">
               <span className="t-dot active"></span>
               <span className="t-label">Control Plane</span>
-              <span className="t-value text-gradient">LEASE QUEUE ONLINE</span>
+              <span className="t-value text-gradient">SESSION ONLINE</span>
             </div>
             <div className="telemetry-item">
               <span className="t-label">Job</span>
