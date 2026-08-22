@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Outfit, Fraunces, Fira_Code } from "next/font/google";
 import { REPO_URL, SITE_URL } from "@/lib/site";
+import CookieConsent from "@/components/CookieConsent";
 import "./globals.css";
 
 const inter = Inter({
@@ -117,6 +118,7 @@ export default function RootLayout({
         <div className="film-grain" aria-hidden="true" />
         {children}
         <Analytics />
+        <CookieConsent />
       </body>
     </html>
   );
